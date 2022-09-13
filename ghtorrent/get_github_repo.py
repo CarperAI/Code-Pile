@@ -26,7 +26,7 @@ def main():
             for x in os.listdir("ghtorrent_data/") if x.endswith(".gz")]
 
     total_urls = []
-    for file_name in ['ghtorrent_data/mysql-2013-10-12.sql']:
+    for file_name in files:
         urls = []
         if file_mode == 'text':
             with open(file_name, "r", encoding="ISO-8859-1") as file:
