@@ -1,8 +1,8 @@
 from typing import Union, Optional, TypeAlias, Literal, Any
-from abc import ABC
+from abc import ABC, abstractmethod
 import uuid
 import pydantic
-from pydantic import BaseModel, AnyUrl
+from pydantic import BaseModel, AnyUrl, FileUrl
 from datetime import datetime
 
 
@@ -65,18 +65,26 @@ class DatasetSources(BaseModel):
 
 class RawDataset(BaseModel):
     # where the raw dataset files is stored after the scrape
-    storage_uris: list[AnyUrl]
+    storage_uris: list[Union[AnyUrl, FileUrl]]
     # possible locks for parallel writing to the storage_uris
-    storage_locks: list[Any]
+    storage_locks: Optional[list[Any]]
     # wether the download is complete
     # if more finegrained saving of state is needed, handle it customly
     # in the scraper
-    complete: bool
+    complete: bool = False
+    
+    # miscellanous metadata we additionally want to track
+    metadata: Optional[str]
 
 
 class Scraper(ABC):
     # logic for downloading/scraping the datasets
-    pass
+    def __init__(self, tempdir, target_dir, *args, **kwargs):
+        self.tempdir = tempdir
+        self.target_dir = target_dir
+
+    def scrape(self):
+        raise NotImplementedError()
 
 
 class Processor(ABC):
@@ -84,16 +92,43 @@ class Processor(ABC):
     # filtering out bad data
     # data transformations
     # if you wanna use kind a workflow, implement it in here
-    pass
+    def process(self):
+        raise NotImplementedError()
 
 
 class Analyser(ABC):
     # logic for getting basic statistics of the dataset
-    pass
+    def analyse(self):
+        raise NotImplementedError()
 
 
-class Merger(ABC):
-    # for merging datasets, not for assembling a single dataset
-    # can use Analyser for 
-    pass
+class Dataset(ABC):
+    def __init__(self, tempdir, target_dir, *args, **kwargs):
+        self.tempdir = tempdir
+        self.target_dir = target_dir
+
+        self.info : DatasetInfo = None
+
+        self.scraper = None
+        self.processor = None 
+        self.analyser = None
+
+    def download(self, *args, **kwargs):
+        self.scraper.scrape()
+
+    def process(self, *args, **kwargs):
+        self.processor.process()
+
+    def analyse(self, *args, **kwargs):
+        self.analyser.analyse()
+
+    '''
+    @property
+    @abstractmethod
+    def info(self) -> DatasetInfo:
+        if self.info is None:
+            raise NotImplementedError()
+        return self.info
+    '''
+
 
