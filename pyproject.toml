@@ -8,6 +8,6 @@ build-backend = "setuptools.build_meta"
 name = "Code-Pile"
 version = "0.0.1"
 dependencies = [
-    "pydantic"
+    "pydantic",
     "internetarchive"
 ]
