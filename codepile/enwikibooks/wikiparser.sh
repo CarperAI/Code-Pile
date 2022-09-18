@@ -1,0 +1,1 @@
+python -m wikiextractor.WikiExtractor --json data/enwikibooks-20220820-pages-meta-current.xml -o data/enwikibooks_json
