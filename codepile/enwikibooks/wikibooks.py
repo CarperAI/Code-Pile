@@ -78,7 +78,8 @@ class WikiBookDataset():
     
 
 if __name__=="__main__":
-    data = WikiBookDataset(wikiextractor_dir="data/enwikibooks_json/")
+    data = WikiBookDataset(wikiextractor_dir="data/enwikibooks_json_keep_block/")
     df = data.df_books
     df_computing = data.get_wikibooks_by_category(category='Computing')
-    import ipdb; ipdb.set_trace()
+    df.to_parquet("data/all_wikibooks.parquet.gzip", compression='gzip')
+    df_computing.to_parquet("data/computing_wikibooks.parquet.gzip", compression='gzip')
