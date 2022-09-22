@@ -1,17 +1,15 @@
+import os
+import json
+import pandas as pd
+from codepile.dataset import RawDataset, Scraper, Dataset
+
 import requests
 from bs4 import BeautifulSoup
 
-import os
-import json
-import pickle
-import pandas as pd
 
-
-class WikiBookDataset():
-
-    def __init__(self, wikiextractor_dir=None):
-        self.wikiextractor_dir = wikiextractor_dir # directory output json format from wikiextractor
-        self.df_books = self.get_all_wikibooks()
+class WikiBookScraper(Scraper):
+    # tempdir: wikiextractor output directory
+    # target dir: parquest file directory
 
     def _scrape_titles(self, category_url):
         # get all books title from category_url
@@ -49,7 +47,7 @@ class WikiBookDataset():
 
     def get_all_wikibooks(self):
         wikibooks = []
-        for path, currentDirectory, files in os.walk(self.wikiextractor_dir):
+        for path, currentDirectory, files in os.walk(self.tempdir):
             for file in files:
                 wikibooks.append(os.path.join(path, file))
 
@@ -64,22 +62,31 @@ class WikiBookDataset():
         return pd.DataFrame(doc_wikibooks)
         
 
-    def get_wikibooks_by_category(self, category='Computing'):
-
+    def get_wikibooks_by_category(self):
+        category='Computing'
+        self.df_books = self.get_all_wikibooks()
         cat_titles, cat_urls = self.get_title_by_category(category)
         df_titles = ['_'.join(title.split()) for title in self.df_books.title.values] # convert title to match with wikibooks
         idx_list = []
         for i, title in enumerate(df_titles):
             if title in cat_titles:
                 idx_list.append(i)
-        return self.df_books.iloc[idx_list]
+        return self.df_books, self.df_books.iloc[idx_list]
+
+    def scrape(self):
+        df_all, df_computing = self.get_wikibooks_by_category()
+        df_all.to_parquet(f"{self.target_dir}/all_wikibooks.parquet.gzip", compression='gzip')
+        df_computing.to_parquet(f"{self.target_dir}/computing_wikibooks.parquet.gzip", compression='gzip')
+        return RawDataset(storage_uris=['file:///{self.target_dir}'])
 
 
-    
+class WikiBookDataset(Dataset):
+    def __init__(self, tempdir, target_dir):
+        self.scraper = WikiBookScraper(tempdir, target_dir)
+    def download(self):
+        self.scraper.download()
+
 
 if __name__=="__main__":
-    data = WikiBookDataset(wikiextractor_dir="data/enwikibooks_json_keep_block/")
-    df = data.df_books
-    df_computing = data.get_wikibooks_by_category(category='Computing')
-    df.to_parquet("data/all_wikibooks.parquet.gzip", compression='gzip')
-    df_computing.to_parquet("data/computing_wikibooks.parquet.gzip", compression='gzip')
+    data = WikiBookDataset(tempdir="data/enwikibooks_json_keep_block/", target_dir="data/enwikibooks_parquet/")
+    data.download()
