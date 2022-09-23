@@ -23,8 +23,8 @@ class StackExchangeProcessor(Processor):
         self.temp_dir = temp_dir
         self.output_dir = temp_dir
 
-        self.exclude_sites = ["ru.stackoverflow.com"]
-        self.include_sites = ["devops.stackexchange.com"]
+        self.exclude_sites = [] # exclude list has precedence over include list
+        self.include_sites = []
         # , "superuser.com", "askubuntu.com"
         self.tables_to_consider = ["Posts", "Comments", "Users"]
         self.intermediate_format = "parquet" # parquet or json

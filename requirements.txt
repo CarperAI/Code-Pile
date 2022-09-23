@@ -1,0 +1,6 @@
+pydantic
+internetarchive
+xmltodict
+simplejson
+pandas
+py7zr
