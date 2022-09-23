@@ -10,7 +10,6 @@ import simplejson
 import os
 from pathlib import Path
 import pandas as pd
-import numpy as np
 import re
 from tqdm import tqdm
 import py7zr
@@ -107,7 +106,7 @@ class StackExchangeProcessor(Processor):
                     with open(target_file, 'w') as json_file_o:
                         json_file_o.write(simplejson.dumps(data_dict[file_wo_ext.lower()]['row'], ignore_nan=True))
                 else:
-                    raise ValueError(f"Unsupported target format type: {to}. supported values are 'parquet', 'json'")
+                    raise ValueError(f"Unsupported target format type: {self.intermediate_format}. supported values are 'parquet', 'json'")
                 print(f"Finished converting {file_wo_ext} from xml to {format}")
 
     def load_data_into_pandas(self, src_dir, tables, format="parquet"):
