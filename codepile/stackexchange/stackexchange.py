@@ -3,6 +3,7 @@ from codepile.dataset import DatasetInfo, DatasetSources, RawDataset, Scraper, P
 from datetime import datetime
 
 import internetarchive as ia
+from .processor import StackExchangeProcessor
 
 '''
 # example
@@ -44,5 +45,6 @@ class StackExchangeScraper(Scraper):
 class StackExchangeDataset(Dataset):
     def __init__(self, tempdir, target_dir):
         self.scraper = StackExchangeScraper(tempdir, target_dir)
+        self.processor = StackExchangeProcessor(target_dir, tempdir)
     def download(self):
         self.scraper.download()
