@@ -1,4 +1,4 @@
-from typing import Union, Optional, TypeAlias, Literal, Any
+from typing import Union, Optional, Literal, Any
 from abc import ABC, abstractmethod
 import uuid
 import pydantic
@@ -117,7 +117,7 @@ class Dataset(ABC):
         self.scraper.scrape()
 
     def process(self, *args, **kwargs):
-        self.processor.process()
+        self.processor.process(*args, **kwargs)
 
     def analyse(self, *args, **kwargs):
         self.analyser.analyse()
