@@ -116,7 +116,7 @@ class TopCoder(Scraper):
         def preprocess_solution(text):
             s = text.find('class="alignMiddle" ALIGN="left">') + len('class="alignMiddle" ALIGN="left">')
             e = s + text[s:].find('</TD>')
-            return text[s:e]
+            return text[s:e].replace("&#160;", " ").replace("<BR>", '\n')
         
         clean_sols = []
         for lst in df.solution:
