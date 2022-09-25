@@ -86,8 +86,8 @@ class TopCoder(Scraper):
         all_name = []
         failed_url = []
         failed_name = []
-        if os.path.exists(os.path.join(self.target_dir, "topcoder_cleaned_code.pkl")):
-            df_cache = pd.read_pickle(os.path.join(self.target_dir, "topcoder_cleaned_code.pkl"))
+        if os.path.exists(os.path.join(self.target_dir, "topcoder.parquet")):
+            df_cache = pd.read_parquet(os.path.join(self.target_dir, "topcoder.parquet"))
             cache_url = set(df_cache['url'].tolist())
         else:
             cache_url = []
@@ -111,9 +111,9 @@ class TopCoder(Scraper):
             all_solution.append(solutions)
             all_url.append(url)
             all_name.append(name)
-            if (i + 1) % 100 == 0:
-                df = pd.DataFrame({'problem': all_problem, 'solution': all_solution, 'url': all_url, 'name': all_name})
-                df.to_pickle(os.path.join(self.target_dir, 'topcoder_success2.parquet'))
+            # if (i + 1) % 100 == 0:
+            #     df = pd.DataFrame({'problem': all_problem, 'solution': all_solution, 'url': all_url, 'name': all_name})
+            #     df.to_pickle(os.path.join(self.target_dir, 'topcoder_success2.parquet'))
                 
 
 
@@ -134,9 +134,9 @@ class TopCoder(Scraper):
                     clean.append(temp)
             clean_sols.append(clean)
         df['clean_solution'] = clean_sols
-        df.to_pickle(os.path.join(self.target_dir, 'topcoder_success2.parquet'))
-        df_failed.to_pickle(os.path.join(self.target_dir, 'topcoder_failed2.parquet'))
-        df[['problem', 'clean_solution', 'url', 'name']].to_pickle(os.path.join(self.target_dir, "topcoder_cleaned2.pkl"))
+        # df.to_parquet(os.path.join(self.target_dir, 'topcoder.parquet'))
+        df_failed.to_parquet(os.path.join(self.target_dir, 'topcoder_failed.parquet'))
+        df[['problem', 'clean_solution', 'url', 'name']].to_parquet(os.path.join(self.target_dir, "topcoder.parquet"))
         return RawDataset(storage_uris=['file:///{self.target_dir}'])
 
 
