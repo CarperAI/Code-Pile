@@ -86,7 +86,7 @@ class TopCoder(Scraper):
         all_name = []
         failed_url = []
         failed_name = []
-        if os.path.exists(os.path.join(self.target_dir, "topcoder.parquet")):
+        if os.path.exists(os.path.join(self.target_dir, "topcoder_cleaned_code.pkl")):
             df_cache = pd.read_pickle(os.path.join(self.target_dir, "topcoder_cleaned_code.pkl"))
             cache_url = set(df_cache['url'].tolist())
         else:
