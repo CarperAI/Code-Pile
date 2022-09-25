@@ -127,7 +127,7 @@ class TopCoder(Scraper):
         clean_sols = []
         for lst in df.solution:
             clean = []
-            for sol in lst.tolist():
+            for sol in lst:
                 temp = preprocess_solution(sol)
                 if temp != "":
                     clean.append(temp)
