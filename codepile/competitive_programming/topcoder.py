@@ -135,6 +135,7 @@ class TopCoder(Scraper):
         df['clean_solution'] = clean_sols
         df.to_pickle(os.path.join(self.target_dir, 'topcoder_success.parquet'))
         df_failed.to_pickle(os.path.join(self.target_dir, 'topcoder_failed.parquet'))
+        df[['problem', 'clean_solution', 'url', 'name']].to_pickle(os.path.join(self.target_dir, "topcoder_cleaned.pkl"))
         return RawDataset(storage_uris=['file:///{self.target_dir}'])
 
 
