@@ -1,4 +1,4 @@
-from typing import Union, Optional, TypeAlias, Literal, Any
+from typing import Union, Optional, Literal, Any
 from abc import ABC, abstractmethod
 import uuid
 import pydantic
