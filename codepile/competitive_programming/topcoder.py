@@ -113,7 +113,7 @@ class TopCoder(Scraper):
             all_name.append(name)
             if (i + 1) % 100 == 0:
                 df = pd.DataFrame({'problem': all_problem, 'solution': all_solution, 'url': all_url, 'name': all_name})
-                df.to_parquet(os.path.join(self.target_dir, 'topcoder_success.parquet'))
+                df.to_pickle(os.path.join(self.target_dir, 'topcoder_success.parquet'))
 
 
         df_failed = pd.DataFrame({'url': failed_url, 'name': failed_name})
@@ -133,8 +133,8 @@ class TopCoder(Scraper):
                     clean.append(temp)
             clean_sols.append(clean)
         df['clean_solution'] = clean_sols
-        df.to_parquet(os.path.join(self.target_dir, 'topcoder_success.parquet'))
-        df_failed.to_parquet(os.path.join(self.target_dir, 'topcoder_failed.parquet'))
+        df.to_pickle(os.path.join(self.target_dir, 'topcoder_success.parquet'))
+        df_failed.to_pickle(os.path.join(self.target_dir, 'topcoder_failed.parquet'))
         return RawDataset(storage_uris=['file:///{self.target_dir}'])
 
 
