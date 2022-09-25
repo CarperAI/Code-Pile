@@ -109,6 +109,10 @@ class TopCoder(Scraper):
             all_solution.append(solutions)
             all_url.append(url)
             all_name.append(name)
+            if (i + 1) % 100 == 0:
+                df = pd.DataFrame({'problem': all_problem, 'solution': all_solution, 'url': all_url, 'name': all_name})
+                df.to_parquet(os.path.join(self.target_dir, 'topcoder_success.parquet'))
+
 
         df_failed = pd.DataFrame({'url': failed_url, 'name': failed_name})
         df = pd.DataFrame({'problem': all_problem, 'solution': all_solution, 'url': all_url, 'name': all_name})
