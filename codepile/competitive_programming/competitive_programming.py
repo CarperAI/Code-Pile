@@ -77,10 +77,12 @@ class CPScraper(Scraper):
         tc_df = dct['TopCoder']
         all_text = []
         all_name = []
+        all_source = []
         for _, row in tqdm(cc_df.iterrows(), total=len(cc_df)):
             text = self.make_format_code_contest(row)
             all_text.append(text)
             all_name.append(row['name'])
+            all_source.append('CodeContest')
 
         for _, row in tqdm(tc_df.iterrows(), total=len(tc_df)):
             text = self.make_format_topcoder(row)
@@ -89,7 +91,9 @@ class CPScraper(Scraper):
             text = self.make_format_topcoder(row)
             all_text.append(text)
             all_name.append(row['name'])
-        return pd.DataFrame.from_dict({'name': all_name, 'text': all_text})
+            all_source.append('TopCoder')
+            
+        return pd.DataFrame.from_dict({'name': all_name, 'text': all_text, 'source': all_source})
 
 
 
