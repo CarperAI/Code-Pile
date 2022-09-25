@@ -89,6 +89,8 @@ class TopCoder(Scraper):
         if os.path.exists(os.path.join(self.target_dir, "topcoder.parquet")):
             df_cache = pd.read_parquet(os.path.join(self.target_dir, "topcoder.parquet"))
             cache_url = set(df_cache['url'].tolist())
+        else:
+            cache_url = []
 
         for (i, (url, name)) in tqdm(enumerate(zip(total_url, total_name)), total=len(total_url)):
             if url in cache_url:
