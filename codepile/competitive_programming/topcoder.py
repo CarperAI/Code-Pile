@@ -61,7 +61,7 @@ class TopCoder(Scraper):
         for td in soup.find_all('td', {'class':"statText"}):
             if td.find('a'):
                 url = 'https://community.topcoder.com/' + td.find('a').get('href')
-                if 'stat?c=problem_solution' in url:
+                if 'stat?c=problem_solution' in url or 'HSProblemSolution' in url:
                     sol_urls.append(url)
         solutions = []
         for url in sol_urls: # to crawl solution require login need to get cookies from browser
@@ -114,6 +114,7 @@ class TopCoder(Scraper):
             if (i + 1) % 100 == 0:
                 df = pd.DataFrame({'problem': all_problem, 'solution': all_solution, 'url': all_url, 'name': all_name})
                 df.to_pickle(os.path.join(self.target_dir, 'topcoder_success.parquet'))
+                
 
 
         df_failed = pd.DataFrame({'url': failed_url, 'name': failed_name})
