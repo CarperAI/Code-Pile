@@ -8,8 +8,8 @@ from bs4 import BeautifulSoup
 from codepile.dataset import DatasetInfo, DatasetSources, RawDataset, Scraper, Processor, Analyser, Dataset
 
 LIST_DATASET = ['CodeContest', 'TopCoder']
-CODE_CONTEST_URL_RAW = ""
-TOPCODER_URL_RAW = ""
+CODE_CONTEST_URL_RAW = "https://drive.google.com/file/d/1MOdiZ6sCgJiUcrRNUMJTN06RWhei2q90/view?usp=sharing"
+TOPCODER_URL_RAW = "https://drive.google.com/file/d/1Mvvsm_a70gNTWKkPEcjX2AR29XkP2sws/view?usp=sharing"
 
 class CPDataset(Dataset):
     def __init__(self, tempdir, target_dir):
