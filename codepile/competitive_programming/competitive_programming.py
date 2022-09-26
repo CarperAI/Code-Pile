@@ -54,7 +54,7 @@ class CPScraper(Scraper):
         incorrect_solutions = "\n".join(lst)
         text = title + "\n" + problem + "\n" + "<hint> " + hint + " </hint>" \
             + "\n" +  "<correct_solutions>\n" + solutions + "\n</correct_solutions>" \
-            + "\n" +  "<incorrect_solutions>\n" + incorrect_solutions + "</incorrect_solutions>"
+            + "\n" +  "<incorrect_solutions>\n" + incorrect_solutions + "\n</incorrect_solutions>"
         return text
     
     def make_format_topcoder(self, sample):
@@ -85,9 +85,6 @@ class CPScraper(Scraper):
             all_source.append('CodeContest')
 
         for _, row in tqdm(tc_df.iterrows(), total=len(tc_df)):
-            text = self.make_format_topcoder(row)
-            all_text.append(text)
-            all_name.append(row['name'])
             text = self.make_format_topcoder(row)
             all_text.append(text)
             all_name.append(row['name'])
