@@ -42,17 +42,17 @@ class CPScraper(Scraper):
         title = "<title> " + title + " </title>"
         problem = "<problem "  + "source=" + source +  " tags=" + ','.join(tags) \
             + " time_limit=" + time_limit + " memory_limit=" \
-            + memory_limit + " difficulty=" + difficulty + "> "
-        problem = problem + description + " </problem>"
+            + memory_limit + " difficulty=" + difficulty + ">\n"
+        problem = problem + description + "\n</problem>"
         lst = []
         for sol in solutions:
-            lst.append("<code language=" + sol['language'] + ">" + sol['solution'] + "</code>")
+            lst.append("<code language=" + sol['language'] + ">\n" + sol['solution'] + "\n</code>")
         solutions = "\n".join(lst)
         lst = []
         for sol in incorrect_solutions:
-            lst.append("<code language=" + sol['language'] + "> " + sol['solution'] + " </code>")
+            lst.append("<code language=" + sol['language'] + ">\n" + sol['solution'] + "\n</code>")
         incorrect_solutions = "\n".join(lst)
-        text = title + "\n" + problem + "\n" + "<hint> " + hint + " </hint>" \
+        text = title + "\n" + problem + "\n" + "<hint> " + hint + "\n</hint>" \
             + "\n" +  "<correct_solutions>\n" + solutions + "\n</correct_solutions>" \
             + "\n" +  "<incorrect_solutions>\n" + incorrect_solutions + "\n</incorrect_solutions>"
         return text
@@ -63,10 +63,10 @@ class CPScraper(Scraper):
         solutions = sample['solutions']
 
         title = "<title> " + name + " </title>"
-        problem = "<problem> " + description + " </problem>"
+        problem = "<problem>\n" + description + "\n</problem>"
         lst = []
         for sol in solutions:
-            lst.append("<code>" + sol.strip() + "</code>")
+            lst.append("<code>\n" + sol.strip() + "\n</code>")
         solutions = "\n".join(lst)
         text = title + "\n" + problem + "\n" + "<correct_solutions>\n" + solutions + "\n</correct_solutions>"
         return text
