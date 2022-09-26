@@ -1,4 +1,3 @@
-from functools import cache
 import os
 import json
 import requests
@@ -12,21 +11,10 @@ LIST_DATASET = ['CodeContest', 'TopCoder']
 CODE_CONTEST_URL_RAW = ""
 TOPCODER_URL_RAW = ""
 
-class CPScraper(Scraper):
-
-
-    def fetch_raw(self):
-
-        if not os.path.exists(os.path.join(self.tempdir, 'CodeContest_raw.pickle')):
-            gdown.download(CODE_CONTEST_URL_RAW, os.path.join(self.tempdir, 'CodeContest_raw.pickle'), quiet=False)
-        
-        if not os.path.exists(os.path.join(self.tempdir, 'TopCoder_raw.pickle')):
-            gdown.download(TOPCODER_URL_RAW, os.path.join(self.tempdir, 'TopCoder_raw.pickle'), quiet=False)
-
-        cc_df = pd.read_pickle(os.path.join(self.tempdir, 'CodeContest_raw.pickle'))
-        tc_df = pd.read_pickle(os.path.join(self.tempdir, 'TopCoder_raw.pickle'))
-
-        return {"CodeContest": cc_df, "TopCoder": tc_df}
+class CPDataset(Dataset):
+    def __init__(self, tempdir, target_dir):
+        self.tempdir = tempdir
+        self.target_dir = target_dir
 
     def make_format_code_contest(self, sample):
         title = sample['name']
@@ -71,46 +59,28 @@ class CPScraper(Scraper):
         text = title + "\n" + problem + "\n" + "<correct_solutions>\n" + solutions + "\n</correct_solutions>"
         return text
 
-    def make_format(self):
-        dct = self.fetch_raw()
-        cc_df = dct['CodeContest']
-        tc_df = dct['TopCoder']
-        all_text = []
-        all_name = []
-        all_source = []
-        for _, row in tqdm(cc_df.iterrows(), total=len(cc_df)):
-            text = self.make_format_code_contest(row)
-            all_text.append(text)
-            all_name.append(row['name'])
-            all_source.append('CodeContest')
+    def make_format(self, sample, source):
+        if source == 'CodeContest':
+            return self.make_format_code_contest(sample)
+        elif source == 'TopCoder':
+            return self.make_format_topcoder(sample)
+        else:
+            raise ValueError('Unknown source')
 
-        for _, row in tqdm(tc_df.iterrows(), total=len(tc_df)):
-            text = self.make_format_topcoder(row)
-            all_text.append(text)
-            all_name.append(row['name'])
-            all_source.append('TopCoder')
-            
-        return pd.DataFrame.from_dict({'name': all_name, 'text': all_text, 'source': all_source})
+    def fetch_raw(self, return_df=True):
 
-
-
-    def scrape(self) -> RawDataset:
-
-        if os.path.exists(os.path.join(self.target_dir, "CompetitiveProgramming.pickle")):
-            return RawDataset(storage_uris=['file:///{self.target_dir}'])
+        if not os.path.exists(os.path.join(self.target_dir, 'CodeContest_raw.pickle')):
+            gdown.download(CODE_CONTEST_URL_RAW, os.path.join(self.target_dir, 'CodeContest_raw.pickle'), quiet=False)
         
-        df = self.make_format()
-        df.to_pickle(os.path.join(self.target_dir, "CompetitiveProgramming.pickle"))
-        return RawDataset(storage_uris=['file:///{self.target_dir}'])
+        if not os.path.exists(os.path.join(self.target_dir, 'TopCoder_raw.pickle')):
+            gdown.download(TOPCODER_URL_RAW, os.path.join(self.target_dir, 'TopCoder_raw.pickle'), quiet=False)
 
-
-
-class CPDataset(Dataset):
-    def __init__(self, tempdir, target_dir):
-        self.scraper = CPScraper(tempdir, target_dir)
+        if return_df:
+            return {'CodeContest': pd.read_pickle(os.path.join(self.target_dir, 'CodeContest_raw.pickle')),
+                    'TopCoder': pd.read_pickle(os.path.join(self.target_dir, 'TopCoder_raw.pickle'))}
+    
     def download(self):
-        self.scraper.scrape()
-
+        self.fetch_raw(return_df=False)
 
 
 if __name__=="__main__":
