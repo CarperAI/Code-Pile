@@ -23,3 +23,9 @@ URL if Yes - [here]()
 ## Tests
 
 Include a dummy_dataset.parquet file to test your code against. This dummy_dataset should include the columns for the data and metadata associated with the dataset, which will then be converted into the final format for language model consumption, along with an example row or rows that you can verify your code correctly collects. In addition to this file, include the unit test that evaluates your code against this dummy_dataset.
+
+Give an example of the columns and data:
+
+| col1 | col2 | .... |
+| ---- | ---- | ---- |
+| row1 | row1 | .... |
