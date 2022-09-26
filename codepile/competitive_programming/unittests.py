@@ -17,7 +17,7 @@ tc_df = pd.read_pickle("test/TopCoder_raw.pickle")
 
 assert dummy.columns.tolist() == tc_df.columns.tolist()
 
-## 
+## Test commpetitive dataset
 
 from competitive_programming import CPDataset
 

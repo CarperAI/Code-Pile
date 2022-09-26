@@ -70,10 +70,10 @@ class CPDataset(Dataset):
     def fetch_raw(self, return_df=True):
 
         if not os.path.exists(os.path.join(self.target_dir, 'CodeContest_raw.pickle')):
-            gdown.download(CODE_CONTEST_URL_RAW, os.path.join(self.target_dir, 'CodeContest_raw.pickle'), quiet=False)
+            gdown.download(url=CODE_CONTEST_URL_RAW, output=os.path.join(self.target_dir, 'CodeContest_raw.pickle'), quiet=False, fuzzy=True)
         
         if not os.path.exists(os.path.join(self.target_dir, 'TopCoder_raw.pickle')):
-            gdown.download(TOPCODER_URL_RAW, os.path.join(self.target_dir, 'TopCoder_raw.pickle'), quiet=False)
+            gdown.download(url=TOPCODER_URL_RAW, output=os.path.join(self.target_dir, 'TopCoder_raw.pickle'), quiet=False, fuzzy=True)
 
         if return_df:
             return {'CodeContest': pd.read_pickle(os.path.join(self.target_dir, 'CodeContest_raw.pickle')),
