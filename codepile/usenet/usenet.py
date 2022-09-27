@@ -1,35 +1,36 @@
-from codepile.dataset import DatasetInfo, DatasetSources, RawDataset, Scraper, Processor, Analyser, Dataset
-
-import mailbox
-
 import internetarchive as ia
 
+import shutil
 
-class UsenetScraper(Scraper):
+import glob
+import os
 
-    def scrape(self, ia_identifier='usenet-comp') -> RawDataset:
-        item = ia.get_item(ia_identifier)
-        metadata = item.metadata
-        ia.download(ia_identifier, checksum=True, verbose=True, destdir=self.target_dir)
+from .forum import mbox
 
-        return RawDataset(
-            storage_uris=['file:///{self.target_dir}'],
-            metadata=str(metadata)
-        )
+from xml.etree import ElementTree as ET
 
 
-class UsenetProcessor(Processor):
-
-    def process(self):
-        pass
+USENET_COMP = 'usenet-comp'
 
 
-class UsenetDataset(Dataset):
-    def __init__(self, tempdir, target_dir, *args, **kwargs):
-        self.scraper = UsenetScraper(tempdir, target_dir)
+def main(temp_dir, dest_dir, ia_id=USENET_COMP, files=None):
+    # Downloading the archive (or specific files from the archive) to the temp dir
+    if files:
+        ia.download(ia_id, destdir=temp_dir, files=files)
+    else:
+        ia.download(ia_id, destdir=temp_dir)
+    # Unzipping all files - stored in temp_dir/ia_id
+    unzipped_files = os.path.join(temp_dir, ia_id, 'unzipped')
+    for file in glob.glob(os.path.join(temp_dir, ia_id, '*')):
+        if file.endswith('.mbox.zip'):
+            shutil.unpack_archive(file, unzipped_files)
 
-    def download(self):
-        self.scraper.download()
-
-
-
+    # Process each unzipped file and store the result in dest_dir
+    for file in glob.glob(os.path.join(unzipped_files, '*')):
+        if file.endswith('.mbox'):
+            threads = mbox.process_forum(file)
+            for thread in threads:
+                tree = ET.ElementTree(thread.export_xml())
+                tree.write(os.path.join(
+                    dest_dir, '{}.xml'.format(thread.get_id())), xml_declaration=True, encoding='utf-8',
+                )

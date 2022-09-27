@@ -24,8 +24,10 @@ class Thread:
     def add_reply(self, message):
         # Skipping duplicate message bodies (after cleaning)
         if message.body_hash not in self.reply_hashes:
-            self.replies.append(message)
-            self.reply_hashes.add(message.body_hash)
+            # Also making sure the reply does not match the post
+            if self.post and not message.body_hash == self.post.body_hash:
+                self.replies.append(message)
+                self.reply_hashes.add(message.body_hash)
 
     def get_replies(self):
         # Replies are sorted by timestamp at the time of access
@@ -34,13 +36,18 @@ class Thread:
 
     def add_post(self, message):
         if not self.post:
-            self.post = message
+            # Make sure the post does not match any replies
+            if message.body_hash not in self.reply_hashes:
+                self.post = message
 
     def has_post(self):
         return self.post is not None
 
     def has_replies(self):
         return len(self.replies) > 0
+
+    def get_id(self):
+        return self.post.body_hash
 
     def export_xml(self):
         # Export this thread in xml, returns an ElementTree instance

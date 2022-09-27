@@ -10,6 +10,12 @@ from datetime import datetime
 import mailbox
 
 
+def mbox_utf_reader(stream):
+    data = stream.read()
+    text = data.decode(encoding='utf-8', errors='replace')
+    return mailbox.mboxMessage(text)
+
+
 def process_forum(mbox_file):
     """
     Processes a mbox_file and returns a list of classes.
@@ -21,19 +27,26 @@ def process_forum(mbox_file):
     From in the first line (i.e. From <str>) is not consistent
     From: in the message body (i.e. From: Name (abc@xyz.com)) is consistent
     """
-    mbox = mailbox.mbox(mbox_file)
+    # mbox = mailbox.mbox(mbox_file)
+    mbox = mailbox.mbox(mbox_file, factory=mbox_utf_reader)
     threads = {}
+
     for message in mbox.itervalues():
         # We use the "subject" to determine threads and thread starts
-        subject = message.get('Subject')
-        if not subject:
+        subject = str(message.get('Subject'))
+        if not subject or '�' in subject:
+            continue
+
+        if len(subject) < 10:
             continue
 
         # Clean the message and check if it meets our minimum thresholds
         body = message.get_payload()
-        if not body:
+        if not isinstance(body, str):
             # NB: get_payload only works for text/plain content types
             # Use walk and call get_payload for individual parts in other cases
+            continue
+        if not body:
             continue
 
         body = process_raw_message(body)
