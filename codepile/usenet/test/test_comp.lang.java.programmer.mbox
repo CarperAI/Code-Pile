@@ -1,0 +1,3840 @@
+From 7335563574580868290
+X-Google-Thread: 10a146,8e55a99b97ba5d08,start
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.88.104 with SMTP id bf8mr2955497wib.3.1371729801466;
+        Thu, 20 Jun 2013 05:03:21 -0700 (PDT)
+Path: b5ni11899wiz.1!nntp.google.com!proxad.net!feeder1-2.proxad.net!feeder.erje.net!eu.feeder.erje.net!news.albasani.net!.POSTED!not-for-mail
+From: Laura Schmidt <ls@mailinator.com>
+Newsgroups: comp.lang.java.programmer
+Subject: convert byte array to hex string using BigInteger
+Date: Thu, 20 Jun 2013 14:03:21 +0200
+Organization: albasani.net
+Lines: 23
+Message-ID: <kpur29$5v4$1@news.albasani.net>
+Mime-Version: 1.0
+X-Trace: news.albasani.net 6oE9nHXDBa6E8BxBGT8h4xa4aNof8pBgS2sFWIlf7dZ1dBHgRUdvNCJ/+lUYlWeh9A0fAmxqO91VoQN83SMWVQ==
+NNTP-Posting-Date: Thu, 20 Jun 2013 12:03:21 +0000 (UTC)
+Injection-Info: news.albasani.net; logging-data="vUbELUWkvQ3lAQng0DnWg6VnS74iZJGQyvWzZtQ/S/nNArkKRFoYaOdK3Za0suZG3xbYGCauI9jSVwb6c8uLDxQ9eApOkNKDcySE9sgRC3KStdqYCHvx9ZjtZSvqxJnN"; mail-complaints-to="abuse@albasani.net"
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:10.0.12) Gecko/20130116 Icedove/10.0.12
+Cancel-Lock: sha1:sU7rHtf+AOyVxbdQiBPYu53rnwQ=
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hi,
+
+I try to convert a byte array to a hex string like this:
+
+  private static String hex_encode (byte [] val)
+  {
+   BigInteger b = new BigInteger(val);
+
+   String t = b.toString(16);
+
+   return (t);
+  }
+
+For a long byte array it returns a "negative" hex string, i. e. starting 
+with a "-" sign.
+
+But I want just the bytes in the array converted to hex representation, 
+each one ranging from "00" to "FF". There should be no minus sign then.
+
+Can you help?
+Thanks!
+
+Laura
+
+
+From -881808658041785617
+X-Google-Thread: 10a146,671304d096f0bce7
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.100.167 with SMTP id ez7mr3036941wib.0.1371732293280;
+        Thu, 20 Jun 2013 05:44:53 -0700 (PDT)
+Path: b5ni11960wiz.1!nntp.google.com!proxad.net!feeder1-2.proxad.net!feeder.erje.net!eu.feeder.erje.net!news.albasani.net!.POSTED!not-for-mail
+From: Magnus Warker <warker@mailinator.com>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: BCS - time offset not working!
+Date: Thu, 20 Jun 2013 14:44:52 +0200
+Organization: albasani.net
+Lines: 11
+Message-ID: <kputg4$aj2$1@news.albasani.net>
+References: <kprtjj$j1t$1@news.albasani.net>
+Mime-Version: 1.0
+X-Trace: news.albasani.net r7hY6tP6zDdrZldJHgzKu3wQqpxmGYYF0HExDtzyF+utfN8fHiouMC5KUZNwFaocOZwzJtmarqV7pTts7Dhrhy7vg2hxC5bHhY5yG6pWfqaqbsyO5YCftelBnMf2Zhyn
+NNTP-Posting-Date: Thu, 20 Jun 2013 12:44:53 +0000 (UTC)
+Injection-Info: news.albasani.net; logging-data="JOR0KfATiQpZerAGTQkBoUjeQuASBrXOKmmWilkGE6saXpqySgKKYy3tCvEAmIpKUbl5WvpKL/M+rXYnVht2M6i5YtIY68BheAHNi01ihunrddxeXK2P9ntWmlOuKp4f"; mail-complaints-to="abuse@albasani.net"
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:10.0.12) Gecko/20130116 Icedove/10.0.12
+In-Reply-To: <kprtjj$j1t$1@news.albasani.net>
+Cancel-Lock: sha1:q7YxwMhBo2FRxieR+e2eorubNK0=
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hi folks,
+
+the last time this happened is about ten years ago.
+
+BCS is my chess application. Yesterday I found that there is a little 
+bug and I wanted to send me a reminder per e-mail. But I did not notice 
+that my thunderbird was displaying a newsgroup. :-)
+
+Sorry.
+
+Magnus
+
+
+From -8074027044169409569
+X-Google-Thread: 10a146,8e55a99b97ba5d08
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.185.132 with SMTP id fc4mr3065193wic.7.1371733419665;
+        Thu, 20 Jun 2013 06:03:39 -0700 (PDT)
+Path: md6ni13182wic.0!nntp.google.com!proxad.net!feeder1-2.proxad.net!usenet-fr.net!de-l.enfer-du-nord.net!feeder1.enfer-du-nord.net!eternal-september.org!feeder.eternal-september.org!mx05.eternal-september.org!.POSTED!not-for-mail
+From: Eric Sosman <esosman@comcast-dot-net.invalid>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: convert byte array to hex string using BigInteger
+Date: Thu, 20 Jun 2013 09:03:38 -0400
+Organization: A noiseless patient Spider
+Lines: 37
+Message-ID: <kpuu9p$mgu$1@dont-email.me>
+References: <kpur29$5v4$1@news.albasani.net>
+Mime-Version: 1.0
+Injection-Date: Thu, 20 Jun 2013 12:58:33 +0000 (UTC)
+Injection-Info: mx05.eternal-september.org; posting-host="0d73d8cc209bff1c6395088b400d0605";
+	logging-data="23070"; mail-complaints-to="abuse@eternal-september.org";	posting-account="U2FsdGVkX18Z+A0p/kGaF9l3pEyZsAbQ"
+User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:17.0) Gecko/20130509 Thunderbird/17.0.6
+In-Reply-To: <kpur29$5v4$1@news.albasani.net>
+Cancel-Lock: sha1:dGRQPWfTYssgCW3JhHvEiITkvxk=
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 6/20/2013 8:03 AM, Laura Schmidt wrote:
+> Hi,
+>
+> I try to convert a byte array to a hex string like this:
+>
+>   private static String hex_encode (byte [] val)
+>   {
+>    BigInteger b = new BigInteger(val);
+>
+>    String t = b.toString(16);
+>
+>    return (t);
+>   }
+>
+> For a long byte array it returns a "negative" hex string, i. e. starting
+> with a "-" sign.
+>
+> But I want just the bytes in the array converted to hex representation,
+> each one ranging from "00" to "FF". There should be no minus sign then.
+>
+> Can you help?
+
+	// Untested:
+	private static String hexEncode(byte[] val) {
+	    StringBuilder buff = new StringBuilder(2 * val.length);
+	    for (byte b : val) {
+	        buff.append("0123456789ABCDEF".charAt((b >> 4) & 0xF));
+	        buff.append("0123456789ABCDEF".charAt(b & 0xF));
+	    }
+	    return buff.toString();
+	}
+
+There are other ways, too.
+
+-- 
+Eric Sosman
+esosman@comcast-dot-net.invalid
+
+
+From -4926876324932074856
+X-Google-Thread: 10a146,8e55a99b97ba5d08
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.37.229 with SMTP id b5mr8174489wik.4.1371733782665;
+        Thu, 20 Jun 2013 06:09:42 -0700 (PDT)
+Path: md6ni13188wic.0!nntp.google.com!proxad.net!feeder1-2.proxad.net!usenet-fr.net!de-l.enfer-du-nord.net!feeder2.enfer-du-nord.net!border1.nntp.ams2.giganews.com!border3.nntp.ams.giganews.com!Xl.tags.giganews.com!border1.nntp.ams.giganews.com!nntp.giganews.com!local2.nntp.ams.giganews.com!nntp.bt.com!news.bt.com.POSTED!not-for-mail
+NNTP-Posting-Date: Thu, 20 Jun 2013 08:09:42 -0500
+From: rossum <rossum48@coldmail.com>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: convert byte array to hex string using BigInteger
+Date: Thu, 20 Jun 2013 14:09:38 +0100
+Message-ID: <9hv5s85cul11v42sfop0388joag6mu6t4e@4ax.com>
+References: <kpur29$5v4$1@news.albasani.net>
+User-Agent: ForteAgent/7.00.32.1200
+MIME-Version: 1.0
+Lines: 36
+X-Usenet-Provider: http://www.giganews.com
+X-AuthenticatedUsername: NoAuthUser
+X-Trace: sv3-6CMOKGJPS2tADuva4v7cmtlWYOm8p5HE/YFe/dxK+JVu8isycPKQwwTDstCuqsBXZVEjf0EiEa1PxGL!HvNfakK+sTl599NhxOYaipUMq5IM/53rtYQSCgEM0Bcm10RVR13ccI0CpZF7lXCNXIgypdx6yVLc!BDJQ
+X-Complaints-To: abuse@btinternet.com
+X-DMCA-Complaints-To: abuse@btinternet.com
+X-Abuse-and-DMCA-Info: Please be sure to forward a copy of ALL headers
+X-Abuse-and-DMCA-Info: Otherwise we will be unable to process your complaint properly
+X-Postfilter: 1.3.40
+X-Original-Bytes: 2019
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+On Thu, 20 Jun 2013 14:03:21 +0200, Laura Schmidt <ls@mailinator.com>
+wrote:
+
+>Hi,
+>
+>I try to convert a byte array to a hex string like this:
+>
+>  private static String hex_encode (byte [] val)
+>  {
+>   BigInteger b = new BigInteger(val);
+>
+>   String t = b.toString(16);
+>
+>   return (t);
+>  }
+>
+>For a long byte array it returns a "negative" hex string, i. e. starting 
+>with a "-" sign.
+>
+>But I want just the bytes in the array converted to hex representation, 
+>each one ranging from "00" to "FF". There should be no minus sign then.
+>
+>Can you help?
+>Thanks!
+>
+>Laura
+This is a case of RTFM.  The Javadocs for BigInteger(byte[]) tell you
+that it expects the byte array in two's complement representation, so
+a leading 1 bit is interpreted as a negative number.  You need a
+different constructor:
+
+  public BigInteger(int signum, byte[] magnitude)
+
+This lets you set the sign separately.
+
+rossum
+
+
+From 4498644438725119940
+X-Google-Thread: 10a146,8e55a99b97ba5d08
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.188.240 with SMTP id gd16mr7024798wic.2.1371735177919;
+        Thu, 20 Jun 2013 06:32:57 -0700 (PDT)
+Path: b5ni12033wiz.1!nntp.google.com!feeder1.cambriumusenet.nl!feed.tweaknews.nl!195.62.100.242.MISMATCH!newsfeed.kamp.net!newsfeed.kamp.net!newsfeed.freenet.ag!feeder.erje.net!eu.feeder.erje.net!news.albasani.net!.POSTED!not-for-mail
+From: Laura Schmidt <ls@mailinator.com>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: convert byte array to hex string using BigInteger
+Date: Thu, 20 Jun 2013 15:32:56 +0200
+Organization: albasani.net
+Lines: 27
+Message-ID: <kpv0a9$gio$1@news.albasani.net>
+References: <kpur29$5v4$1@news.albasani.net> <9hv5s85cul11v42sfop0388joag6mu6t4e@4ax.com>
+Mime-Version: 1.0
+X-Trace: news.albasani.net nNmLG4MIHWHG0DXLdQiI86nOobXHJ27SHSvEOGD3Ua5VZWhYhevYmabaJrGCnciswPOU7C+QtXLw8HENM6GTH/IYCmzwGUlfzTDg2dVnQhjumICDZyPe7yd6ine8/mq4
+NNTP-Posting-Date: Thu, 20 Jun 2013 13:32:57 +0000 (UTC)
+Injection-Info: news.albasani.net; logging-data="P5O5efvJ+3TXkPitwJEiMLrAzEhkvfkVZ/le8Y7+N7uwR9L4aUj2+N8JdqhV0+3UJzpiMDpVRiepDaHPgl4Oa1pLR1aIO+nTkzduSTpNtj7cxRMwSIClAp3eERDdWusF"; mail-complaints-to="abuse@albasani.net"
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:10.0.12) Gecko/20130116 Icedove/10.0.12
+In-Reply-To: <9hv5s85cul11v42sfop0388joag6mu6t4e@4ax.com>
+Cancel-Lock: sha1:MokL3Cmd7+mQuEooH1sfDXcTByQ=
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 06/20/2013 03:09 PM, rossum wrote:
+
+> This is a case of RTFM.  The Javadocs for BigInteger(byte[]) tell you
+> that it expects the byte array in two's complement representation, so
+> a leading 1 bit is interpreted as a negative number.  You need a
+> different constructor:
+>
+>    public BigInteger(int signum, byte[] magnitude)
+
+You are right, sorry.
+
+Now I get a hex string without sign. But now the decode method does not 
+return the original bytes anymore:
+
+  private byte [] hex_decode (String val)
+  {
+   BigInteger b = new BigInteger (val,16);
+   byte [] t = b.toByteArray();
+
+   return (t);
+  }
+
+There is no other constructor for byte arrays.
+And I don't really understand why it doesn't return the original byte array.
+
+Laura
+
+
+
+From 4527123497832184987
+X-Google-Thread: 10a146,8e55a99b97ba5d08
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.76.76 with SMTP id i12mr3270175wiw.6.1371739502047;
+        Thu, 20 Jun 2013 07:45:02 -0700 (PDT)
+Path: md6ni13289wic.0!nntp.google.com!goblin2!goblin1!goblin.stu.neva.ru!feeds.phibee-telecom.net!border2.nntp.ams2.giganews.com!border4.nntp.ams.giganews.com!border2.nntp.ams.giganews.com!border3.nntp.ams.giganews.com!Xl.tags.giganews.com!border1.nntp.ams.giganews.com!nntp.giganews.com!local2.nntp.ams.giganews.com!nntp.bt.com!news.bt.com.POSTED!not-for-mail
+NNTP-Posting-Date: Thu, 20 Jun 2013 09:45:01 -0500
+From: rossum <rossum48@coldmail.com>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: convert byte array to hex string using BigInteger
+Date: Thu, 20 Jun 2013 15:44:58 +0100
+Message-ID: <9q46s811lpb47jnqv1mtct778r7nnelju4@4ax.com>
+References: <kpur29$5v4$1@news.albasani.net> <9hv5s85cul11v42sfop0388joag6mu6t4e@4ax.com> <kpv0a9$gio$1@news.albasani.net>
+User-Agent: ForteAgent/7.00.32.1200
+MIME-Version: 1.0
+Lines: 39
+X-Usenet-Provider: http://www.giganews.com
+X-AuthenticatedUsername: NoAuthUser
+X-Trace: sv3-IIItjwT8AowuXfRoV5dtZ1MWEbBY37KvSHU8HZmQFiTj80Sp7vUPY/vHxdhatPRQUhIUE9GQrO9ySOk!eOGDTG2IJ4XP7vKypQ+OWcVFh82bQ9pQou/ruc58s+Yvs75OkZQhz6a69DW7a7ECp8mpz1t54r2j!dbxo
+X-Complaints-To: abuse@btinternet.com
+X-DMCA-Complaints-To: abuse@btinternet.com
+X-Abuse-and-DMCA-Info: Please be sure to forward a copy of ALL headers
+X-Abuse-and-DMCA-Info: Otherwise we will be unable to process your complaint properly
+X-Postfilter: 1.3.40
+X-Original-Bytes: 2401
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+On Thu, 20 Jun 2013 15:32:56 +0200, Laura Schmidt <ls@mailinator.com>
+wrote:
+
+>On 06/20/2013 03:09 PM, rossum wrote:
+>
+>> This is a case of RTFM.  The Javadocs for BigInteger(byte[]) tell you
+>> that it expects the byte array in two's complement representation, so
+>> a leading 1 bit is interpreted as a negative number.  You need a
+>> different constructor:
+>>
+>>    public BigInteger(int signum, byte[] magnitude)
+>
+>You are right, sorry.
+>
+>Now I get a hex string without sign. But now the decode method does not 
+>return the original bytes anymore:
+>
+>  private byte [] hex_decode (String val)
+>  {
+>   BigInteger b = new BigInteger (val,16);
+>   byte [] t = b.toByteArray();
+>
+>   return (t);
+>  }
+>
+>There is no other constructor for byte arrays.
+>And I don't really understand why it doesn't return the original byte array.
+>
+>Laura
+Again, you need to look at the Javadoc.  That tells you toByteArray()
+returns the two's complement representation of the BigInt.
+
+Either convert the two's complement or write your own hex_decode(), it
+isn't that difficult.
+
+As a minor point, you should follow the Java naming conventions:
+hexEncode() and hexDecode().  Underscores are more C++ than Java.
+
+rossum
+
+
+From -7290141688809905811
+X-Google-Thread: 10a146,9730213e38c467f5
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII
+X-Received: by 10.181.11.130 with SMTP id ei2mr208437wid.7.1371748726673;
+        Thu, 20 Jun 2013 10:18:46 -0700 (PDT)
+Path: md6ni13540wic.0!nntp.google.com!fu-berlin.de!uni-berlin.de!individual.net!not-for-mail
+From: Robert Klemme <shortcutter@googlemail.com>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+Date: Thu, 20 Jun 2013 19:18:34 +0200
+Lines: 74
+Message-ID: <b2grrlFdgboU1@mid.individual.net>
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com> <b24an6FlpvpU1@mid.individual.net> <UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com> <b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad> <ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com> <19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me> <1lvu4yv8sxe73$.n4o05ixuag9y.dlg@40tude.net> <kpqoab$ngo$1@dont-email.me> <mV6wt.46392$hh3.41265@newsfe23.iad> <b2eekgFs5llU1@mid.individual.net> <b2fsdoF6n5gU1@mid.dfncis.de>
+Mime-Version: 1.0
+X-Trace: individual.net RoNRRWns7ZrBIVJbnMA9NAbWoRTFJPknJZaV+DXqaFoTUUM88=
+Cancel-Lock: sha1:Kz+vP3AXQ/0edD4c+cD8PJdOZrc=
+User-Agent: Mozilla/5.0 (Windows NT 6.0; WOW64; rv:17.0) Gecko/20130509 Thunderbird/17.0.6
+In-Reply-To: <b2fsdoF6n5gU1@mid.dfncis.de>
+X-Antivirus: avast! (VPS 130620-1, 20.06.2013), Outbound message
+X-Antivirus-Status: Clean
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
+
+On 20.06.2013 10:23, Sven K=F6hler wrote:
+> Am 19.06.2013 22:20, schrieb Robert Klemme:
+>> boolean result =3D false;
+>> try {
+>>    result =3D whatEver() || somethingElse();
+>> }
+>> catch (whatever...) {
+>>    no return or change of result
+>> }
+>
+> I would like to add, that I dislike the initialization of result in thi=
+s
+> example. If result (for whatever reason) must be declared outside the
+> try-catch block, then please don't initialize it unless you plan on
+> doing something nasty.
+
+Absolutely.  The reason is that by initializing the variable you forgo=20
+the Java compiler's data flow analysis.  Without initialization you will =
+
+immediately know if there is a code path which uses the variable without =
+
+prior initialization.
+
+> A nasty example would be that the try block sets
+> result to true midway and an exception in the second half doesn't chang=
+e
+> the value of result to false for some weired reason.
+
+Right.
+
+> The IMHO cleaner way is the following:
+>
+> boolean result;
+
+I'd even recommend making that variable final if possible.
+
+> try {
+>    result =3D whatEver() || somethingElse();
+> }
+> catch (whatever...) {
+>    result =3D false;
+> }
+> // use result for whatever
+
+Generally I prefer not to have code after the catch block (unless it's a =
+
+finally block :-)) because that means that error handling is not=20
+centralized but rather interspersed with other logic.  I have seen=20
+methods with multiple try catch blocks in them on the same level which=20
+made them really unreadable.  If that is necessary then I'd either=20
+combine catch blocks and if that cannot be done I'd rather refactor=20
+reasonable sections into separate methods.
+
+> And may all (ex-)C programmers in this group refrain from telling me
+> that not initializing variables is dangerous. This is Java, where the
+> compiler enforces initialization of variables on all code paths before
+> the first read-access to the variable.
+
+Exactly.  And another difference to C is that you can declare variables=20
+anywhere - not just at the top of the method body.  I have seen too many =
+
+Java methods which did that and used the variable 30 lines below.  That=20
+really makes reading and understanding code hard.
+
+Cheers
+
+	robert
+
+
+
+--=20
+remember.guy do |as, often| as.you_can - without end
+http://blog.rubybestpractices.com/
+
+
+
+From 5420312369051252111
+X-Google-Thread: 10a146,8e55a99b97ba5d08
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII
+X-Received: by 10.66.17.165 with SMTP id p5mr1602069pad.7.1371752536821;
+        Thu, 20 Jun 2013 11:22:16 -0700 (PDT)
+Path: e10ni17459pbm.0!nntp.google.com!news.glorb.com!us.feeder.erje.net!feeder.erje.net!eu.feeder.erje.net!border3.nntp.ams.giganews.com!Xl.tags.giganews.com!border1.nntp.ams.giganews.com!nntp.giganews.com!local2.nntp.ams.giganews.com!nntp.bt.com!news.bt.com.POSTED!not-for-mail
+NNTP-Posting-Date: Thu, 20 Jun 2013 13:22:16 -0500
+Date: Thu, 20 Jun 2013 19:22:13 +0100
+From: lipska the kat <"nospam at neversurrender dot co dot uk">
+Organization: Trollbusters 3
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130308 Thunderbird/17.0.4
+MIME-Version: 1.0
+Newsgroups: comp.lang.java.programmer
+Subject: Re: convert byte array to hex string using BigInteger
+References: <kpur29$5v4$1@news.albasani.net> <9hv5s85cul11v42sfop0388joag6mu6t4e@4ax.com> <kpv0a9$gio$1@news.albasani.net>
+In-Reply-To: <kpv0a9$gio$1@news.albasani.net>
+Message-ID: <Y4WdncJquPfF1V7MnZ2dnUVZ8uednZ2d@bt.com>
+Lines: 121
+X-Usenet-Provider: http://www.giganews.com
+X-AuthenticatedUsername: NoAuthUser
+X-Trace: sv3-F4zxjECBgZ+ObFtoJ0PwymjvIyvwI8PX8VMAWRiWuIPFVPAtXPn20uTKu/cSv2Sg9VkKIE4vAn+uGWl!2hmSi/rPV2nFge7cRJKWE0JiZVfFE5v0sLLjkXV1VRMKbgiFrXChBeNj78eAxb7bQaZsAfBPNPo=
+X-Complaints-To: abuse@btinternet.com
+X-DMCA-Complaints-To: abuse@btinternet.com
+X-Abuse-and-DMCA-Info: Please be sure to forward a copy of ALL headers
+X-Abuse-and-DMCA-Info: Otherwise we will be unable to process your complaint properly
+X-Postfilter: 1.3.40
+X-Original-Bytes: 4534
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 8bit
+
+On 20/06/13 14:32, Laura Schmidt wrote:
+> On 06/20/2013 03:09 PM, rossum wrote:
+>
+>> This is a case of RTFM.  The Javadocs for BigInteger(byte[]) tell you
+>> that it expects the byte array in two's complement representation, so
+>> a leading 1 bit is interpreted as a negative number.  You need a
+>> different constructor:
+>>
+>>    public BigInteger(int signum, byte[] magnitude)
+>
+> You are right, sorry.
+>
+> Now I get a hex string without sign. But now the decode method does not
+> return the original bytes anymore:
+>
+>   private byte [] hex_decode (String val)
+>   {
+>    BigInteger b = new BigInteger (val,16);
+>    byte [] t = b.toByteArray();
+>
+>    return (t);
+>   }
+>
+> There is no other constructor for byte arrays.
+> And I don't really understand why it doesn't return the original byte
+> array.
+
+I'm not sure what all this twos compliment stuff is about
+twos compliment is just a number representation scheme
+There should be no need to 'convert' anything
+
+Anyway
+
+The following program works with the following observation
+
+If the most significant byte is positive e.g >= 1 && <= 127 or 0x7F
+the conversion works both ways
+
+If the most significant byte is negative or 0 e.g <= 0 && >= -128 or 
+0x80 then the conversion works with one proviso
+
+The contract for BigInteger#toByteArray() contains the following text
+
+"The array will contain the minimum number of bytes required to 
+represent this BigInteger, including at least one sign bit"
+
+so, if the MSB is negative there will be an additional byte in the MSG 
+position after calling toByteArray set to 0 which indicates that the 
+following is a positive number, if the MSB is positive there is no need 
+for an additional byte as the first bit in the MSB is 0 thereby marking 
+the following number as positive ... interesting, never seen this 
+before... apart from that it seems to work.
+
+Try changing the byte variable a to a positive number to see the 
+difference.
+
+
+<code compiles='yes'>
+
+import java.math.BigInteger;
+
+public class Converter {
+	
+	private static void printBytes(byte[] val){
+		for(byte b : val){
+			System.out.print(b);
+			System.out.print(' ');
+		}
+		System.out.print("\n");
+	}
+	
+    	
+	private static String hexEncode (byte[] val){
+		BigInteger b = new BigInteger(1, val);
+		String t = b.toString(16);
+		return t;
+		//Just Say No to this :-)
+		//return new BigInteger(1, val).toString(16);
+	}
+	
+	private static byte[] hexDecode (String val){
+		BigInteger b = new BigInteger (val, 16);
+		byte[] t = b.toByteArray();
+		return t;
+	}
+
+	public static void main(String[] args) {
+		byte a = -1;   //0xFF
+		byte b = 127;  //0x7F
+		byte c = -128; //0x80
+		byte d = 64;   //0x40
+		byte e = 16;   //0x10
+		byte f = 99;   //0x5A
+		
+		byte[] val = {a, b, c, d, e, f};
+		
+		printBytes(val);
+		
+		String encoded = hexEncode(val);
+		
+		System.out.println(encoded);
+		
+		byte[] decoded = hexDecode(encoded);
+		
+		printBytes(decoded);
+		
+         	encoded = hexEncode(decoded);
+		
+		System.out.println(encoded);
+
+	}
+
+}
+
+</code>
+
+lipska
+
+-- 
+Lipska the Kat�: Troll hunter, sandbox destroyer
+and farscape dreamer of Aeryn Sun
+
+
+From 1409702315846558009
+X-Google-Thread: 10a146,8e55a99b97ba5d08
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.36.211 with SMTP id s19mr805039wij.1.1371754598674;
+        Thu, 20 Jun 2013 11:56:38 -0700 (PDT)
+Path: b5ni12488wiz.1!nntp.google.com!feeder1.cambriumusenet.nl!feed.tweaknews.nl!195.62.100.242.MISMATCH!newsfeed.kamp.net!newsfeed.kamp.net!eternal-september.org!feeder.eternal-september.org!mx05.eternal-september.org!.POSTED!not-for-mail
+From: markspace <markspace@nospam.nospam>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: convert byte array to hex string using BigInteger
+Date: Thu, 20 Jun 2013 11:56:35 -0700
+Organization: A noiseless patient Spider
+Lines: 24
+Message-ID: <kpvivk$elg$1@dont-email.me>
+References: <kpur29$5v4$1@news.albasani.net> <9hv5s85cul11v42sfop0388joag6mu6t4e@4ax.com> <kpv0a9$gio$1@news.albasani.net> <Y4WdncJquPfF1V7MnZ2dnUVZ8uednZ2d@bt.com>
+Mime-Version: 1.0
+Injection-Date: Thu, 20 Jun 2013 18:51:32 +0000 (UTC)
+Injection-Info: mx05.eternal-september.org; posting-host="fba3415ba68d85d643935af2f52f0b4b";
+	logging-data="15024"; mail-complaints-to="abuse@eternal-september.org";	posting-account="U2FsdGVkX182NX6GZiz8DcIKqvbPDJseSY5Ubrpg+yk="
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:17.0) Gecko/20130509 Thunderbird/17.0.6
+In-Reply-To: <Y4WdncJquPfF1V7MnZ2dnUVZ8uednZ2d@bt.com>
+Cancel-Lock: sha1:dgHUZunmeEmcRouYvsVg/DCcfvo=
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 6/20/2013 11:22 AM, lipska the kat wrote:
+
+>      public static void main(String[] args) {
+>          byte a = -1;   //0xFF
+>          byte b = 127;  //0x7F
+>          byte c = -128; //0x80
+>          byte d = 64;   //0x40
+>          byte e = 16;   //0x10
+>          byte f = 99;   //0x5A
+
+
+Laura, if you're still reading, please note especially this part of the 
+sample program.  If you want to know if your idea is going to work, you 
+have to test it.  This list of test vectors is excellent, and also an 
+excellent example of how to unit test a method.
+
+You'll need to do testing like this not only for yourself, now, to 
+assure you that your method really works, but also for posterity, by 
+which I mean also yourself, but three months from now when you have 
+completely forgotten the details of any method you implement today.
+
+(Or if you're like me, posterity means about two weeks from now.  Or less.)
+
+
+
+
+From -1262187233620635836
+X-Google-Thread: 10a146,8e55a99b97ba5d08
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII
+X-Received: by 10.180.76.76 with SMTP id i12mr508827wiw.6.1371757432621;
+        Thu, 20 Jun 2013 12:43:52 -0700 (PDT)
+Path: b5ni12526wiz.1!nntp.google.com!goblin3!goblin1!goblin.stu.neva.ru!border1.hitnews.com!Xl.tags.giganews.com!border1.nntp.ams.giganews.com!nntp.giganews.com!local2.nntp.ams.giganews.com!nntp.bt.com!news.bt.com.POSTED!not-for-mail
+NNTP-Posting-Date: Thu, 20 Jun 2013 14:43:51 -0500
+Date: Thu, 20 Jun 2013 20:43:49 +0100
+From: lipska the kat <"nospam at neversurrender dot co dot uk">
+Organization: Trollbusters 3
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130308 Thunderbird/17.0.4
+MIME-Version: 1.0
+Newsgroups: comp.lang.java.programmer
+Subject: Re: convert byte array to hex string using BigInteger
+References: <kpur29$5v4$1@news.albasani.net> <9hv5s85cul11v42sfop0388joag6mu6t4e@4ax.com> <kpv0a9$gio$1@news.albasani.net> <Y4WdncJquPfF1V7MnZ2dnUVZ8uednZ2d@bt.com> <kpvivk$elg$1@dont-email.me>
+In-Reply-To: <kpvivk$elg$1@dont-email.me>
+Message-ID: <RZadnZyCl53qxl7MnZ2dnUVZ8nCdnZ2d@bt.com>
+Lines: 32
+X-Usenet-Provider: http://www.giganews.com
+X-AuthenticatedUsername: NoAuthUser
+X-Trace: sv3-1vcx7W1KnDvIXIkohas7T+JKy/bCW0rl0u6zoxw/jWNp+qVx7R+mO1kJcBPmg8T/gjWYxRqVKG4QS0E!mGZ7gX6jFv4IKz/YnDkGihIrdnIPlchEURJXk0U7lG7XiT1uIOPMq8Crs+ATCYc1WiY+/HJCBTo=
+X-Complaints-To: abuse@btinternet.com
+X-DMCA-Complaints-To: abuse@btinternet.com
+X-Abuse-and-DMCA-Info: Please be sure to forward a copy of ALL headers
+X-Abuse-and-DMCA-Info: Otherwise we will be unable to process your complaint properly
+X-Postfilter: 1.3.40
+X-Original-Bytes: 2530
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 8bit
+
+On 20/06/13 19:56, markspace wrote:
+> On 6/20/2013 11:22 AM, lipska the kat wrote:
+>
+>>      public static void main(String[] args) {
+>>          byte a = -1;   //0xFF
+>>          byte b = 127;  //0x7F
+>>          byte c = -128; //0x80
+>>          byte d = 64;   //0x40
+>>          byte e = 16;   //0x10
+>>          byte f = 99;   //0x5A
+>
+>
+> Laura, if you're still reading, please note especially this part of the
+> sample program.  If you want to know if your idea is going to work, you
+> have to test it.  This list of test vectors is excellent, and also an
+> excellent example of how to unit test a method.
+>
+> You'll need to do testing like this not only for yourself, now, to
+> assure you that your method really works, but also for posterity, by
+> which I mean also yourself, but three months from now when you have
+> completely forgotten the details of any method you implement today.
+>
+> (Or if you're like me, posterity means about two weeks from now.  Or less.)
+>
+
+Heh, two weeks sounds about right.
+
+lipska
+
+-- 
+Lipska the Kat�: Troll hunter, sandbox destroyer
+and farscape dreamer of Aeryn Sun
+
+
+From -8130496302111061787
+X-Google-Thread: 10a146,8e55a99b97ba5d08
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.98.100 with SMTP id eh4mr556152wib.4.1371758963644;
+        Thu, 20 Jun 2013 13:09:23 -0700 (PDT)
+Path: b5ni12334wiz.1!nntp.google.com!fu-berlin.de!uni-berlin.de!news.dfncis.de!not-for-mail
+From: Joerg Meier <joergmmeier@arcor.de>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: convert byte array to hex string using BigInteger
+Date: Thu, 20 Jun 2013 22:09:17 +0200
+Lines: 34
+Message-ID: <16xd6kqk55a7s$.1w2vnmqtc1nx4.dlg@40tude.net>
+References: <kpur29$5v4$1@news.albasani.net>
+Mime-Version: 1.0
+X-Trace: news.dfncis.de UQDK54o/EYXsWzkLgFUH5wjfLRUp1e5OBVAOmrVFJGhujPzjCa/w8VmVrn
+Cancel-Lock: sha1:b/YhwAIpi+dnTDsEh2BMwxQZYb4=
+User-Agent: 40tude_Dialog/2.0.15.1
+X-Antivirus: avast! (VPS 130620-1, 20.06.2013), Outbound message
+X-Antivirus-Status: Clean
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+
+On Thu, 20 Jun 2013 14:03:21 +0200, Laura Schmidt wrote:
+
+> I try to convert a byte array to a hex string like this:
+
+>   private static String hex_encode (byte [] val)
+>   {
+>    BigInteger b = new BigInteger(val);
+> 
+>    String t = b.toString(16);
+> 
+>    return (t);
+>   }
+
+> For a long byte array it returns a "negative" hex string, i. e. starting 
+> with a "-" sign.
+
+> But I want just the bytes in the array converted to hex representation, 
+> each one ranging from "00" to "FF". There should be no minus sign then.
+
+> Can you help?
+
+If you are not married to reinventing the wheel, such as by a homework
+assignment or whatever, you could always use:
+
+DatatypeConverter.printHexBinary(val);
+
+instead.
+
+Liebe Gruesse,
+		Joerg
+
+-- 
+Ich lese meine Emails nicht, replies to Email bleiben also leider
+ungelesen.
+
+
+From 6215520028603437527
+X-Google-Thread: 10a146,8e55a99b97ba5d08
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.224.200.202 with SMTP id ex10mr9608677qab.8.1371760797467;
+        Thu, 20 Jun 2013 13:39:57 -0700 (PDT)
+X-Received: by 10.182.199.37 with SMTP id jh5mr21728obc.26.1371760797356; Thu,
+ 20 Jun 2013 13:39:57 -0700 (PDT)
+Path: y6ni3510qax.0!nntp.google.com!j2no1006859qak.0!postnews.google.com!glegroupsg2000goo.googlegroups.com!not-for-mail
+Newsgroups: comp.lang.java.programmer
+Date: Thu, 20 Jun 2013 13:39:56 -0700 (PDT)
+In-Reply-To: <Y4WdncJquPfF1V7MnZ2dnUVZ8uednZ2d@bt.com>
+Complaints-To: groups-abuse@google.com
+Injection-Info: glegroupsg2000goo.googlegroups.com; posting-host=69.28.149.29; posting-account=CP-lKQoAAAAGtB5diOuGlDQk0jIwmH0T
+NNTP-Posting-Host: 69.28.149.29
+References: <kpur29$5v4$1@news.albasani.net> <9hv5s85cul11v42sfop0388joag6mu6t4e@4ax.com>
+ <kpv0a9$gio$1@news.albasani.net> <Y4WdncJquPfF1V7MnZ2dnUVZ8uednZ2d@bt.com>
+User-Agent: G2/1.0
+MIME-Version: 1.0
+Message-ID: <66032944-f695-4060-a48b-03633fcd9c91@googlegroups.com>
+Subject: Re: convert byte array to hex string using BigInteger
+From: Lew <lewbloch@gmail.com>
+Injection-Date: Thu, 20 Jun 2013 20:39:57 +0000
+Content-Type: text/plain; charset=ISO-8859-1
+
+lipska the kat wrote:
+> Laura Schmidt wrote:
+>> rossum wrote:
+>>> This is a case of RTFM.  The Javadocs for BigInteger(byte[]) tell you
+>>> that it expects the byte array in two's complement representation, so
+>>> a leading 1 bit is interpreted as a negative number.  You need a
+>>> different constructor:
+>>>
+>>>    public BigInteger(int signum, byte[] magnitude)
+>>
+>> You are right, sorry.
+>>
+>> Now I get a hex string without sign. But now the decode method does not
+>> return the original bytes anymore:
+>>
+>>   private byte [] hex_decode (String val)
+>>   {
+>>    BigInteger b = new BigInteger (val,16);
+>>    byte [] t = b.toByteArray();
+>>
+>>    return (t);
+>>   }
+>>
+>> There is no other constructor for byte arrays.
+>> And I don't really understand why it doesn't return the original byte
+>> array.
+> 
+> I'm not sure what all this twos compliment stuff is about
+
+That's spelled "two's-complement".
+
+> twos compliment is just a number representation scheme
+
+And the purpose of that constructor is just to convert a representation 
+in that scheme to the correct number.
+
+> There should be no need to 'convert' anything
+
+If there isn't, then don't use that constructor.
+
+-- 
+Lew
+
+
+From -7422388392898500028
+X-Google-Thread: 10a146,9730213e38c467f5
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.66.192.8 with SMTP id hc8mr2649376pac.11.1371782037347;
+        Thu, 20 Jun 2013 19:33:57 -0700 (PDT)
+Path: e10ni16664pbm.0!nntp.google.com!npeer02.iad.highwinds-media.com!news.highwinds-media.com!feed-me.highwinds-media.com!post02.iad.highwinds-media.com!newsfe26.iad.POSTED!not-for-mail
+From: Arved Sandstrom <asandstrom2@eastlink.ca>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130510 Thunderbird/17.0.6
+MIME-Version: 1.0
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com> <b24an6FlpvpU1@mid.individual.net> <UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com> <b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad> <ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com> <19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me> <kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad> <kpsfn7$k9k$1@dont-email.me>
+In-Reply-To: <kpsfn7$k9k$1@dont-email.me>
+Lines: 49
+Message-ID: <oYOwt.19280$9m5.18160@newsfe26.iad>
+X-Complaints-To: abuse@newsgroups-download.com
+NNTP-Posting-Date: Fri, 21 Jun 2013 02:33:56 UTC
+Organization: Public Usenet Newsgroup Access
+Date: Thu, 20 Jun 2013 23:33:56 -0300
+X-Received-Bytes: 3405
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 06/19/2013 11:42 AM, Daniele Futtorovic wrote:
+> On 18/06/2013 22:50, Arved Sandstrom allegedly wrote:
+>> <snip />
+>> See my answer to Eric, all this is just ridiculing reasonable
+>> programming practices.
+>>
+>> Even given Robert's example where the NPE-safe equals() is wrapped in a
+>> method that constrains the type of object being compared to, it may not
+>> be expected or acceptable that the String is null. So perhaps you do
+>> want to check for that, maybe with Apache StringUtils.isBlank().
+>>
+>> Sure, the contrived absurd examples are retarded; so is the mockery of
+>> defensive programming. Oh well, there's a reason why most software
+>> projects still fail or go vastly over budget.
+>
+> I'm all for defensive programming, but I think that there's a limit
+> where it can be on the verge of silliness, and that that limit has been
+> grazed here.
+>
+> Less-than-bright programmers IMO cannot be a justification for crossing
+> that line; less-than-bright programmers have more ways to mess things up
+> than you could possibly ever guard against. "Do not underestimate the
+> ingenuity of complete fools", as the saying goes.
+>
+> And for me, there is an additional aspect: if a piece of code does
+> something simple, something basic, then I will want it to be short, and
+> vice-versa. Verbosity of code, to me, should hold a first-glance
+> indication of the complexity of the algorithm. In other words: be terse
+> IFF it's basic, be verbose IFF it's not.
+>
+> Perhaps your mileage does vary. No beef with that. Just throwing in my
+> two cents.
+>
+It's a good discussion. I'm not personally convinced that verbosity adds 
+complexity, as a rule. There's really two types of complexity here: 
+maintainability complexity - as in, can Joe Blow 12 months later 
+understand the code best if it's compact versus unrolled, and formal 
+complexity, cyclomatic and otherwise.
+
+I'll admit that verbosity does usually add maintainability complexity, 
+if not the other kind. But not always. I've seen plenty of code that is 
+conceptually quite complex but very terse.
+
+AHS
+
+-- 
+When a true genius appears, you can know him by this sign:
+that all the dunces are in a confederacy against him.
+-- Jonathan Swift
+
+
+From -2075740413437054836
+X-Google-Thread: 10a146,9730213e38c467f5
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.67.5.7 with SMTP id ci7mr2683466pad.45.1371788500351;
+        Thu, 20 Jun 2013 21:21:40 -0700 (PDT)
+Path: b2ni26599pby.1!nntp.google.com!npeer03.iad.highwinds-media.com!news.highwinds-media.com!feed-me.highwinds-media.com!newsfeed1.swip.net!85.214.130.194.MISMATCH!eternal-september.org!feeder.eternal-september.org!mx05.eternal-september.org!.POSTED!not-for-mail
+From: Martin Gregorie <martin@address-in-sig.invalid>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+Date: Fri, 21 Jun 2013 04:16:32 +0000 (UTC)
+Organization: A noiseless patient Spider
+Lines: 81
+Message-ID: <kq0k30$ubf$1@dont-email.me>
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com>
+	<b24an6FlpvpU1@mid.individual.net>
+	<UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com>
+	<b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad>
+	<ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com>
+	<19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me>
+	<kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad>
+	<kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad>
+Mime-Version: 1.0
+Injection-Date: Fri, 21 Jun 2013 04:16:32 +0000 (UTC)
+Injection-Info: mx05.eternal-september.org; posting-host="e5160e2be48f1ea550cf61512446f525";
+	logging-data="31087"; mail-complaints-to="abuse@eternal-september.org";	posting-account="U2FsdGVkX19J48JiG6Zhooz2eeDXB4KkuV1z4Dup1sQ="
+User-Agent: Pan/0.139 (Sexual Chocolate; GIT bf56508
+	git://git.gnome.org/pan2)
+Cancel-Lock: sha1:YfQBn4uHscltubUZqxA31wUCzJw=
+X-Received-Bytes: 5033
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On Thu, 20 Jun 2013 23:33:56 -0300, Arved Sandstrom wrote:
+
+> It's a good discussion. I'm not personally convinced that verbosity adds
+> complexity, as a rule. There's really two types of complexity here:
+> maintainability complexity - as in, can Joe Blow 12 months later
+> understand the code best if it's compact versus unrolled, and formal
+> complexity, cyclomatic and otherwise.
+>
+I'm with you there.
+ 
+> I'll admit that verbosity does usually add maintainability complexity,
+>
+My attitude is that well-laid out code with well-thought out names and 
+intelligently commented offers about the best chance of being more easily 
+maintainable. I prefer blocks of well formatted and carefully written 
+comments places ahead of what they describe to any other type.
+
+> if not the other kind. But not always. I've seen plenty of code that is
+> conceptually quite complex but very terse.
+>
+I've certainly see some memorable examples of badly documented and over-
+clever code in the past.
+
+One of my favourite examples of bad documentation was actually quite good 
+code: it was just the commenting style that was naff. This was MC 6800 
+assembler, and the house style was to add a comment alongside every 
+instruction whether it needed it or not: the machine had INC and DEC 
+instructions to and or subtract 1 from a register, but did it really add 
+anything the write "BUMP THE B REGISTER" alongside every INC B 
+instruction?
+
+As it happens, my worst ever example was also assembler: this time PLAN 3 
+assembler for an ICL 1900. In this case it was a lineprinter page, i.e. 
+about 60 instructions whose task was the work out the date of the last 
+day of the current month so it could be printed on financial statements. 
+it worked by doing arithmetic on the current date in "dd/mm/yy" format  
+This page has two comments: the first said "Calculate the last day of the 
+month" and the second said "Works until Feb 2100". The rest of the page 
+contained a mess of register-to-register operations and relative 
+branches. There wasn't a single label or variable name in the whole mess. 
+I never met anybody who could follow it past its first dozen steps - and 
+that includes me - and I used to be fairly good at programming in PLAN.
+
+The silly thing was that the date calculation was trivial on a 1900, 
+which held dates internally as days since 31 Dec 1899 and provided a  set 
+of date manipulation subroutines. The obvious solution, given that 
+library, and writing the routine in pseudo-Java in deference to this 'ere 
+august forum, looks like this:
+
+  public String lastDayOfMonth(String today)
+  {
+    int day = 1;
+    int month = today.substring(3,2);
+    int year = today.substring(6);
+    if (month > 12)
+    {
+      year++;
+      month = 1;
+    }
+  
+    days = gdatebin(String.format("%02d/%02d/%02d",day, month, year));
+    return gbindate(days - 1);
+  }
+  
+... and wasn't much longer in assembler. 
+
+gdatebin() converted a date string into binary days since 31/12/1899 and 
+gbindate() did the reverse. I have no idea why the bloke thought his mess 
+of assembler would fall over after Feb 2100: the 1900 held dates in a 
+signed 24 bit number, so its Y2K moment isn't due until some time in 
+24866 AD.
+
+And, yes, I do know my algorithm worked correctly despite leap years and 
+all: it ran for years as part of an accounting package and anybody could 
+see exactly how it worked even though it was written in COBOL.
+
+
+-- 
+martin@   | Martin Gregorie
+gregorie. | Essex, UK
+org       |
+
+
+From -6675476831045504662
+X-Google-Thread: 10a146,8e55a99b97ba5d08
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII
+X-Received: by 10.180.9.170 with SMTP id a10mr1097564wib.6.1371799075812;
+        Fri, 21 Jun 2013 00:17:55 -0700 (PDT)
+Path: b5ni13521wiz.1!nntp.google.com!feeder1.cambriumusenet.nl!82.197.223.108.MISMATCH!feeder2.cambriumusenet.nl!feed.tweaknews.nl!217.73.144.44.MISMATCH!ecngs!feeder.ecngs.de!Xl.tags.giganews.com!border1.nntp.ams.giganews.com!nntp.giganews.com!local2.nntp.ams.giganews.com!nntp.bt.com!news.bt.com.POSTED!not-for-mail
+NNTP-Posting-Date: Fri, 21 Jun 2013 02:17:55 -0500
+Date: Fri, 21 Jun 2013 08:17:54 +0100
+From: lipska the kat <"nospam at neversurrender dot co dot uk">
+Organization: Trollbusters 3
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130308 Thunderbird/17.0.4
+MIME-Version: 1.0
+Newsgroups: comp.lang.java.programmer
+Subject: Re: convert byte array to hex string using BigInteger
+References: <kpur29$5v4$1@news.albasani.net> <9hv5s85cul11v42sfop0388joag6mu6t4e@4ax.com> <kpv0a9$gio$1@news.albasani.net> <Y4WdncJquPfF1V7MnZ2dnUVZ8uednZ2d@bt.com> <66032944-f695-4060-a48b-03633fcd9c91@googlegroups.com>
+In-Reply-To: <66032944-f695-4060-a48b-03633fcd9c91@googlegroups.com>
+Message-ID: <A_mdnQ7xaL6-Y17MnZ2dnUVZ8lednZ2d@bt.com>
+Lines: 48
+X-Usenet-Provider: http://www.giganews.com
+X-AuthenticatedUsername: NoAuthUser
+X-Trace: sv3-w1wDZ5kLFfbtjvFzFwr+rzg1RVi2c9NYNziFFQbE1MnLEZ3FymDtWmlgAQ3zd3v7/Wd++N5DJeH14P5!BtzkTlaUjjBQz7YKgyNGHKkIpgcedsHfkofng5aUkp4x0rpQUE+Zm6iie6fufpOHI+HuX5PcUxM=
+X-Complaints-To: abuse@btinternet.com
+X-DMCA-Complaints-To: abuse@btinternet.com
+X-Abuse-and-DMCA-Info: Please be sure to forward a copy of ALL headers
+X-Abuse-and-DMCA-Info: Otherwise we will be unable to process your complaint properly
+X-Postfilter: 1.3.40
+Bytes: 2934
+X-Original-Bytes: 2873
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 8bit
+
+On 20/06/13 21:39, Lew wrote:
+> lipska the kat wrote:
+>> Laura Schmidt wrote:
+>>> rossum wrote:
+>>>> This is a case of RTFM.  The Javadocs for BigInteger(byte[]) tell you
+>>>> that it expects the byte array in two's complement representation, so
+>>>> a leading 1 bit is interpreted as a negative number.  You need a
+>>>> different constructor:
+>>>>
+>>>>     public BigInteger(int signum, byte[] magnitude)
+>>>
+>>> You are right, sorry.
+>>>
+>>> Now I get a hex string without sign. But now the decode method does not
+>>> return the original bytes anymore:
+>>>
+>>>    private byte [] hex_decode (String val)
+>>>    {
+>>>     BigInteger b = new BigInteger (val,16);
+>>>     byte [] t = b.toByteArray();
+>>>
+>>>     return (t);
+>>>    }
+>>>
+>>> There is no other constructor for byte arrays.
+>>> And I don't really understand why it doesn't return the original byte
+>>> array.
+>>
+>> I'm not sure what all this twos compliment stuff is about
+>
+> That's spelled "two's-complement".
+>
+>> twos compliment is just a number representation scheme
+>
+> And the purpose of that constructor is just to convert a representation
+> in that scheme to the correct number.
+>
+>> There should be no need to 'convert' anything
+>
+> If there isn't, then don't use that constructor.
+
+How incredibly interesting.
+
+lipska
+
+-- 
+Lipska the Kat�: Troll hunter, sandbox destroyer
+and farscape dreamer of Aeryn Sun
+
+
+From -4056455211191472603
+X-Google-Thread: 10a146,9730213e38c467f5
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.88.104 with SMTP id bf8mr1409448wib.3.1371810476450;
+        Fri, 21 Jun 2013 03:27:56 -0700 (PDT)
+Path: md6ni14421wic.0!nntp.google.com!fu-berlin.de!uni-berlin.de!news.dfncis.de!not-for-mail
+From: Joerg Meier <joergmmeier@arcor.de>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+Date: Fri, 21 Jun 2013 12:27:49 +0200
+Lines: 24
+Message-ID: <6euehy3ijswn.e08p5nxwbfbf.dlg@40tude.net>
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com> <b24an6FlpvpU1@mid.individual.net> <UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com> <b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad> <ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com> <19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me> <kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad> <kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad> <kq0k30$ubf$1@dont-email.me>
+Mime-Version: 1.0
+X-Trace: news.dfncis.de bJY51UXeD4uKCz+SyfgoZAZtgfwwDObDi+lvpVtGDK3edGnNZPsDhupSak
+Cancel-Lock: sha1:sqV+rhCfVTfM1pZVm4dhauBg8ps=
+User-Agent: 40tude_Dialog/2.0.15.1
+X-Antivirus: avast! (VPS 130620-5, 20.06.2013), Outbound message
+X-Antivirus-Status: Clean
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+
+On Fri, 21 Jun 2013 04:16:32 +0000 (UTC), Martin Gregorie wrote:
+
+> [...]
+
+>     days = gdatebin(String.format("%02d/%02d/%02d",day, month, year));
+>     return gbindate(days - 1);
+>   }
+
+> ... and wasn't much longer in assembler. 
+
+> gdatebin() converted a date string into binary days since 31/12/1899 and 
+> gbindate() did the reverse. I have no idea why the bloke thought his mess 
+> of assembler would fall over after Feb 2100: the 1900 held dates in a 
+> signed 24 bit number, so its Y2K moment isn't due until some time in 
+> 24866 AD.
+
+It's ironic that after all that, your algorithm would have failed on Y2K ;)
+
+Liebe Gruesse,
+		Joerg
+
+-- 
+Ich lese meine Emails nicht, replies to Email bleiben also leider
+ungelesen.
+
+
+From 6055383878199205816
+X-Google-Thread: 10a146,2328e3add14cba83,start
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII
+X-Received: by 10.224.59.205 with SMTP id m13mr12594758qah.7.1371811449695;
+        Fri, 21 Jun 2013 03:44:09 -0700 (PDT)
+X-Received: by 10.49.4.201 with SMTP id m9mr287427qem.15.1371811449643; Fri,
+ 21 Jun 2013 03:44:09 -0700 (PDT)
+Path: y6ni3811qax.0!nntp.google.com!j2no1079792qak.0!postnews.google.com!glegroupsg2000goo.googlegroups.com!not-for-mail
+Newsgroups: comp.lang.java.programmer
+Date: Fri, 21 Jun 2013 03:44:09 -0700 (PDT)
+Complaints-To: groups-abuse@google.com
+Injection-Info: glegroupsg2000goo.googlegroups.com; posting-host=24.193.203.205;
+ posting-account=kd1vCgoAAAASftpOD6T7fKmy0OALzaC6
+NNTP-Posting-Host: 24.193.203.205
+User-Agent: G2/1.0
+MIME-Version: 1.0
+Message-ID: <1a711a30-4780-4cbc-8034-79d5a194b6fe@googlegroups.com>
+Subject: Java Proxy Application
+From: bobspero@gmail.com
+Injection-Date: Fri, 21 Jun 2013 10:44:09 +0000
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+I need help with how to tackle this problem. A good example is I have a web=
+ site on my local computer that is am allowing users to access through a NA=
+T=E9d ip. My router has an internal ASP page that I can access at 192.168.1=
+.1, I want my users to be able to enter the ip address of the router and ha=
+ve the server show the page. Users access my site through 29.xx.xx.xx so th=
+ere browser can not access the 192 directly. I have looked at sockets, but =
+I do not know it can be done to an ASP page.
+
+Where do I start? I can not alter the network in anyway the host server is =
+the only computer that has access to the ASP page.
+
+
+From -7371037538701977572
+X-Google-Thread: 10a146,9730213e38c467f5
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.68.191.36 with SMTP id gv4mr2690751pbc.8.1371824671202;
+        Fri, 21 Jun 2013 07:24:31 -0700 (PDT)
+Path: b2ni28966pby.1!nntp.google.com!news.glorb.com!us.feeder.erje.net!feeder.erje.net!eu.feeder.erje.net!eternal-september.org!feeder.eternal-september.org!mx05.eternal-september.org!.POSTED!not-for-mail
+From: Daniele Futtorovic <da.futt.news@laposte-dot-net.invalid>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+Date: Fri, 21 Jun 2013 16:24:30 +0200
+Organization: A noiseless patient Spider
+Lines: 44
+Message-ID: <kq1nda$fbk$1@dont-email.me>
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com> <b24an6FlpvpU1@mid.individual.net> <UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com> <b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad> <ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com> <19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me> <kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad> <kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad>
+Mime-Version: 1.0
+Injection-Date: Fri, 21 Jun 2013 14:19:22 +0000 (UTC)
+Injection-Info: mx05.eternal-september.org; posting-host="41089a30dcc7a58326f8a553857d3643";
+	logging-data="15732"; mail-complaints-to="abuse@eternal-september.org";	posting-account="U2FsdGVkX1+SSgdrkz+j40/DZeNKna40"
+User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:17.0) Gecko/20130509 Thunderbird/17.0.6
+In-Reply-To: <oYOwt.19280$9m5.18160@newsfe26.iad>
+Cancel-Lock: sha1:3CHd7sS+bloXQyfJ0GKfMJcSm6w=
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+
+On 21/06/2013 04:33, Arved Sandstrom allegedly wrote:
+> On 06/19/2013 11:42 AM, Daniele Futtorovic wrote:
+>> I'm all for defensive programming, but I think that there's a limit
+>> where it can be on the verge of silliness, and that that limit has been
+>> grazed here.
+>>
+>> Less-than-bright programmers IMO cannot be a justification for crossing
+>> that line; less-than-bright programmers have more ways to mess things up
+>> than you could possibly ever guard against. "Do not underestimate the
+>> ingenuity of complete fools", as the saying goes.
+>>
+>> And for me, there is an additional aspect: if a piece of code does
+>> something simple, something basic, then I will want it to be short, and
+>> vice-versa. Verbosity of code, to me, should hold a first-glance
+>> indication of the complexity of the algorithm. In other words: be terse
+>> IFF it's basic, be verbose IFF it's not.
+>>
+>> Perhaps your mileage does vary. No beef with that. Just throwing in my
+>> two cents.
+>>
+> It's a good discussion. I'm not personally convinced that verbosity adds
+> complexity, as a rule. There's really two types of complexity here:
+> maintainability complexity - as in, can Joe Blow 12 months later
+> understand the code best if it's compact versus unrolled, and formal
+> complexity, cyclomatic and otherwise.
+> 
+> I'll admit that verbosity does usually add maintainability complexity,
+> if not the other kind. But not always. I've seen plenty of code that is
+> conceptually quite complex but very terse.
+
+Sorry to nitpick, but I don't think you understood me right. I'm not
+saying that verbosity adds complexity; I'm saying: if the piece of code
+does something tricky, something complicated, tend to make it verbose,
+otherwise, tend to make it terse. Thus, seeing a big blob of (e.g.
+unrolled, step-by-step) code holds the message "here be dragons". (And
+if it cannot be made verbose, then it means it absolutely requires an
+in-line comment).
+
+At least the way I perceived it, this discussion was about making stuff
+verbose indiscriminately, viz. basic code as well. I disagree with that
+in the above sense.
+
+-- 
+DF.
+
+
+From -5945919137561103798
+X-Google-Thread: 9dc47a6fbc,2328e3add14cba83
+X-Google-Attributes: gid9dc47a6fbc,public,usenet
+X-Google-NewGroupId: yes
+X-Google-Language: ENGLISH,UTF8
+X-Received: by 10.180.185.115 with SMTP id fb19mr846193wic.0.1371844519774;
+        Fri, 21 Jun 2013 12:55:19 -0700 (PDT)
+Path: b5ni14562wiz.1!nntp.google.com!goblin3!goblin2!goblin.stu.neva.ru!aioe.org!.POSTED!not-for-mail
+From: "John B. Matthews" <nospam@nospam.invalid>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: Java Proxy Application
+Date: Fri, 21 Jun 2013 15:55:17 -0400
+Organization: The Wasteland
+Lines: 23
+Message-ID: <nospam-D17E99.15551721062013@news.aioe.org>
+References: <1a711a30-4780-4cbc-8034-79d5a194b6fe@googlegroups.com>
+NNTP-Posting-Host: LQJtZWzu+iKlBROuDg+IUg.user.speranza.aioe.org
+Mime-Version: 1.0
+X-Complaints-To: abuse@aioe.org
+User-Agent: MT-NewsWatcher/3.5.3b3 (Intel Mac OS X)
+X-Notice: Filtered by postfilter v. 0.8.2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+In article <1a711a30-4780-4cbc-8034-79d5a194b6fe@googlegroups.com>,
+ bobspero@gmail.com wrote:
+
+> I need help with how to tackle this problem. A good example is I have 
+> a web site on my local computer that is am allowing users to access 
+> through a NATéd ip. My router has an internal ASP page that I can 
+> access at 192.168.1.1, I want my users to be able to enter the ip 
+> address of the router and have the server show the page. Users access 
+> my site through 29.xx.xx.xx so there browser can not access the 192 
+> directly. I have looked at sockets, but I do not know it can be done 
+> to an ASP page.
+> 
+> Where do I start? I can not alter the network in anyway the host 
+> server is the only computer that has access to the ASP page.
+
+Your router may support port mapping:
+
+<http://en.wikipedia.org/wiki/Port_forwarding>
+
+-- 
+John B. Matthews
+trashgod at gmail dot com
+<http://sites.google.com/site/drjohnbmatthews>
+
+
+From -8073940870761034481
+X-Google-Thread: 10a146,9730213e38c467f5
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.88.104 with SMTP id bf8mr114680wib.3.1371849587843;
+        Fri, 21 Jun 2013 14:19:47 -0700 (PDT)
+Path: b5ni14671wiz.1!nntp.google.com!proxad.net!feeder1-2.proxad.net!news.mixmin.net!eternal-september.org!feeder.eternal-september.org!mx05.eternal-september.org!.POSTED!not-for-mail
+From: Martin Gregorie <martin@address-in-sig.invalid>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+Date: Fri, 21 Jun 2013 21:14:39 +0000 (UTC)
+Organization: A noiseless patient Spider
+Lines: 89
+Message-ID: <kq2fnu$osv$1@dont-email.me>
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com>
+	<b24an6FlpvpU1@mid.individual.net>
+	<UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com>
+	<b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad>
+	<ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com>
+	<19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me>
+	<kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad>
+	<kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad>
+	<kq0k30$ubf$1@dont-email.me> <6euehy3ijswn.e08p5nxwbfbf.dlg@40tude.net>
+Mime-Version: 1.0
+Injection-Date: Fri, 21 Jun 2013 21:14:39 +0000 (UTC)
+Injection-Info: mx05.eternal-september.org; posting-host="e5160e2be48f1ea550cf61512446f525";
+	logging-data="25503"; mail-complaints-to="abuse@eternal-september.org";	posting-account="U2FsdGVkX1+G6guOzcRPV3TPuL4IY9xxEf0R3E2bUH0="
+User-Agent: Pan/0.139 (Sexual Chocolate; GIT bf56508
+	git://git.gnome.org/pan2)
+Cancel-Lock: sha1:htS3npzS+eP/gNQEmKX1ZiJC+7c=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On Fri, 21 Jun 2013 12:27:49 +0200, Joerg Meier wrote:
+
+> On Fri, 21 Jun 2013 04:16:32 +0000 (UTC), Martin Gregorie wrote:
+> 
+>> [...]
+> 
+>>     days = gdatebin(String.format("%02d/%02d/%02d",day, month, year));
+>>     return gbindate(days - 1);
+>>   }
+> 
+>> ... and wasn't much longer in assembler.
+> 
+>> gdatebin() converted a date string into binary days since 31/12/1899
+>> and gbindate() did the reverse. I have no idea why the bloke thought
+>> his mess of assembler would fall over after Feb 2100: the 1900 held
+>> dates in a signed 24 bit number, so its Y2K moment isn't due until some
+>> time in 24866 AD.
+> 
+> It's ironic that after all that, your algorithm would have failed on Y2K
+> ;)
+>
+How do you work that out? 
+
+I omitted the century in the interst of historical accuracy: when I wrote 
+the COBOL version back in the very early 70s, nobody ever used it[1]. But 
+the code would work correctly: if you convert 31/12/1999 to days since a 
+base date (31/12/1899 is as good as any), add one to it and convert the 
+result back to a character string you get 01/01/2000 which, if you omit 
+the century, becomes 01/01/00 which is the correct result.
+
+Admittedly, without using a 4 digit year it would eventually have got the 
+end of February wrong but, since 2000 was a leap year, the first of these 
+mistakes would only have shown up in Feb 2100 since the leap years during 
+a century, e.g. 1904 to 1998 and 2004 to 2098 are always the same. 
+However, if a four digit year is used so the method knows whether the 
+first year of the century is a leap year or not, then my algorithm is 
+correct over the range I originally stated. 
+
+**Lightbulb moment: thanks for making me think that through. 
+
+Now I understand the nameless spaghetti coder's "Works until Feb 2100" 
+comment, though I won't begin to guess whether, like my method, his would 
+have been permanently fixed by simply using a four digit year.
+
+However you apparently missed my obvious mistake, which I thought 
+somebody would comment on:
+
+    int month = today.substring(3,2);
+
+should, of course, have been: 
+
+    int month = today.substring(3,2) + 1;
+
+Since the idea was to change, say, 21/06/13 to 01/07/13 which, when you 
+convert it to days since a base date, subtract one and convert it back 
+will give you 30/06/13, the desired result.
+
+[1] Four digit dates on the late '60s and early '70s.
+
+There was a curious blind spot about including the century in dates back 
+then, partly due to hardware limitations  and partly aided and abetted by 
+the COBOL language specification.
+
+COBOL required the receiving field in an "ACCEPT field FROM DATE." 
+statement could only be a 6 digit non-computational field, i.e. exactly 6 
+characters long and that the received date would be in the form "yymmdd".
+There was no provision for accepting a century, at least as late as the 
+mid '80s, and apparently in IBM COBOL/400 as late as 2006, though I see 
+that by 2010 their mainframe COBOL used four digit dates. The same 
+applied to Julian dates ("ACCEPT field FROM DAY" which returned 
+"yyddd").   
+
+Early hardware was expensive and physically large, but very limited in 
+capability. In the early days saving storage and clock cycles was all-
+important. In the 60s and early 70s a small mainframe might have as 
+little as 16 KB of ferrite core RAM, a clock speed of 12uS (30K 
+instructions/sec) and stored its data on 1200 or 2400 foot magnetic tapes 
+at 556 bits/inch, i.e. 8 Mb or 16 MB per reel at the outside. Here I'm 
+thinking about the ICL 1901, which is what I learnt to write assembler on.
+
+Consequently, you didn't bother with storing the century unless you 
+really had to, e.g. you had people on file with birthdays in the previous 
+century. 
+
+
+-- 
+martin@   | Martin Gregorie
+gregorie. | Essex, UK
+org       |
+
+
+From -6278627155095652818
+X-Google-Thread: 9dc47a6fbc,9730213e38c467f5
+X-Google-Attributes: gid9dc47a6fbc,public,usenet
+X-Google-NewGroupId: yes
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.185.115 with SMTP id fb19mr3156155wic.0.1372055552085;
+        Sun, 23 Jun 2013 23:32:32 -0700 (PDT)
+From: Joerg Meier <joergmmeier@arcor.de>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+Date: Fri, 21 Jun 2013 23:37:59 +0200
+Lines: 33
+Message-ID: <11vzgu1flpfc0$.fjdyohv4dmbv.dlg@40tude.net>
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com> <b24an6FlpvpU1@mid.individual.net> <UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com> <b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad> <ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com> <19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me> <kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad> <kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad> <kq0k30$ubf$1@dont-email.me> <6euehy3ijswn.e08p5nxwbfbf.dlg@40tude.net> <kq2fnu$osv$1@dont-email.me>
+Mime-Version: 1.0
+X-Trace: news.dfncis.de ycH7vaFKLFQby8KEk+XOpAlJnR0HZxqZiSOg8aKdSk81J3QlbgQB3QmWTt
+Cancel-Lock: sha1:Kin3Lt8dRhrqcFhK8xGLtECq1Co=
+User-Agent: 40tude_Dialog/2.0.15.1
+X-Antivirus: avast! (VPS 130621-2, 21.06.2013), Outbound message
+X-Antivirus-Status: Clean
+Path: md6ni20171wic.0!nntp.google.com!feeder1.cambriumusenet.nl!feed.tweaknews.nl!85.12.40.131.MISMATCH!xlned.com!feeder3.xlned.com!news.astraweb.com!border5.a.newsrouter.astraweb.com!goblin1!goblin.stu.neva.ru!news.telnetwork.it!diesel.cu.mi.it!fu-berlin.de!uni-berlin.de!news.dfncis.de!not-for-mail
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+
+On Fri, 21 Jun 2013 21:14:39 +0000 (UTC), Martin Gregorie wrote:
+
+> On Fri, 21 Jun 2013 12:27:49 +0200, Joerg Meier wrote:
+>> On Fri, 21 Jun 2013 04:16:32 +0000 (UTC), Martin Gregorie wrote:
+>>> [...]
+
+>>>     days = gdatebin(String.format("%02d/%02d/%02d",day, month, year));
+>>>     return gbindate(days - 1);
+>>>   }
+
+>>> ... and wasn't much longer in assembler.
+
+>>> gdatebin() converted a date string into binary days since 31/12/1899
+>>> and gbindate() did the reverse. I have no idea why the bloke thought
+>>> his mess of assembler would fall over after Feb 2100: the 1900 held
+>>> dates in a signed 24 bit number, so its Y2K moment isn't due until some
+>>> time in 24866 AD.
+>> It's ironic that after all that, your algorithm would have failed on Y2K
+>> ;)
+> How do you work that out? 
+
+I must apologize for prompting this long (but interesting) post based on a
+mistake on my part: my sleep-deprived brain forgot about that pesky 400
+year thing affecting 2000. That seems to happen a lot to my posts here
+lately. In other words: my bad, I see nothing wrong (other than the +1
+thing).
+
+Liebe Gruesse,
+		Joerg
+
+-- 
+Ich lese meine Emails nicht, replies to Email bleiben also leider
+ungelesen.
+
+
+From -4913073502239244034
+X-Google-Thread: 10a146,2328e3add14cba83
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,UTF8
+X-Received: by 10.180.188.240 with SMTP id gd16mr172391wic.2.1371851010021;
+        Fri, 21 Jun 2013 14:43:30 -0700 (PDT)
+Path: md6ni15868wic.0!nntp.google.com!feeder1.cambriumusenet.nl!82.197.223.103.MISMATCH!feeder3.cambriumusenet.nl!feed.tweaknews.nl!194.134.4.91.MISMATCH!news2.euro.net!news.mixmin.net!eternal-september.org!feeder.eternal-september.org!mx05.eternal-september.org!.POSTED!not-for-mail
+From: Martin Gregorie <martin@address-in-sig.invalid>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: Java Proxy Application
+Date: Fri, 21 Jun 2013 21:38:21 +0000 (UTC)
+Organization: A noiseless patient Spider
+Lines: 40
+Message-ID: <kq2h4d$osv$2@dont-email.me>
+References: <1a711a30-4780-4cbc-8034-79d5a194b6fe@googlegroups.com>
+Mime-Version: 1.0
+Injection-Date: Fri, 21 Jun 2013 21:38:21 +0000 (UTC)
+Injection-Info: mx05.eternal-september.org; posting-host="e5160e2be48f1ea550cf61512446f525";
+	logging-data="25503"; mail-complaints-to="abuse@eternal-september.org";	posting-account="U2FsdGVkX1/L6RxiDdF/B+sHWf0AbGhHZq/ReutYa50="
+User-Agent: Pan/0.139 (Sexual Chocolate; GIT bf56508
+	git://git.gnome.org/pan2)
+Cancel-Lock: sha1:KyZf9WHc84+xl3qbbWTaUgXhz1M=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On Fri, 21 Jun 2013 03:44:09 -0700, bobspero wrote:
+
+> I need help with how to tackle this problem. A good example is I have a
+> web site on my local computer that is am allowing users to access
+> through a NATéd ip. My router has an internal ASP page that I can access
+> at 192.168.1.1, I want my users to be able to enter the ip address of
+> the router and have the server show the page. Users access my site
+> through 29.xx.xx.xx so there browser can not access the 192 directly. I
+> have looked at sockets, but I do not know it can be done to an ASP page.
+> 
+> Where do I start? I can not alter the network in anyway the host server
+> is the only computer that has access to the ASP page.
+
+That's nothing to do with a proxy, regardless whether its written in Java 
+or not.
+
+Look up 'port forwarding' in your router's manual: that will let you 
+direct port 80 to a specific host on your LAN. 
+
+Be very careful: you'll be giving everybody direct access to that 
+machine, so it MUST be locked up tight with a good firewall. You'll need 
+to be running the Apache webserver (or some equivalent) on that port on 
+the host and it must be carefully configured to restrict what hackers and 
+script kiddies can do to your stuff. Apache has a lot of abilities to 
+handle logins etc and control who can see particular pages but, as you 
+don't see aware of either port forwarding or Apache, you have a steep 
+learning curve ahead.
+
+Best advice is 'don't do it'. Hiring small amounts of web space from a 
+web hosting provider is cheap, so put your pages on a web provider and 
+let them worry about security.
+
+Right: this subject is entirely off topic for c.l.j.p so I suggest you 
+move this discussion elsewhere.
+
+
+-- 
+martin@   | Martin Gregorie
+gregorie. | Essex, UK
+org       |
+
+
+From -7509594365149426728
+X-Google-Thread: 9dc47a6fbc,8e55a99b97ba5d08
+X-Google-Attributes: gid9dc47a6fbc,public,usenet
+X-Google-NewGroupId: yes
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.9.170 with SMTP id a10mr3070408wib.6.1372055594009;
+        Sun, 23 Jun 2013 23:33:14 -0700 (PDT)
+From: Roedy Green <see_website@mindprod.com.invalid>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: convert byte array to hex string using BigInteger
+Date: Fri, 21 Jun 2013 14:51:09 -0700
+Organization: Canadian Mind Products
+Lines: 39
+Message-ID: <2lf9s8dkji8grt44qenen8k731pghra5rf@4ax.com>
+References: <kpur29$5v4$1@news.albasani.net>
+Reply-To: Roedy Green <see_website@mindprod.com.invalid>
+NNTP-Posting-Host: K2Qzzs3EAqXk5RLzfhxcSw.user.speranza.aioe.org
+Mime-Version: 1.0
+X-Complaints-To: abuse@aioe.org
+User-Agent: ForteAgent/7.10.32.1212
+X-Notice: Filtered by postfilter v. 0.8.2
+Path: md6ni20173wic.0!nntp.google.com!feeder1.cambriumusenet.nl!feed.tweaknews.nl!85.12.40.130.MISMATCH!xlned.com!feeder1.xlned.com!news.astraweb.com!border3.a.newsrouter.astraweb.com!newsfeed10.multikabel.net!multikabel.net!newsfeed20.multikabel.net!goblin1!goblin.stu.neva.ru!news.telnetwork.it!diesel.cu.mi.it!news.newsland.it!aioe.org!.POSTED!not-for-mail
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+On Thu, 20 Jun 2013 14:03:21 +0200, Laura Schmidt <ls@mailinator.com>
+wrote, quoted or indirectly quoted someone who said :
+
+Here is a low level direct way to convert byte[] to a hex String. It
+should be quite a bit faster than using high level routines.
+
+/**
+ * Fast convert a byte array to a hex string
+ * with possible leading zero.
+ * @param b array of bytes to convert to string
+ * @return hex representation, two chars per byte.
+ */
+public static String toHexString ( byte[] b )
+   {
+   StringBuilder sb = new StringBuilder( b.length * 2 );
+   for ( int i=0; i<b.length; i++ )
+      {
+      // look up high nibble char
+      sb.append( hexChar [( b[i] & 0xf0 ) >>> 4] );
+
+      // look up low nibble char
+      sb.append( hexChar [b[i] & 0x0f] );
+      }
+   return sb.toString();
+   }
+
+/**
+ * table to convert a nibble to a hex char.
+ */
+static char[] hexChar = {
+   '0' , '1' , '2' , '3' ,
+   '4' , '5' , '6' , '7' ,
+   '8' , '9' , 'a' , 'b' ,
+   'c' , 'd' , 'e' , 'f'};
+-- 
+Roedy Green Canadian Mind Products http://mindprod.com
+Getting information off the Internet is 
+like taking a drink from a fire hydrant.
+~ Mitch Kapor 1950-11-01
+
+
+From -750607728378423652
+X-Google-Thread: 9dc47a6fbc,8e55a99b97ba5d08
+X-Google-Attributes: gid9dc47a6fbc,public,usenet
+X-Google-NewGroupId: yes
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.187.238 with SMTP id fv14mr3084757wic.0.1372055695262;
+        Sun, 23 Jun 2013 23:34:55 -0700 (PDT)
+From: Joerg Meier <joergmmeier@arcor.de>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: convert byte array to hex string using BigInteger
+Date: Sat, 22 Jun 2013 00:26:49 +0200
+Lines: 51
+Message-ID: <qdnytcrvwob4.14l9nuassw2g5$.dlg@40tude.net>
+References: <kpur29$5v4$1@news.albasani.net> <2lf9s8dkji8grt44qenen8k731pghra5rf@4ax.com>
+Mime-Version: 1.0
+X-Trace: news.dfncis.de RfM+2l7JmifiWRmOvC7HMw275VOnlLNaWB/mlxdZG7MpbrCZvEx2YkydQ4
+Cancel-Lock: sha1:sVMiCCbgH6vDRqAf0SfQDpPlwSE=
+User-Agent: 40tude_Dialog/2.0.15.1
+X-Antivirus: avast! (VPS 130621-2, 21.06.2013), Outbound message
+X-Antivirus-Status: Clean
+Path: md6ni20175wic.0!nntp.google.com!feeder1.cambriumusenet.nl!82.197.223.103.MISMATCH!feeder3.cambriumusenet.nl!feed.tweaknews.nl!85.12.40.130.MISMATCH!xlned.com!feeder1.xlned.com!news.astraweb.com!border3.a.newsrouter.astraweb.com!newsfeed10.multikabel.net!multikabel.net!newsfeed20.multikabel.net!goblin1!goblin.stu.neva.ru!news.telnetwork.it!feedme.news.telefonica.de!telefonica.de!fu-berlin.de!uni-berlin.de!news.dfncis.de!not-for-mail
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+
+On Fri, 21 Jun 2013 14:51:09 -0700, Roedy Green wrote:
+
+> On Thu, 20 Jun 2013 14:03:21 +0200, Laura Schmidt <ls@mailinator.com>
+> wrote, quoted or indirectly quoted someone who said :
+
+> Here is a low level direct way to convert byte[] to a hex String. It
+> should be quite a bit faster than using high level routines.
+
+> /**
+>  * Fast convert a byte array to a hex string
+>  * with possible leading zero.
+>  * @param b array of bytes to convert to string
+>  * @return hex representation, two chars per byte.
+>  */
+> public static String toHexString ( byte[] b )
+>    {
+>    StringBuilder sb = new StringBuilder( b.length * 2 );
+>    for ( int i=0; i<b.length; i++ )
+>       {
+>       // look up high nibble char
+>       sb.append( hexChar [( b[i] & 0xf0 ) >>> 4] );
+> 
+>       // look up low nibble char
+>       sb.append( hexChar [b[i] & 0x0f] );
+>       }
+>    return sb.toString();
+>    }
+
+Note that this is pretty much a copy and paste version of the converter
+that already comes with the JRE:
+
+from javax.xml.bind.DatatypeConverterImpl:
+
+public String printHexBinary(byte[] data) {
+         StringBuilder r = new StringBuilder(data.length * 2);
+         for (byte b : data) {
+             r.append(hexCode[(b >> 4) & 0xF]);
+             r.append(hexCode[(b & 0xF)]);
+         }
+         return r.toString();
+     }
+     
+For a reason I was unable to discern it was actually a teensy bit slower
+than the Oracle implementation.
+
+Liebe Gruesse,
+		Joerg
+
+-- 
+Ich lese meine Emails nicht, replies to Email bleiben also leider
+ungelesen.
+
+
+From 1364307983651173466
+X-Google-Thread: 10a146,9730213e38c467f5
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.207.44 with SMTP id lt12mr451355wic.5.1371858450293;
+        Fri, 21 Jun 2013 16:47:30 -0700 (PDT)
+Path: md6ni16028wic.0!nntp.google.com!feeder1-2.proxad.net!proxad.net!feeder1-1.proxad.net!ecngs!feeder2.ecngs.de!feeder.erje.net!eu.feeder.erje.net!eternal-september.org!feeder.eternal-september.org!mx05.eternal-september.org!.POSTED!not-for-mail
+From: Martin Gregorie <martin@address-in-sig.invalid>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+Date: Fri, 21 Jun 2013 23:42:21 +0000 (UTC)
+Organization: A noiseless patient Spider
+Lines: 68
+Message-ID: <kq2oct$osv$5@dont-email.me>
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com>
+	<b24an6FlpvpU1@mid.individual.net>
+	<UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com>
+	<b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad>
+	<ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com>
+	<19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me>
+	<kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad>
+	<kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad>
+	<kq0k30$ubf$1@dont-email.me> <6euehy3ijswn.e08p5nxwbfbf.dlg@40tude.net>
+	<kq2fnu$osv$1@dont-email.me> <11vzgu1flpfc0$.fjdyohv4dmbv.dlg@40tude.net>
+Mime-Version: 1.0
+Injection-Date: Fri, 21 Jun 2013 23:42:21 +0000 (UTC)
+Injection-Info: mx05.eternal-september.org; posting-host="e5160e2be48f1ea550cf61512446f525";
+	logging-data="25503"; mail-complaints-to="abuse@eternal-september.org";	posting-account="U2FsdGVkX1+3keEb/VIfLZaOJNhTHPDS6ewVpXOjTbk="
+User-Agent: Pan/0.139 (Sexual Chocolate; GIT bf56508
+	git://git.gnome.org/pan2)
+Cancel-Lock: sha1:NAhvzeiNJ/EPXcYZ3goK46wqNs4=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On Fri, 21 Jun 2013 23:37:59 +0200, Joerg Meier wrote:
+
+> On Fri, 21 Jun 2013 21:14:39 +0000 (UTC), Martin Gregorie wrote:
+> 
+>> On Fri, 21 Jun 2013 12:27:49 +0200, Joerg Meier wrote:
+>>> On Fri, 21 Jun 2013 04:16:32 +0000 (UTC), Martin Gregorie wrote:
+>>>> [...]
+> 
+>>>>     days = gdatebin(String.format("%02d/%02d/%02d",day, month,
+>>>>     year));
+>>>>     return gbindate(days - 1);
+>>>>   }
+> 
+>>>> ... and wasn't much longer in assembler.
+> 
+>>>> gdatebin() converted a date string into binary days since 31/12/1899
+>>>> and gbindate() did the reverse. I have no idea why the bloke thought
+>>>> his mess of assembler would fall over after Feb 2100: the 1900 held
+>>>> dates in a signed 24 bit number, so its Y2K moment isn't due until
+>>>> some time in 24866 AD.
+>>> It's ironic that after all that, your algorithm would have failed on
+>>> Y2K ;)
+>> How do you work that out?
+> 
+> I must apologize for prompting this long (but interesting) post based on
+> a mistake on my part: my sleep-deprived brain forgot about that pesky
+> 400 year thing affecting 2000. That seems to happen a lot to my posts
+> here lately. In other words: my bad, I see nothing wrong (other than the
+> +1 thing).
+> 
+No problem and no apology needed.
+
+It was fun delving back into the early days.
+
+FWIW, I've always liked block structured languages, probably because I 
+first learned to program on an Ellott 503 in Algol 60 about 1967. 
+Interesting beast: it had 8K of 39 bit words and another 16Kwords of 
+slower ferrite core that it used as a sort of fast disk. It just preceded 
+integrated circuits: its logic was built with discrete transistors and 
+was a true scientific computer: its floating point divide was faster than 
+its integer divide. With the long 39 bit word it had no double length 
+arithmetic (didn't need it!) and it stored two instructions per word: the 
+spare bit determined whether the first instruction modified the second or 
+not.  We programmed in on paper tape using a Flexowriter (much superior 
+to a teletype, as it had a huge array of symbols as well as both cases 
+and underline (Ellott Algol underlined reserved words. Output was either 
+on a big, fast line printer or more paper tape.
+
+The machine was surprisingly fast: everything we did on it was compile 
+and go from paper tape, but despite that and a 3 minute testing slot, you 
+could easily compile your program and get a useful bit of data crunching 
+done within the three minute period. 
+
+In fact a year or two later I was sysadmin on an ICL 1903S with 60 MB 
+disks as well as loads of tapes etc. It ran George 3, one of the earliest 
+true multi-user, multi-tasking operation systems, but no matter what I 
+tried with that and despite keeping my source on disk (of course) and not 
+printing the compiler listings etc. I never was able to match the 
+compilation speed of that old Elliott 503 despite it reading the program 
+off a 1250 cps tape reader and printing the compiler listings direct to 
+the (guessed) 600 lpm line printer.
+
+
+
+-- 
+martin@   | Martin Gregorie
+gregorie. | Essex, UK
+org       |
+
+
+From 4394208531426909640
+X-Google-Thread: 10a146,9730213e38c467f5
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.66.217.134 with SMTP id oy6mr3606666pac.36.1371865170064;
+        Fri, 21 Jun 2013 18:39:30 -0700 (PDT)
+Path: e10ni19475pbm.0!nntp.google.com!npeer02.iad.highwinds-media.com!news.highwinds-media.com!feed-me.highwinds-media.com!post01.iad.highwinds-media.com!newsfe25.iad.POSTED!not-for-mail
+From: Arved Sandstrom <asandstrom2@eastlink.ca>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130510 Thunderbird/17.0.6
+MIME-Version: 1.0
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com> <b24an6FlpvpU1@mid.individual.net> <UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com> <b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad> <ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com> <19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me> <kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad> <kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad> <kq1nda$fbk$1@dont-email.me>
+In-Reply-To: <kq1nda$fbk$1@dont-email.me>
+Lines: 72
+Message-ID: <lf7xt.83078$1p2.22506@newsfe25.iad>
+X-Complaints-To: abuse@newsgroups-download.com
+NNTP-Posting-Date: Sat, 22 Jun 2013 01:39:29 UTC
+Organization: Public Usenet Newsgroup Access
+Date: Fri, 21 Jun 2013 22:39:28 -0300
+X-Received-Bytes: 4728
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 06/21/2013 11:24 AM, Daniele Futtorovic wrote:
+> On 21/06/2013 04:33, Arved Sandstrom allegedly wrote:
+>> On 06/19/2013 11:42 AM, Daniele Futtorovic wrote:
+>>> I'm all for defensive programming, but I think that there's a limit
+>>> where it can be on the verge of silliness, and that that limit has been
+>>> grazed here.
+>>>
+>>> Less-than-bright programmers IMO cannot be a justification for crossing
+>>> that line; less-than-bright programmers have more ways to mess things up
+>>> than you could possibly ever guard against. "Do not underestimate the
+>>> ingenuity of complete fools", as the saying goes.
+>>>
+>>> And for me, there is an additional aspect: if a piece of code does
+>>> something simple, something basic, then I will want it to be short, and
+>>> vice-versa. Verbosity of code, to me, should hold a first-glance
+>>> indication of the complexity of the algorithm. In other words: be terse
+>>> IFF it's basic, be verbose IFF it's not.
+>>>
+>>> Perhaps your mileage does vary. No beef with that. Just throwing in my
+>>> two cents.
+>>>
+>> It's a good discussion. I'm not personally convinced that verbosity adds
+>> complexity, as a rule. There's really two types of complexity here:
+>> maintainability complexity - as in, can Joe Blow 12 months later
+>> understand the code best if it's compact versus unrolled, and formal
+>> complexity, cyclomatic and otherwise.
+>>
+>> I'll admit that verbosity does usually add maintainability complexity,
+>> if not the other kind. But not always. I've seen plenty of code that is
+>> conceptually quite complex but very terse.
+>
+> Sorry to nitpick, but I don't think you understood me right. I'm not
+> saying that verbosity adds complexity; I'm saying: if the piece of code
+> does something tricky, something complicated, tend to make it verbose,
+> otherwise, tend to make it terse. Thus, seeing a big blob of (e.g.
+> unrolled, step-by-step) code holds the message "here be dragons". (And
+> if it cannot be made verbose, then it means it absolutely requires an
+> in-line comment).
+
+We're very much in agreement, on all points you just made.
+
+> At least the way I perceived it, this discussion was about making stuff
+> verbose indiscriminately, viz. basic code as well. I disagree with that
+> in the above sense.
+>
+I won't speak for anyone else, the argument I was making was for 
+verbosity in support of defensive programming. I see Java code all the 
+time where exceptions are try-caught with no thought placed into 
+handling the problem somewhere - defensive coding fail...and handling it 
+properly would add verbosity.
+
+I see main methods all the time where someone assumes the number and 
+type of arguments. Defensive coding fail. I see methods all the time - 
+like I said - where the same coder wrote the calling code and called 
+code, and makes assumptions about what the calling code will do. 
+Defensive coding fail.
+
+Or they make the naive assumption that people read Javadocs thoroughly. 
+It's not the calling code's responsibility to protect the called code, 
+after all. Given that we have to consider the bounds of parameters 
+carefully, I don't see how some verbosity in the form of defensive code 
+is objectionable.
+
+"Here be dragons" often means simply that there is - that we have to 
+guard against what the calling code is doing.
+
+AHS
+
+-- 
+When a true genius appears, you can know him by this sign:
+that all the dunces are in a confederacy against him.
+-- Jonathan Swift
+
+
+From -2636386484978272142
+X-Google-Thread: 9dc47a6fbc,600894b2c7f8f2d
+X-Google-Attributes: gid9dc47a6fbc,public,usenet
+X-Google-NewGroupId: yes
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.37.143 with SMTP id y15mr3112330wij.2.1372055845040;
+        Sun, 23 Jun 2013 23:37:25 -0700 (PDT)
+Path: md6ni20180wic.0!nntp.google.com!feeder1.cambriumusenet.nl!feed.tweaknews.nl!195.208.113.67.MISMATCH!goblin1!goblin.stu.neva.ru!usenet.stanford.edu!newsfeed.hal-mli.net!feeder3.hal-mli.net!newsfeed.hal-mli.net!feeder1.hal-mli.net!feeder.erje.net!eu.feeder.erje.net!eternal-september.org!feeder.eternal-september.org!mx05.eternal-september.org!.POSTED!not-for-mail
+From: David Lamb <dalamb@cs.queensu.ca>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: new JDK 1.7.0_25
+Date: Fri, 21 Jun 2013 22:01:30 -0400
+Organization: A noiseless patient Spider
+Lines: 11
+Message-ID: <kq308b$uah$1@dont-email.me>
+References: <ekm1s8dcbec98dtehp77u7j3o4dqf9pupr@4ax.com> <602776aa-b071-4c62-a5e4-77451a7a636e@googlegroups.com>
+Mime-Version: 1.0
+Injection-Date: Sat, 22 Jun 2013 01:56:28 +0000 (UTC)
+Injection-Info: mx05.eternal-september.org; posting-host="582e165532e9c292c654c5bbdca1358d";
+	logging-data="31057"; mail-complaints-to="abuse@eternal-september.org";	posting-account="U2FsdGVkX1+7J6bsxyi/FR2MBmyAfaTc"
+User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:17.0) Gecko/20130509 Thunderbird/17.0.6
+In-Reply-To: <602776aa-b071-4c62-a5e4-77451a7a636e@googlegroups.com>
+Cancel-Lock: sha1:4P+rSeFUO/ldVOfXd/1JkEyMWPE=
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+
+> On Wednesday, June 19, 2013 2:09:52 AM UTC+4, Roedy Green wrote:
+>>
+>> Roedy Green Canadian Mind Products http://mindprod.com
+>>
+>> Getting information off the Internet is
+>> like taking a drink from a fire hydrant.
+>>
+>> ~ Mitch Kapor 1950-11-01
+
+Uh, that was Mitch's birthday -- not likely to be the date of the quote! :)
+
+
+
+From 7644047618217805642
+X-Google-Thread: 9dc47a6fbc,9730213e38c467f5
+X-Google-Attributes: gid9dc47a6fbc,public,usenet
+X-Google-NewGroupId: yes
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.37.229 with SMTP id b5mr3065575wik.4.1372055876440;
+        Sun, 23 Jun 2013 23:37:56 -0700 (PDT)
+Path: md6ni20180wic.0!nntp.google.com!feeder1.cambriumusenet.nl!feed.tweaknews.nl!195.208.113.67.MISMATCH!goblin1!goblin.stu.neva.ru!usenet.stanford.edu!newsfeed.hal-mli.net!feeder3.hal-mli.net!newsfeed.hal-mli.net!feeder2.hal-mli.net!npeer02.iad.highwinds-media.com!news.highwinds-media.com!feed-me.highwinds-media.com!post01.iad.highwinds-media.com!newsfe15.iad.POSTED!not-for-mail
+From: Arved Sandstrom <asandstrom2@eastlink.ca>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130510 Thunderbird/17.0.6
+MIME-Version: 1.0
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com> <b24an6FlpvpU1@mid.individual.net> <UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com> <b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad> <ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com> <19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me> <kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad> <kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad> <kq0k30$ubf$1@dont-email.me>
+In-Reply-To: <kq0k30$ubf$1@dont-email.me>
+Lines: 98
+Message-ID: <Gq8xt.62041$5i1.57182@newsfe15.iad>
+X-Complaints-To: abuse@newsgroups-download.com
+NNTP-Posting-Date: Sat, 22 Jun 2013 02:59:50 UTC
+Organization: Public Usenet Newsgroup Access
+Date: Fri, 21 Jun 2013 23:59:41 -0300
+X-Received-Bytes: 5789
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 06/21/2013 01:16 AM, Martin Gregorie wrote:
+> On Thu, 20 Jun 2013 23:33:56 -0300, Arved Sandstrom wrote:
+>
+>> It's a good discussion. I'm not personally convinced that verbosity adds
+>> complexity, as a rule. There's really two types of complexity here:
+>> maintainability complexity - as in, can Joe Blow 12 months later
+>> understand the code best if it's compact versus unrolled, and formal
+>> complexity, cyclomatic and otherwise.
+>>
+> I'm with you there.
+>
+>> I'll admit that verbosity does usually add maintainability complexity,
+>>
+> My attitude is that well-laid out code with well-thought out names and
+> intelligently commented offers about the best chance of being more easily
+> maintainable. I prefer blocks of well formatted and carefully written
+> comments places ahead of what they describe to any other type.
+>
+>> if not the other kind. But not always. I've seen plenty of code that is
+>> conceptually quite complex but very terse.
+>>
+> I've certainly see some memorable examples of badly documented and over-
+> clever code in the past.
+>
+> One of my favourite examples of bad documentation was actually quite good
+> code: it was just the commenting style that was naff. This was MC 6800
+> assembler, and the house style was to add a comment alongside every
+> instruction whether it needed it or not: the machine had INC and DEC
+> instructions to and or subtract 1 from a register, but did it really add
+> anything the write "BUMP THE B REGISTER" alongside every INC B
+> instruction?
+>
+> As it happens, my worst ever example was also assembler: this time PLAN 3
+> assembler for an ICL 1900. In this case it was a lineprinter page, i.e.
+> about 60 instructions whose task was the work out the date of the last
+> day of the current month so it could be printed on financial statements.
+> it worked by doing arithmetic on the current date in "dd/mm/yy" format
+> This page has two comments: the first said "Calculate the last day of the
+> month" and the second said "Works until Feb 2100". The rest of the page
+> contained a mess of register-to-register operations and relative
+> branches. There wasn't a single label or variable name in the whole mess.
+> I never met anybody who could follow it past its first dozen steps - and
+> that includes me - and I used to be fairly good at programming in PLAN.
+>
+> The silly thing was that the date calculation was trivial on a 1900,
+> which held dates internally as days since 31 Dec 1899 and provided a  set
+> of date manipulation subroutines. The obvious solution, given that
+> library, and writing the routine in pseudo-Java in deference to this 'ere
+> august forum, looks like this:
+>
+>    public String lastDayOfMonth(String today)
+>    {
+>      int day = 1;
+>      int month = today.substring(3,2);
+>      int year = today.substring(6);
+>      if (month > 12)
+>      {
+>        year++;
+>        month = 1;
+>      }
+>
+>      days = gdatebin(String.format("%02d/%02d/%02d",day, month, year));
+>      return gbindate(days - 1);
+>    }
+>
+> ... and wasn't much longer in assembler.
+>
+> gdatebin() converted a date string into binary days since 31/12/1899 and
+> gbindate() did the reverse. I have no idea why the bloke thought his mess
+> of assembler would fall over after Feb 2100: the 1900 held dates in a
+> signed 24 bit number, so its Y2K moment isn't due until some time in
+> 24866 AD.
+>
+> And, yes, I do know my algorithm worked correctly despite leap years and
+> all: it ran for years as part of an accounting package and anybody could
+> see exactly how it worked even though it was written in COBOL.
+>
+>
+Ahhh, dates. :-) Just this last fall had to bypass front ends for a 
+mainstream financial system and get at the DB directly. No docs worth a 
+damn, not even a good data dictionary for the database, so I had to use 
+the front end programs to generate DB activity of the sort I wanted 
+while I ran a SQL Server profiler trace. I cleaned up the trace and 
+looked at the dates...what is this, I thought? Integer numbers in the 
+seven hundred thousands. It took a bit of sleuthing to find out that it 
+was rata die dates.
+
+There is no clean way of doing rata die <-> java.util.Calendar 
+conversions. And that nasty little 0.5 day floating point adjustment is 
+a bugger. It's only now after 9 months of production that I have a warm 
+fuzzy about the thing being solid.
+
+AHS
+
+-- 
+When a true genius appears, you can know him by this sign:
+that all the dunces are in a confederacy against him.
+-- Jonathan Swift
+
+
+From -7165408807483222766
+X-Google-Thread: 10a146,9730213e38c467f5
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII
+X-Received: by 10.180.12.200 with SMTP id a8mr1304247wic.1.1371888207740;
+        Sat, 22 Jun 2013 01:03:27 -0700 (PDT)
+Path: md6ni16617wic.0!nntp.google.com!proxad.net!feeder1-2.proxad.net!usenet-fr.net!de-l.enfer-du-nord.net!feeder2.enfer-du-nord.net!border1.nntp.ams2.giganews.com!border3.nntp.ams.giganews.com!Xl.tags.giganews.com!border1.nntp.ams.giganews.com!nntp.giganews.com!local2.nntp.ams.giganews.com!nntp.bt.com!news.bt.com.POSTED!not-for-mail
+NNTP-Posting-Date: Sat, 22 Jun 2013 03:03:26 -0500
+Date: Sat, 22 Jun 2013 09:03:26 +0100
+From: lipska the kat <"nospam at neversurrender dot co dot uk">
+Organization: Trollbusters 3
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130308 Thunderbird/17.0.4
+MIME-Version: 1.0
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com> <b24an6FlpvpU1@mid.individual.net> <UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com> <b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad> <ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com> <19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me> <kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad> <kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad> <kq1nda$fbk$1@dont-email.me>
+In-Reply-To: <kq1nda$fbk$1@dont-email.me>
+Message-ID: <Uv6dnWRtNKrTx1jMnZ2dnUVZ7qSdnZ2d@bt.com>
+Lines: 62
+X-Usenet-Provider: http://www.giganews.com
+X-AuthenticatedUsername: NoAuthUser
+X-Trace: sv3-lxBWqqQVb+WdlLZOLoU61O77NJ/W6USaCzUHVAWXeEwSp5E+gykbuFcb8iTkggAnzzJRnygSdwwLks0!uditY4Ty1mnCo1BPsQx7gcALt18xAuvlA0jhH8mEBWfFng8qqsH28DAqOj4Z+ERnaL3UOuxycB4=
+X-Complaints-To: abuse@btinternet.com
+X-DMCA-Complaints-To: abuse@btinternet.com
+X-Abuse-and-DMCA-Info: Please be sure to forward a copy of ALL headers
+X-Abuse-and-DMCA-Info: Otherwise we will be unable to process your complaint properly
+X-Postfilter: 1.3.40
+X-Original-Bytes: 4811
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 8bit
+
+On 21/06/13 15:24, Daniele Futtorovic wrote:
+> On 21/06/2013 04:33, Arved Sandstrom allegedly wrote:
+>> On 06/19/2013 11:42 AM, Daniele Futtorovic wrote:
+>>> I'm all for defensive programming, but I think that there's a limit
+>>> where it can be on the verge of silliness, and that that limit has been
+>>> grazed here.
+>>>
+>>> Less-than-bright programmers IMO cannot be a justification for crossing
+>>> that line; less-than-bright programmers have more ways to mess things up
+>>> than you could possibly ever guard against. "Do not underestimate the
+>>> ingenuity of complete fools", as the saying goes.
+>>>
+>>> And for me, there is an additional aspect: if a piece of code does
+>>> something simple, something basic, then I will want it to be short, and
+>>> vice-versa. Verbosity of code, to me, should hold a first-glance
+>>> indication of the complexity of the algorithm. In other words: be terse
+>>> IFF it's basic, be verbose IFF it's not.
+>>>
+>>> Perhaps your mileage does vary. No beef with that. Just throwing in my
+>>> two cents.
+>>>
+>> It's a good discussion. I'm not personally convinced that verbosity adds
+>> complexity, as a rule. There's really two types of complexity here:
+>> maintainability complexity - as in, can Joe Blow 12 months later
+>> understand the code best if it's compact versus unrolled, and formal
+>> complexity, cyclomatic and otherwise.
+>>
+>> I'll admit that verbosity does usually add maintainability complexity,
+>> if not the other kind. But not always. I've seen plenty of code that is
+>> conceptually quite complex but very terse.
+>
+> Sorry to nitpick, but I don't think you understood me right. I'm not
+> saying that verbosity adds complexity; I'm saying: if the piece of code
+> does something tricky, something complicated, tend to make it verbose,
+> otherwise, tend to make it terse. Thus, seeing a big blob of (e.g.
+> unrolled, step-by-step) code holds the message "here be dragons". (And
+> if it cannot be made verbose, then it means it absolutely requires an
+> in-line comment).
+>
+> At least the way I perceived it, this discussion was about making stuff
+> verbose indiscriminately, viz. basic code as well. I disagree with that
+> in the above sense.
+
+... and who makes these seemingly arbitrary decisions about what is and 
+what isn't 'complex'. This idea that some bits of code can be written 
+differently (more/less verbosely) depending on someones definition of 
+'complex' is exactly the sort of thing that makes code less readable. 
+Let's be quite clear about this, the *most important* thing
+is readability. Anyone who has experienced 'flow' when writing code will 
+know that what was blindingly obvious yesterday can be arcane and obtuse 
+today. You need to pick a style and stick with it, not chop and change 
+between arbitrary styles on some whim.
+
+I'm tempted to say that this behavior typifies the too clever by half 
+attitude that makes our job so frustrating sometimes but that might be 
+construed as confrontational so I won't ... :-)
+
+lipska
+
+-- 
+Lipska the Kat�: Troll hunter, sandbox destroyer
+and farscape dreamer of Aeryn Sun
+
+
+From 7055395390331304002
+X-Google-Thread: 10a146,9730213e38c467f5
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.66.27.17 with SMTP id p17mr3896793pag.1.1371908131874;
+        Sat, 22 Jun 2013 06:35:31 -0700 (PDT)
+Path: e10ni19284pbm.0!nntp.google.com!npeer01.iad.highwinds-media.com!feed-me.highwinds-media.com!cyclone01.ams2.highwinds-media.com!news.highwinds-media.com!voer-me.highwinds-media.com!eweka.nl!lightspeed.eweka.nl!193.141.40.65.MISMATCH!npeer.de.kpn-eurorings.net!npeer-ng0.de.kpn-eurorings.net!newsfeed.fsmpi.rwth-aachen.de!eternal-september.org!feeder.eternal-september.org!mx05.eternal-september.org!.POSTED!not-for-mail
+From: Martin Gregorie <martin@address-in-sig.invalid>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+Date: Sat, 22 Jun 2013 13:30:21 +0000 (UTC)
+Organization: A noiseless patient Spider
+Lines: 61
+Message-ID: <kq48td$9qk$1@dont-email.me>
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com>
+	<b24an6FlpvpU1@mid.individual.net>
+	<UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com>
+	<b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad>
+	<ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com>
+	<19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me>
+	<kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad>
+	<kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad>
+	<kq0k30$ubf$1@dont-email.me> <Gq8xt.62041$5i1.57182@newsfe15.iad>
+Mime-Version: 1.0
+Injection-Date: Sat, 22 Jun 2013 13:30:21 +0000 (UTC)
+Injection-Info: mx05.eternal-september.org; posting-host="e5160e2be48f1ea550cf61512446f525";
+	logging-data="10068"; mail-complaints-to="abuse@eternal-september.org";	posting-account="U2FsdGVkX18Wg8dmhaCs5biVmohGgE5ZQnt5Wirhljo="
+User-Agent: Pan/0.139 (Sexual Chocolate; GIT bf56508
+	git://git.gnome.org/pan2)
+Cancel-Lock: sha1:J30+Mp/tLKwM6Mu1N3x5MHk5mVU=
+X-Received-Bytes: 4662
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On Fri, 21 Jun 2013 23:59:41 -0300, Arved Sandstrom wrote:
+
+> Ahhh, dates. :-) Just this last fall had to bypass front ends for a
+> mainstream financial system and get at the DB directly. No docs worth a
+> damn, not even a good data dictionary for the database, so I had to use
+> the front end programs to generate DB activity of the sort I wanted
+> while I ran a SQL Server profiler trace. I cleaned up the trace and
+> looked at the dates...what is this, I thought? Integer numbers in the
+> seven hundred thousands. It took a bit of sleuthing to find out that it
+> was rata die dates.
+>
+Thats interesting: there are evidently scads of different (and mutually 
+incompatible date representations of this type. Previously I knew about 
+four (listed in the order I learnt about them):
+
+- the proprietary 'ICL 1900 date', based on 31/12/1899 and enumerated in
+  24 bit signed integers, so the time is a separate issue and with its
+  rollover event ocurring in  24866 AD.
+
+- the proprietary 'ICL 2900 date, held as as signed 64 bit integer and
+  enumerated in microseconds, so includes the time. I've never known what
+  the base date was but its scarcely relevant since it will only roll over
+  after 292271 years.
+
+- the 'Julian Day', based on noon GMT on January 1, 4713 BC and
+  enumerated as days held as a real number with the fractional part
+  representing the time of day. The base date comes from the Julian
+  calendar.
+
+- the UNIX data, held in 32 bits and enumerated in seconds since 00:00
+  on 01/01/1970 with a rollover in 2038.
+
+It also turns out that the format that IBM calls the 'Julian Date' (yyddd) 
+isn't the same as the Julian Day.
+
+And now there's 'rata die' which I'd not previously heard of. It is 
+similar to the Julian Day except that it is based on midnight in the 
+local time zone on the 1st of Jan, 1AD. It is held as a real number, with 
+the fractional part representing the time of day. However, there are 
+variants: the second uses integers to represent whole days, i.e. its the 
+first form with the fractional part discarded, and the third is also an 
+integer, but defined to represent midday.
+
+> There is no clean way of doing rata die <-> java.util.Calendar
+> conversions. And that nasty little 0.5 day floating point adjustment is
+> a bugger. It's only now after 9 months of production that I have a warm
+> fuzzy about the thing being solid.
+>
+I'm not surprised. In fact there's no clean way to convert an arbitrary 
+historic date to any of these representations or to a Gregorian date 
+without using a lookup table holding the discontinuities and corrections 
+that have been applied to all human calendars at some time or other. And, 
+it you want to convert times, where they are known, as well it just turns 
+into a can of worms before the invention of the railway and the 
+introduction of the railway timetable.
+ 
+
+-- 
+martin@   | Martin Gregorie
+gregorie. | Essex, UK
+org       |
+
+
+From -1035392818587446820
+X-Google-Thread: 10a146,9730213e38c467f5
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.36.211 with SMTP id s19mr1946519wij.1.1371921960678;
+        Sat, 22 Jun 2013 10:26:00 -0700 (PDT)
+Path: b5ni14836wiz.1!nntp.google.com!fu-berlin.de!news.swapon.de!eternal-september.org!feeder.eternal-september.org!mx05.eternal-september.org!.POSTED!not-for-mail
+From: Daniele Futtorovic <da.futt.news@laposte-dot-net.invalid>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+Date: Sat, 22 Jun 2013 19:25:57 +0200
+Organization: A noiseless patient Spider
+Lines: 153
+Message-ID: <kq4mdh$fbm$1@dont-email.me>
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com> <b24an6FlpvpU1@mid.individual.net> <UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com> <b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad> <ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com> <19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me> <kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad> <kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad> <kq1nda$fbk$1@dont-email.me> <lf7xt.83078$1p2.22506@newsfe25.iad>
+Mime-Version: 1.0
+Injection-Date: Sat, 22 Jun 2013 17:20:49 +0000 (UTC)
+Injection-Info: mx05.eternal-september.org; posting-host="f367d9e8a7c7f2a10160e0639e957a17";
+	logging-data="15734"; mail-complaints-to="abuse@eternal-september.org";	posting-account="U2FsdGVkX1+LInm802ctw4LJprA8F+/C"
+User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:17.0) Gecko/20130509 Thunderbird/17.0.6
+In-Reply-To: <lf7xt.83078$1p2.22506@newsfe25.iad>
+Cancel-Lock: sha1:fqUJ88PCZ/ZO5+1VdxuVVghQ3e4=
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+
+On 22/06/2013 03:39, Arved Sandstrom allegedly wrote:
+> On 06/21/2013 11:24 AM, Daniele Futtorovic wrote:
+>> On 21/06/2013 04:33, Arved Sandstrom allegedly wrote:
+>>> On 06/19/2013 11:42 AM, Daniele Futtorovic wrote:
+>>>> I'm all for defensive programming, but I think that there's a limit
+>>>> where it can be on the verge of silliness, and that that limit has been
+>>>> grazed here.
+>>>>
+>>>> Less-than-bright programmers IMO cannot be a justification for crossing
+>>>> that line; less-than-bright programmers have more ways to mess
+>>>> things up
+>>>> than you could possibly ever guard against. "Do not underestimate the
+>>>> ingenuity of complete fools", as the saying goes.
+>>>>
+>>>> And for me, there is an additional aspect: if a piece of code does
+>>>> something simple, something basic, then I will want it to be short, and
+>>>> vice-versa. Verbosity of code, to me, should hold a first-glance
+>>>> indication of the complexity of the algorithm. In other words: be terse
+>>>> IFF it's basic, be verbose IFF it's not.
+>>>>
+>>>> Perhaps your mileage does vary. No beef with that. Just throwing in my
+>>>> two cents.
+>>>>
+>>> It's a good discussion. I'm not personally convinced that verbosity adds
+>>> complexity, as a rule. There's really two types of complexity here:
+>>> maintainability complexity - as in, can Joe Blow 12 months later
+>>> understand the code best if it's compact versus unrolled, and formal
+>>> complexity, cyclomatic and otherwise.
+>>>
+>>> I'll admit that verbosity does usually add maintainability complexity,
+>>> if not the other kind. But not always. I've seen plenty of code that is
+>>> conceptually quite complex but very terse.
+>>
+>> Sorry to nitpick, but I don't think you understood me right. I'm not
+>> saying that verbosity adds complexity; I'm saying: if the piece of code
+>> does something tricky, something complicated, tend to make it verbose,
+>> otherwise, tend to make it terse. Thus, seeing a big blob of (e.g.
+>> unrolled, step-by-step) code holds the message "here be dragons". (And
+>> if it cannot be made verbose, then it means it absolutely requires an
+>> in-line comment).
+> 
+> We're very much in agreement, on all points you just made.
+> 
+>> At least the way I perceived it, this discussion was about making stuff
+>> verbose indiscriminately, viz. basic code as well. I disagree with that
+>> in the above sense.
+>>
+> I won't speak for anyone else, the argument I was making was for
+> verbosity in support of defensive programming. I see Java code all the
+> time where exceptions are try-caught with no thought placed into
+> handling the problem somewhere - defensive coding fail...and handling it
+> properly would add verbosity.
+> 
+> I see main methods all the time where someone assumes the number and
+> type of arguments. Defensive coding fail. I see methods all the time -
+> like I said - where the same coder wrote the calling code and called
+> code, and makes assumptions about what the calling code will do.
+> Defensive coding fail.
+> 
+> Or they make the naive assumption that people read Javadocs thoroughly.
+> It's not the calling code's responsibility to protect the called code,
+> after all. Given that we have to consider the bounds of parameters
+> carefully, I don't see how some verbosity in the form of defensive code
+> is objectionable.
+> 
+> "Here be dragons" often means simply that there is - that we have to
+> guard against what the calling code is doing.
+
+I see. Thanks for clarifying.
+
+It looks like I had not understood the discussion about verbosity in the
+same sense as you do. In my view, when talking about verbosity, we talk
+about a measure on, and that's the important point, an iso-functional
+basis. To illustrate, when I switch on a "verbose" flag on my command
+line, I do not expect the command to perform any differently than before
+-- only that it should be more talkative about it. But the functions it
+performs should not be impacted by it.
+
+To illustrate with code, and to pick some of the original examples
+again, take the following two methods:
+
+boolean method1( String input ){
+  return "yes".equals( input );
+}
+
+boolean method2( String input ){
+  final boolean ret;
+  if( input == null ){
+    ret = false;
+  }
+  else if( input.equals("yes") ){
+    ret = true;
+  }
+  else {
+    ret = false;
+  }
+
+  return ret;
+}
+
+This is what I mean. Both methods perform exactly the same for any
+input. The only matter in which they differ is their verbosity.
+
+And to pick up the argument again: it could be argued that the latter
+form is preferable, because it is more obvious what happens in each
+case. I argue against that. Not generally, but in this case. Because
+what's going on there is a very basic operation (making sure the input
+is exactly the String "yes"). The second form is too verbose -- that is,
+so verbose that it becomes clutter. The first (non-verbose) form
+expresses the intent clearly enough. If there is a "programmer" who does
+not understand that (especially the null-implication), then I'm sure Lew
+would have some poignant recommendations as to what avenues of
+employment they rather ought to pursue, and I would happen to be in
+agreement with him.
+
+Some of what you are talking about, on the topic of defensive
+programming, on the other hand, I would call functional defects. I do
+not perceive those as being matters of verbosity or not, but of whether
+the code is functionally complete or not. To your hypothetical
+programmer who does not handle exceptions because it would supposedly
+add verbosity, "verbosity" is but a pathetic front to mask either their
+lack of professionalism.
+
+The other examples you give definitely fall in the realm of defensive
+programming. Yes, a method should not make hidden assumptions as to its
+parameters (OTOH there would be nothing wrong per se with what I'd call
+an explicit assumption along the lines of: if( argumentNotValid ) throw
+new IllegalArgumentException(); ). Yes, every caller should be defensive
+about what the callee might return (within the boundaries of its
+contract). It should be noted that annotations have given us a potential
+tool forcibly to impose more stringency in these regards, although the
+way I see it it won't really be usable until teh Oracle makes the effort
+to formalise them and adds them to the core lib (I mean things like
+@NotNull). It still needs to mature a bit I think.
+
+The aforementioned is mitigated in code that is internal to a component
+(in the spirit of encapsulation, code ought to be divided into
+components such that the density of interrelation of code within a
+component is always strictly greater than that of interrelation of code
+in different components). Think private or package-private methods. It
+is often impractical and counter-productive to have
+to forego any hidden assumptions in those parts of the code. Then again,
+it is precisely the combination of these two aspects, that it is
+impractical and that it would be necessary, which makes OO and esp.
+encapsulation such a virtuous tool: by structuring code and data flow,
+you *can* relegate, notably, input checks to the boundaries of the
+component and operate on assumptions within the component. (Granted,
+this does not help the case where multiple programmers who are not in
+relation with each other work on the internals of the same component,
+which is why such a situation should be avoided).
+
+-- 
+DF.
+
+
+From 9167356974854359865
+X-Google-Thread: 10a146,9730213e38c467f5
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.181.11.130 with SMTP id ei2mr1862600wid.7.1371921989565;
+        Sat, 22 Jun 2013 10:26:29 -0700 (PDT)
+Path: md6ni17315wic.0!nntp.google.com!feeder1.cambriumusenet.nl!feed.tweaknews.nl!195.62.100.242.MISMATCH!newsfeed.kamp.net!newsfeed.kamp.net!eternal-september.org!feeder.eternal-september.org!mx05.eternal-september.org!.POSTED!not-for-mail
+From: Daniele Futtorovic <da.futt.news@laposte-dot-net.invalid>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+Date: Sat, 22 Jun 2013 19:26:27 +0200
+Organization: A noiseless patient Spider
+Lines: 73
+Message-ID: <kq4mee$fbm$2@dont-email.me>
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com> <b24an6FlpvpU1@mid.individual.net> <UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com> <b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad> <ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com> <19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me> <kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad> <kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad> <kq1nda$fbk$1@dont-email.me> <Uv6dnWRtNKrTx1jMnZ2dnUVZ7qSdnZ2d@bt.com>
+Mime-Version: 1.0
+Injection-Date: Sat, 22 Jun 2013 17:21:18 +0000 (UTC)
+Injection-Info: mx05.eternal-september.org; posting-host="f367d9e8a7c7f2a10160e0639e957a17";
+	logging-data="15734"; mail-complaints-to="abuse@eternal-september.org";	posting-account="U2FsdGVkX18HBfPAeWzM9QggvfkdBNiX"
+User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:17.0) Gecko/20130509 Thunderbird/17.0.6
+In-Reply-To: <Uv6dnWRtNKrTx1jMnZ2dnUVZ7qSdnZ2d@bt.com>
+Cancel-Lock: sha1:tgQJLkw7mRvyjZqxMhWCQx8C0/g=
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+
+On 22/06/2013 10:03, lipska the kat allegedly wrote:
+> On 21/06/13 15:24, Daniele Futtorovic wrote:
+>> On 21/06/2013 04:33, Arved Sandstrom allegedly wrote:
+>>> On 06/19/2013 11:42 AM, Daniele Futtorovic wrote:
+>>>> I'm all for defensive programming, but I think that there's a limit
+>>>> where it can be on the verge of silliness, and that that limit has been
+>>>> grazed here.
+>>>>
+>>>> Less-than-bright programmers IMO cannot be a justification for crossing
+>>>> that line; less-than-bright programmers have more ways to mess
+>>>> things up
+>>>> than you could possibly ever guard against. "Do not underestimate the
+>>>> ingenuity of complete fools", as the saying goes.
+>>>>
+>>>> And for me, there is an additional aspect: if a piece of code does
+>>>> something simple, something basic, then I will want it to be short, and
+>>>> vice-versa. Verbosity of code, to me, should hold a first-glance
+>>>> indication of the complexity of the algorithm. In other words: be terse
+>>>> IFF it's basic, be verbose IFF it's not.
+>>>>
+>>>> Perhaps your mileage does vary. No beef with that. Just throwing in my
+>>>> two cents.
+>>>>
+>>> It's a good discussion. I'm not personally convinced that verbosity adds
+>>> complexity, as a rule. There's really two types of complexity here:
+>>> maintainability complexity - as in, can Joe Blow 12 months later
+>>> understand the code best if it's compact versus unrolled, and formal
+>>> complexity, cyclomatic and otherwise.
+>>>
+>>> I'll admit that verbosity does usually add maintainability complexity,
+>>> if not the other kind. But not always. I've seen plenty of code that is
+>>> conceptually quite complex but very terse.
+>>
+>> Sorry to nitpick, but I don't think you understood me right. I'm not
+>> saying that verbosity adds complexity; I'm saying: if the piece of code
+>> does something tricky, something complicated, tend to make it verbose,
+>> otherwise, tend to make it terse. Thus, seeing a big blob of (e.g.
+>> unrolled, step-by-step) code holds the message "here be dragons". (And
+>> if it cannot be made verbose, then it means it absolutely requires an
+>> in-line comment).
+>>
+>> At least the way I perceived it, this discussion was about making stuff
+>> verbose indiscriminately, viz. basic code as well. I disagree with that
+>> in the above sense.
+> 
+> .... and who makes these seemingly arbitrary decisions about what is and
+> what isn't 'complex'. This idea that some bits of code can be written
+> differently (more/less verbosely) depending on someones definition of
+> 'complex' is exactly the sort of thing that makes code less readable.
+> Let's be quite clear about this, the *most important* thing
+> is readability. 
+
+Complexity is an objective measure, relative to the environment
+constituted by the software as a whole, of how sensitive the process in
+question is.
+
+> Anyone who has experienced 'flow' when writing code will
+> know that what was blindingly obvious yesterday can be arcane and obtuse
+> today. You need to pick a style and stick with it, not chop and change
+> between arbitrary styles on some whim.
+> 
+> I'm tempted to say that this behavior typifies the too clever by half
+> attitude that makes our job so frustrating sometimes but that might be
+> construed as confrontational so I won't ... :-)
+
+And who makes this arbitrary decision about what is and isn't "too
+clever by half"? Cleverness is not a sin. As it were, I strive for it.
+Cleverness is the path to betterment, individual as well as human as a
+whole. If you aren't clever or don't want to be, that's not my problem,
+but get out of my way.
+
+-- 
+DF.
+
+
+From -6348824007051150290
+X-Google-Thread: 10a146,9730213e38c467f5
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII
+X-Received: by 10.180.88.104 with SMTP id bf8mr1912730wib.3.1371923481910;
+        Sat, 22 Jun 2013 10:51:21 -0700 (PDT)
+Path: md6ni17343wic.0!nntp.google.com!proxad.net!feeder1-2.proxad.net!usenet-fr.net!de-l.enfer-du-nord.net!feeder1.enfer-du-nord.net!border1.nntp.ams2.giganews.com!border3.nntp.ams.giganews.com!Xl.tags.giganews.com!border1.nntp.ams.giganews.com!nntp.giganews.com!local2.nntp.ams.giganews.com!nntp.bt.com!news.bt.com.POSTED!not-for-mail
+NNTP-Posting-Date: Sat, 22 Jun 2013 12:51:21 -0500
+Date: Sat, 22 Jun 2013 18:51:20 +0100
+From: lipska the kat <"nospam at neversurrender dot co dot uk">
+Organization: Trollbusters 3
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130308 Thunderbird/17.0.4
+MIME-Version: 1.0
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com> <b24an6FlpvpU1@mid.individual.net> <UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com> <b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad> <ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com> <19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me> <kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad> <kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad> <kq1nda$fbk$1@dont-email.me> <Uv6dnWRtNKrTx1jMnZ2dnUVZ7qSdnZ2d@bt.com> <kq4mee$fbm$2@dont-email.me>
+In-Reply-To: <kq4mee$fbm$2@dont-email.me>
+Message-ID: <d9Sdna3iJ_eEeVjMnZ2dnUVZ8s-dnZ2d@bt.com>
+Lines: 79
+X-Usenet-Provider: http://www.giganews.com
+X-AuthenticatedUsername: NoAuthUser
+X-Trace: sv3-1DtHAJrnP2J3lVv6snijPAC4OV0hTNWFAVUsT/EAAMlsTH/jIT2kvM1ToEsn97okDXHqdASP2HSLkhM!UGcymMutAhtEOQ0ZRw3exrzl2RM8396Rc2Kf8EJVk5DAqVYrO6Dv3lbdjfBIroF1mGRPz5/eT/s=
+X-Complaints-To: abuse@btinternet.com
+X-DMCA-Complaints-To: abuse@btinternet.com
+X-Abuse-and-DMCA-Info: Please be sure to forward a copy of ALL headers
+X-Abuse-and-DMCA-Info: Otherwise we will be unable to process your complaint properly
+X-Postfilter: 1.3.40
+X-Original-Bytes: 5650
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 8bit
+
+On 22/06/13 18:26, Daniele Futtorovic wrote:
+> On 22/06/2013 10:03, lipska the kat allegedly wrote:
+>> On 21/06/13 15:24, Daniele Futtorovic wrote:
+>>> On 21/06/2013 04:33, Arved Sandstrom allegedly wrote:
+>>>> On 06/19/2013 11:42 AM, Daniele Futtorovic wrote:
+>>>>> I'm all for defensive programming, but I think that there's a limit
+>>>>> where it can be on the verge of silliness, and that that limit has been
+>>>>> grazed here.
+>>>>>
+>>>>> Less-than-bright programmers IMO cannot be a justification for crossing
+>>>>> that line; less-than-bright programmers have more ways to mess
+>>>>> things up
+>>>>> than you could possibly ever guard against. "Do not underestimate the
+>>>>> ingenuity of complete fools", as the saying goes.
+>>>>>
+>>>>> And for me, there is an additional aspect: if a piece of code does
+>>>>> something simple, something basic, then I will want it to be short, and
+>>>>> vice-versa. Verbosity of code, to me, should hold a first-glance
+>>>>> indication of the complexity of the algorithm. In other words: be terse
+>>>>> IFF it's basic, be verbose IFF it's not.
+>>>>>
+>>>>> Perhaps your mileage does vary. No beef with that. Just throwing in my
+>>>>> two cents.
+>>>>>
+>>>> It's a good discussion. I'm not personally convinced that verbosity adds
+>>>> complexity, as a rule. There's really two types of complexity here:
+>>>> maintainability complexity - as in, can Joe Blow 12 months later
+>>>> understand the code best if it's compact versus unrolled, and formal
+>>>> complexity, cyclomatic and otherwise.
+>>>>
+>>>> I'll admit that verbosity does usually add maintainability complexity,
+>>>> if not the other kind. But not always. I've seen plenty of code that is
+>>>> conceptually quite complex but very terse.
+>>>
+>>> Sorry to nitpick, but I don't think you understood me right. I'm not
+>>> saying that verbosity adds complexity; I'm saying: if the piece of code
+>>> does something tricky, something complicated, tend to make it verbose,
+>>> otherwise, tend to make it terse. Thus, seeing a big blob of (e.g.
+>>> unrolled, step-by-step) code holds the message "here be dragons". (And
+>>> if it cannot be made verbose, then it means it absolutely requires an
+>>> in-line comment).
+>>>
+>>> At least the way I perceived it, this discussion was about making stuff
+>>> verbose indiscriminately, viz. basic code as well. I disagree with that
+>>> in the above sense.
+>>
+>> .... and who makes these seemingly arbitrary decisions about what is and
+>> what isn't 'complex'. This idea that some bits of code can be written
+>> differently (more/less verbosely) depending on someones definition of
+>> 'complex' is exactly the sort of thing that makes code less readable.
+>> Let's be quite clear about this, the *most important* thing
+>> is readability.
+>
+> Complexity is an objective measure, relative to the environment
+> constituted by the software as a whole, of how sensitive the process in
+> question is.
+>
+>> Anyone who has experienced 'flow' when writing code will
+>> know that what was blindingly obvious yesterday can be arcane and obtuse
+>> today. You need to pick a style and stick with it, not chop and change
+>> between arbitrary styles on some whim.
+>>
+>> I'm tempted to say that this behavior typifies the too clever by half
+>> attitude that makes our job so frustrating sometimes but that might be
+>> construed as confrontational so I won't ... :-)
+>
+> And who makes this arbitrary decision about what is and isn't "too
+> clever by half"? Cleverness is not a sin. As it were, I strive for it.
+> Cleverness is the path to betterment, individual as well as human as a
+> whole. If you aren't clever or don't want to be, that's not my problem,
+> but get out of my way.
+
+Too clever by half ... it's an idiom, look it up.
+
+lipska
+
+-- 
+Lipska the Kat�: Troll hunter, sandbox destroyer
+and farscape dreamer of Aeryn Sun
+
+
+From 8140771647144573341
+X-Google-Thread: 10a146,9730213e38c467f5
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII
+X-Received: by 10.180.36.211 with SMTP id s19mr2008614wij.1.1371926488602;
+        Sat, 22 Jun 2013 11:41:28 -0700 (PDT)
+Path: md6ni17405wic.0!nntp.google.com!feeder1-2.proxad.net!proxad.net!feeder1-1.proxad.net!217.73.144.45.MISMATCH!feeder2.ecngs.de!ecngs!feeder.ecngs.de!Xl.tags.giganews.com!border1.nntp.ams.giganews.com!nntp.giganews.com!local2.nntp.ams.giganews.com!nntp.bt.com!news.bt.com.POSTED!not-for-mail
+NNTP-Posting-Date: Sat, 22 Jun 2013 13:41:27 -0500
+Date: Sat, 22 Jun 2013 19:41:23 +0100
+From: lipska the kat <"nospam at neversurrender dot co dot uk">
+Organization: Trollbusters 3
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130308 Thunderbird/17.0.4
+MIME-Version: 1.0
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com> <b24an6FlpvpU1@mid.individual.net> <UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com> <b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad> <ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com> <19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me> <kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad> <kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad> <kq1nda$fbk$1@dont-email.me> <lf7xt.83078$1p2.22506@newsfe25.iad> <kq4mdh$fbm$1@dont-email.me>
+In-Reply-To: <kq4mdh$fbm$1@dont-email.me>
+Message-ID: <l_WdnQVSU6BKcljMnZ2dnUVZ8jOdnZ2d@bt.com>
+Lines: 191
+X-Usenet-Provider: http://www.giganews.com
+X-AuthenticatedUsername: NoAuthUser
+X-Trace: sv3-Iykq9Z5TvV4UtQ+9tvDJTMPeSGW4v9IiFc7yjScoFeMouDHokD6/wWJjG/9T/vB6o5Mv+FKJAjyMCmB!N+TPkzSXfEXwKzIWrxiG308p4pA3VVYf3Vvx2EaWSjPGtc+r9GcBdPl5LLBOINJGNGjzGLh4fSE=
+X-Complaints-To: abuse@btinternet.com
+X-DMCA-Complaints-To: abuse@btinternet.com
+X-Abuse-and-DMCA-Info: Please be sure to forward a copy of ALL headers
+X-Abuse-and-DMCA-Info: Otherwise we will be unable to process your complaint properly
+X-Postfilter: 1.3.40
+Bytes: 10801
+X-Original-Bytes: 10739
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 8bit
+
+On 22/06/13 18:25, Daniele Futtorovic wrote:
+> On 22/06/2013 03:39, Arved Sandstrom allegedly wrote:
+>> On 06/21/2013 11:24 AM, Daniele Futtorovic wrote:
+>>> On 21/06/2013 04:33, Arved Sandstrom allegedly wrote:
+>>>> On 06/19/2013 11:42 AM, Daniele Futtorovic wrote:
+>>>>> I'm all for defensive programming, but I think that there's a limit
+>>>>> where it can be on the verge of silliness, and that that limit has been
+>>>>> grazed here.
+>>>>>
+>>>>> Less-than-bright programmers IMO cannot be a justification for crossing
+>>>>> that line; less-than-bright programmers have more ways to mess
+>>>>> things up
+>>>>> than you could possibly ever guard against. "Do not underestimate the
+>>>>> ingenuity of complete fools", as the saying goes.
+>>>>>
+>>>>> And for me, there is an additional aspect: if a piece of code does
+>>>>> something simple, something basic, then I will want it to be short, and
+>>>>> vice-versa. Verbosity of code, to me, should hold a first-glance
+>>>>> indication of the complexity of the algorithm. In other words: be terse
+>>>>> IFF it's basic, be verbose IFF it's not.
+>>>>>
+>>>>> Perhaps your mileage does vary. No beef with that. Just throwing in my
+>>>>> two cents.
+>>>>>
+>>>> It's a good discussion. I'm not personally convinced that verbosity adds
+>>>> complexity, as a rule. There's really two types of complexity here:
+>>>> maintainability complexity - as in, can Joe Blow 12 months later
+>>>> understand the code best if it's compact versus unrolled, and formal
+>>>> complexity, cyclomatic and otherwise.
+>>>>
+>>>> I'll admit that verbosity does usually add maintainability complexity,
+>>>> if not the other kind. But not always. I've seen plenty of code that is
+>>>> conceptually quite complex but very terse.
+>>>
+>>> Sorry to nitpick, but I don't think you understood me right. I'm not
+>>> saying that verbosity adds complexity; I'm saying: if the piece of code
+>>> does something tricky, something complicated, tend to make it verbose,
+>>> otherwise, tend to make it terse. Thus, seeing a big blob of (e.g.
+>>> unrolled, step-by-step) code holds the message "here be dragons". (And
+>>> if it cannot be made verbose, then it means it absolutely requires an
+>>> in-line comment).
+>>
+>> We're very much in agreement, on all points you just made.
+>>
+>>> At least the way I perceived it, this discussion was about making stuff
+>>> verbose indiscriminately, viz. basic code as well. I disagree with that
+>>> in the above sense.
+>>>
+>> I won't speak for anyone else, the argument I was making was for
+>> verbosity in support of defensive programming. I see Java code all the
+>> time where exceptions are try-caught with no thought placed into
+>> handling the problem somewhere - defensive coding fail...and handling it
+>> properly would add verbosity.
+>>
+>> I see main methods all the time where someone assumes the number and
+>> type of arguments. Defensive coding fail. I see methods all the time -
+>> like I said - where the same coder wrote the calling code and called
+>> code, and makes assumptions about what the calling code will do.
+>> Defensive coding fail.
+>>
+>> Or they make the naive assumption that people read Javadocs thoroughly.
+>> It's not the calling code's responsibility to protect the called code,
+>> after all. Given that we have to consider the bounds of parameters
+>> carefully, I don't see how some verbosity in the form of defensive code
+>> is objectionable.
+>>
+>> "Here be dragons" often means simply that there is - that we have to
+>> guard against what the calling code is doing.
+>
+> I see. Thanks for clarifying.
+>
+> It looks like I had not understood the discussion about verbosity in the
+> same sense as you do. In my view, when talking about verbosity, we talk
+> about a measure on, and that's the important point, an iso-functional
+> basis. To illustrate, when I switch on a "verbose" flag on my command
+> line, I do not expect the command to perform any differently than before
+> -- only that it should be more talkative about it. But the functions it
+> performs should not be impacted by it.
+>
+> To illustrate with code, and to pick some of the original examples
+> again, take the following two methods:
+>
+> boolean method1( String input ){
+>    return "yes".equals( input );
+> }
+>
+> boolean method2( String input ){
+>    final boolean ret;
+>    if( input == null ){
+>      ret = false;
+>    }
+>    else if( input.equals("yes") ){
+>      ret = true;
+>    }
+>    else {
+>      ret = false;
+>    }
+>
+>    return ret;
+> }
+>
+> This is what I mean. Both methods perform exactly the same for any
+> input. The only matter in which they differ is their verbosity.
+
+> And to pick up the argument again: it could be argued that the latter
+> form is preferable, because it is more obvious what happens in each
+> case. I argue against that. Not generally, but in this case. Because
+> what's going on there is a very basic operation (making sure the input
+> is exactly the String "yes"). The second form is too verbose -- that is,
+> so verbose that it becomes clutter. The first (non-verbose) form
+> expresses the intent clearly enough. If there is a "programmer" who does
+> not understand that (especially the null-implication), then I'm sure Lew
+> would have some poignant recommendations as to what avenues of
+> employment they rather ought to pursue, and I would happen to be in
+> agreement with him.
+
+Why am I not surprised.
+
+> Some of what you are talking about, on the topic of defensive
+> programming, on the other hand, I would call functional defects. I do
+> not perceive those as being matters of verbosity or not, but of whether
+> the code is functionally complete or not. To your hypothetical
+> programmer who does not handle exceptions because it would supposedly
+> add verbosity, "verbosity" is but a pathetic front to mask either their
+> lack of professionalism.
+>
+> The other examples you give definitely fall in the realm of defensive
+> programming. Yes, a method should not make hidden assumptions as to its
+> parameters (OTOH there would be nothing wrong per se with what I'd call
+> an explicit assumption along the lines of: if( argumentNotValid ) throw
+> new IllegalArgumentException(); ). Yes, every caller should be defensive
+> about what the callee might return (within the boundaries of its
+> contract). It should be noted that annotations have given us a potential
+> tool forcibly to impose more stringency in these regards, although the
+> way I see it it won't really be usable until teh Oracle makes the effort
+> to formalise them and adds them to the core lib (I mean things like
+> @NotNull). It still needs to mature a bit I think.
+>
+> The aforementioned is mitigated in code that is internal to a component
+> (in the spirit of encapsulation, code ought to be divided into
+> components such that the density of interrelation of code within a
+> component is always strictly greater than that of interrelation of code
+> in different components).
+
+You mean it should be cohesive (the code in a component), still, why use 
+one word when fifty will do.
+
+as you say.
+
+"verbosity is but a pathetic front to mask either their
+lack of professionalism" [sic]
+
+> Think private or package-private methods. It
+> is often impractical and counter-productive to have
+> to forego any hidden assumptions in those parts of the code.
+
+Hidden from whom???
+This is what encapsulation *means* for goodness sake. Callers code to 
+your published contract. You contract that your component behaves in a 
+certain way. If the caller breaks the contract then it's the callers 
+responsibility, you are stating the obvious. To what end?
+
+> Then again, it is precisely the combination of these two aspects, that it is
+> impractical and that it would be necessary, which makes OO and esp.
+> encapsulation such a virtuous tool: by structuring code and data flow,
+> you *can* relegate, notably, input checks to the boundaries of the
+> component and operate on assumptions within the component.
+
+It's called programming by contract. Or maybe compile time type checking 
+... what does any of this have to do with the original issue
+
+> (Granted,
+> this does not help the case where multiple programmers who are not in
+> relation with each other work on the internals of the same component,
+> which is why such a situation should be avoided).
+
+I hardly know where to start. Oh, I know, *documentation*
+What about maintenance. It will nearly always be the case that 
+programmers who have no knowledge of or contact with the original author 
+will be required to maintain the code at sometime in the future.
+
+*This* is why code should be unambiguous. Truly enlightened developers 
+understand this without needing to be told.
+
+... and BTW. Enlightenment is not the same as 'cleverness'
+
+lipska
+
+-- 
+Lipska the Kat�: Troll hunter, sandbox destroyer
+and farscape dreamer of Aeryn Sun
+
+
+From -1254235870737501384
+X-Google-Thread: 10a146,9730213e38c467f5
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.66.192.8 with SMTP id hc8mr4400999pac.11.1371952413795;
+        Sat, 22 Jun 2013 18:53:33 -0700 (PDT)
+Path: b2ni31639pby.1!nntp.google.com!news.glorb.com!feeder.erje.net!us.feeder.erje.net!newsfeed.fsmpi.rwth-aachen.de!eternal-september.org!feeder.eternal-september.org!mx05.eternal-september.org!.POSTED!not-for-mail
+From: Daniele Futtorovic <da.futt.news@laposte-dot-net.invalid>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+Date: Sun, 23 Jun 2013 03:53:30 +0200
+Organization: A noiseless patient Spider
+Lines: 31
+Message-ID: <kq5k56$rqe$1@dont-email.me>
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com> <b24an6FlpvpU1@mid.individual.net> <UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com> <b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad> <ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com> <19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me> <kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad> <kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad> <kq1nda$fbk$1@dont-email.me> <lf7xt.83078$1p2.22506@newsfe25.iad> <kq4mdh$fbm$1@dont-email.me> <l_WdnQVSU6BKcljMnZ2dnUVZ8jOdnZ2d@bt.com>
+Mime-Version: 1.0
+Injection-Date: Sun, 23 Jun 2013 01:48:22 +0000 (UTC)
+Injection-Info: mx05.eternal-september.org; posting-host="f367d9e8a7c7f2a10160e0639e957a17";
+	logging-data="28494"; mail-complaints-to="abuse@eternal-september.org";	posting-account="U2FsdGVkX18kACHDi7RdteXhyNTvxTZ0"
+User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:17.0) Gecko/20130509 Thunderbird/17.0.6
+In-Reply-To: <l_WdnQVSU6BKcljMnZ2dnUVZ8jOdnZ2d@bt.com>
+Cancel-Lock: sha1:tW6tWATQ7jgYlhwkn04qQOa/oWU=
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+
+On 22/06/2013 20:41, lipska the kat allegedly wrote:
+> On 22/06/13 18:25, Daniele Futtorovic wrote:
+>> The aforementioned is mitigated in code that is internal to a
+>> component (in the spirit of encapsulation, code ought to be divided
+>> into components such that the density of interrelation of code
+>> within a component is always strictly greater than that of
+>> interrelation of code in different components).
+> 
+> You mean it should be cohesive (the code in a component), still, why
+> use one word when fifty will do.
+> 
+> as you say.
+> 
+> "verbosity is but a pathetic front to mask either their lack of
+> professionalism" [sic]
+
+No, I did not simply say it should be cohesive. If you want to
+substitute "cohesiveness" for "density of interrelation" (which is fair
+enough), I said it should be more cohesive within the component than
+between components, and that this is what characterises something as
+being a component. Not the same thing.
+
+But still, assuming it were the same thing for a moment (which, again,
+it is not by a wide stretch), do you really think that completely
+twisting my words, under the guise of quoting me, to proceed to
+advocate, for a natural and hence inexact language, a practice which you
+rebuke me for advocating for a computer and hence exact language is
+going to induce me to take you seriously?
+
+-- 
+DF.
+
+
+From 5770250527225165954
+X-Google-Thread: 10a146,9730213e38c467f5
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII
+X-Received: by 10.180.88.104 with SMTP id bf8mr2377080wib.3.1371975685716;
+        Sun, 23 Jun 2013 01:21:25 -0700 (PDT)
+Path: b5ni17278wiz.1!nntp.google.com!feeder1-2.proxad.net!proxad.net!feeder1-1.proxad.net!217.73.144.45.MISMATCH!feeder2.ecngs.de!ecngs!feeder.ecngs.de!Xl.tags.giganews.com!border1.nntp.ams.giganews.com!nntp.giganews.com!local2.nntp.ams.giganews.com!nntp.bt.com!news.bt.com.POSTED!not-for-mail
+NNTP-Posting-Date: Sun, 23 Jun 2013 03:21:25 -0500
+Date: Sun, 23 Jun 2013 09:21:24 +0100
+From: lipska the kat <"nospam at neversurrender dot co dot uk">
+Organization: Trollbusters 3
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130308 Thunderbird/17.0.4
+MIME-Version: 1.0
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com> <b24an6FlpvpU1@mid.individual.net> <UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com> <b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad> <ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com> <19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me> <kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad> <kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad> <kq1nda$fbk$1@dont-email.me> <lf7xt.83078$1p2.22506@newsfe25.iad> <kq4mdh$fbm$1@dont-email.me> <l_WdnQVSU6BKcljMnZ2dnUVZ8jOdnZ2d@bt.com> <kq5k56$rqe$1@dont-email.me>
+In-Reply-To: <kq5k56$rqe$1@dont-email.me>
+Message-ID: <jq-dnbtLwcyYLVvMnZ2dnUVZ7qCdnZ2d@bt.com>
+Lines: 59
+X-Usenet-Provider: http://www.giganews.com
+X-AuthenticatedUsername: NoAuthUser
+X-Trace: sv3-FZvBDePOqYwBMGZBpUhxnO7fKd2P17Ol3GYgTWOuMcGhCdoUJOQkJ4LC268ewHn9P24nTw+zvps+NjN!W8ojjczg5HlLNYXXyMQNdRmUhR280gJ4DVcXk4EIDMX9Zik2rB0XAeyt4PvyeogNOzRdKGap5Wk=
+X-Complaints-To: abuse@btinternet.com
+X-DMCA-Complaints-To: abuse@btinternet.com
+X-Abuse-and-DMCA-Info: Please be sure to forward a copy of ALL headers
+X-Abuse-and-DMCA-Info: Otherwise we will be unable to process your complaint properly
+X-Postfilter: 1.3.40
+Bytes: 4573
+X-Original-Bytes: 4512
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 8bit
+
+On 23/06/13 02:53, Daniele Futtorovic wrote:
+> On 22/06/2013 20:41, lipska the kat allegedly wrote:
+>> On 22/06/13 18:25, Daniele Futtorovic wrote:
+>>> The aforementioned is mitigated in code that is internal to a
+>>> component (in the spirit of encapsulation, code ought to be divided
+>>> into components such that the density of interrelation of code
+>>> within a component is always strictly greater than that of
+>>> interrelation of code in different components).
+>>
+>> You mean it should be cohesive (the code in a component), still, why
+>> use one word when fifty will do.
+>>
+>> as you say.
+>>
+>> "verbosity is but a pathetic front to mask either their lack of
+>> professionalism" [sic]
+>
+> No, I did not simply say it should be cohesive. If you want to
+> substitute "cohesiveness" for "density of interrelation" (which is fair
+> enough), I said it should be more cohesive within the component than
+> between components, and that this is what characterises something as
+> being a component. Not the same thing.
+
+A component is characterised by the coherence of it's abstraction 
+expressed as the collection of related operations exposed in its 
+interface. What goes on 'inside' a component is irrelevant to it's 
+external clients, or should be. Normal measures of software quality 
+still apply of course but otherwise I have no idea what you mean by
+'cohesive within the component'
+
+A component is a building block. Many cohesive components can be 
+combined to make another cohesive component. Again, the cohesion of the 
+abstraction is characterised by the interface presented to the outside 
+world and cohesion between components (coupling) becomes a moot point 
+(again) as the interface is what matters.
+
+> But still, assuming it were the same thing for a moment (which, again,
+> it is not by a wide stretch), do you really think that completely
+> twisting my words, under the guise of quoting me, to proceed to
+> advocate, for a natural and hence inexact language, a practice which you
+> rebuke me for advocating for a computer and hence exact language is
+> going to induce me to take you seriously?
+
+What is this obsession that people on this group seem to have with being 
+taken seriously? I couldn't care less if you 'take me seriously' I have 
+nothing to prove to you or anyone else so please don't waste any more 
+time on 'taking me seriously'. When you come out with complete bollocks 
+like ...
+
+"verbosity is but a pathetic front to mask either their lack of
+professionalism" [sic]
+
+Then expect me to react. It's nothing personal fercrissakes.
+
+lipska
+
+-- 
+Lipska the Kat�: Troll hunter, sandbox destroyer
+and farscape dreamer of Aeryn Sun
+
+
+From -3216409153807367871
+X-Google-Thread: 10a146,8e55a99b97ba5d08
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.207.44 with SMTP id lt12mr2651487wic.5.1372002554790;
+        Sun, 23 Jun 2013 08:49:14 -0700 (PDT)
+Path: md6ni18977wic.0!nntp.google.com!feeder1.cambriumusenet.nl!feed.tweaknews.nl!194.134.4.91.MISMATCH!news2.euro.net!news.mixmin.net!aioe.org!.POSTED!not-for-mail
+From: Roedy Green <see_website@mindprod.com.invalid>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: convert byte array to hex string using BigInteger
+Date: Sun, 23 Jun 2013 08:49:12 -0700
+Organization: Canadian Mind Products
+Lines: 16
+Message-ID: <c26es85kfu6a95accpbcfg0o4ufojodhne@4ax.com>
+References: <kpur29$5v4$1@news.albasani.net> <2lf9s8dkji8grt44qenen8k731pghra5rf@4ax.com> <qdnytcrvwob4.14l9nuassw2g5$.dlg@40tude.net>
+Reply-To: Roedy Green <see_website@mindprod.com.invalid>
+NNTP-Posting-Host: K2Qzzs3EAqXk5RLzfhxcSw.user.speranza.aioe.org
+Mime-Version: 1.0
+X-Complaints-To: abuse@aioe.org
+User-Agent: ForteAgent/7.10.32.1212
+X-Notice: Filtered by postfilter v. 0.8.2
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+On Sat, 22 Jun 2013 00:26:49 +0200, Joerg Meier <joergmmeier@arcor.de>
+wrote, quoted or indirectly quoted someone who said :
+
+>For a reason I was unable to discern it was actually a teensy bit slower
+>than the Oracle implementation.
+
+I forgot to make my static array final.  That might have done it.
+The corrected version is posted at http://mindprod.com/jgloss/hex.html
+
+How did you think to look for such a method in that package by that
+name?
+-- 
+Roedy Green Canadian Mind Products http://mindprod.com
+Getting information off the Internet is 
+like taking a drink from a fire hydrant.
+~ Mitch Kapor 1950-11-01
+
+
+From 8438364856615881364
+X-Google-Thread: 10a146,600894b2c7f8f2d
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.37.143 with SMTP id y15mr2655837wij.2.1372002616917;
+        Sun, 23 Jun 2013 08:50:16 -0700 (PDT)
+Path: md6ni18978wic.0!nntp.google.com!feeder1.cambriumusenet.nl!feed.tweaknews.nl!195.96.0.7.MISMATCH!newsfeed.utanet.at!newsfeed.tele2net.at!aioe.org!.POSTED!not-for-mail
+From: Roedy Green <see_website@mindprod.com.invalid>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: new JDK 1.7.0_25
+Date: Sun, 23 Jun 2013 08:50:15 -0700
+Organization: Canadian Mind Products
+Lines: 13
+Message-ID: <ljlbs8hrohont7bocinnrm8ak2s5v77jlc@4ax.com>
+References: <ekm1s8dcbec98dtehp77u7j3o4dqf9pupr@4ax.com> <602776aa-b071-4c62-a5e4-77451a7a636e@googlegroups.com> <kq308b$uah$1@dont-email.me>
+Reply-To: Roedy Green <see_website@mindprod.com.invalid>
+NNTP-Posting-Host: K2Qzzs3EAqXk5RLzfhxcSw.user.speranza.aioe.org
+Mime-Version: 1.0
+X-Complaints-To: abuse@aioe.org
+User-Agent: ForteAgent/7.10.32.1212
+X-Notice: Filtered by postfilter v. 0.8.2
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+On Fri, 21 Jun 2013 22:01:30 -0400, David Lamb <dalamb@cs.queensu.ca>
+wrote, quoted or indirectly quoted someone who said :
+
+>Uh, that was Mitch's birthday -- not likely to be the date of the quote! :)
+
+Correct.  I try to get birth/death dates on all quote and book authors
+on my site to help you put them in context. Almost no young people
+today reveal their birthdays.  Identity theft discourages it.
+-- 
+Roedy Green Canadian Mind Products http://mindprod.com
+Getting information off the Internet is 
+like taking a drink from a fire hydrant.
+~ Mitch Kapor 1950-11-01
+
+
+From 3487365503607948070
+X-Google-Thread: 10a146,8e55a99b97ba5d08
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.12.200 with SMTP id a8mr2750788wic.1.1372016432171;
+        Sun, 23 Jun 2013 12:40:32 -0700 (PDT)
+Path: md6ni19257wic.0!nntp.google.com!proxad.net!feeder1-2.proxad.net!news.mixmin.net!aioe.org!.POSTED!not-for-mail
+From: Roedy Green <see_website@mindprod.com.invalid>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: convert byte array to hex string using BigInteger
+Date: Sun, 23 Jun 2013 12:40:29 -0700
+Organization: Canadian Mind Products
+Lines: 14
+Message-ID: <9pjes8t6m7echl5a8m3bioeji2j6tjv0rb@4ax.com>
+References: <kpur29$5v4$1@news.albasani.net> <2lf9s8dkji8grt44qenen8k731pghra5rf@4ax.com> <qdnytcrvwob4.14l9nuassw2g5$.dlg@40tude.net>
+Reply-To: Roedy Green <see_website@mindprod.com.invalid>
+NNTP-Posting-Host: K2Qzzs3EAqXk5RLzfhxcSw.user.speranza.aioe.org
+Mime-Version: 1.0
+X-Complaints-To: abuse@aioe.org
+User-Agent: ForteAgent/7.10.32.1212
+X-Notice: Filtered by postfilter v. 0.8.2
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+On Sat, 22 Jun 2013 00:26:49 +0200, Joerg Meier <joergmmeier@arcor.de>
+wrote, quoted or indirectly quoted someone who said :
+
+>For a reason I was unable to discern it was actually a teensy bit slower
+>than the Oracle implementation.
+
+The code looks almost identical. Probably the difference was caused by
+different "warmup" times before starting to measure.  You have to give
+it time to apply the hotspot.
+-- 
+Roedy Green Canadian Mind Products http://mindprod.com
+Getting information off the Internet is 
+like taking a drink from a fire hydrant.
+~ Mitch Kapor 1950-11-01
+
+
+From 1303163555889517193
+X-Google-Thread: 10a146,8e55a99b97ba5d08
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.11.239 with SMTP id t15mr2775579wib.3.1372019862166;
+        Sun, 23 Jun 2013 13:37:42 -0700 (PDT)
+Path: md6ni17918wic.0!nntp.google.com!fu-berlin.de!uni-berlin.de!news.dfncis.de!not-for-mail
+From: Joerg Meier <joergmmeier@arcor.de>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: convert byte array to hex string using BigInteger
+Date: Sun, 23 Jun 2013 22:37:40 +0200
+Lines: 28
+Message-ID: <nqk78kxi0fk2.yhz4meaf84ys$.dlg@40tude.net>
+References: <kpur29$5v4$1@news.albasani.net> <2lf9s8dkji8grt44qenen8k731pghra5rf@4ax.com> <qdnytcrvwob4.14l9nuassw2g5$.dlg@40tude.net> <c26es85kfu6a95accpbcfg0o4ufojodhne@4ax.com>
+Mime-Version: 1.0
+X-Trace: news.dfncis.de VbI9820g9wZIhiCYgHMHhQdvg9Ux9uhHvXV0TDXTFR3Kuyr4hdv9YTbw4G
+Cancel-Lock: sha1:3y0i8o4jmRSXOUnxZHuBHYZvFZI=
+User-Agent: 40tude_Dialog/2.0.15.1
+X-Antivirus: avast! (VPS 130623-1, 23.06.2013), Outbound message
+X-Antivirus-Status: Clean
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+
+On Sun, 23 Jun 2013 08:49:12 -0700, Roedy Green wrote:
+
+> On Sat, 22 Jun 2013 00:26:49 +0200, Joerg Meier <joergmmeier@arcor.de>
+> wrote, quoted or indirectly quoted someone who said :
+>>For a reason I was unable to discern it was actually a teensy bit slower
+>>than the Oracle implementation.
+> I forgot to make my static array final.  That might have done it.
+> The corrected version is posted at http://mindprod.com/jgloss/hex.html
+
+It has not made any difference in my test case, but I will readily admit
+that I only jotted down a very primitive one, so it's entirely possible
+that the issue was on my end. Either way, it was only around 5-10%, so I
+didn't bother to look into it too much.
+
+> How did you think to look for such a method in that package by that
+> name?
+
+I must admit that I don't recall how I first came upon it, but ever since I
+did, I retained to memory that Java "has that", and the few times I needed
+it, I just used Google until I found "the one in the JRE". It's not the
+most obvious of places, I agree.
+
+Liebe Gruesse,
+		Joerg
+
+-- 
+Ich lese meine Emails nicht, replies to Email bleiben also leider
+ungelesen.
+
+
+From -6512525150338368914
+X-Google-Thread: 10a146,8e55a99b97ba5d08
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.37.143 with SMTP id y15mr2807899wij.2.1372020067759;
+        Sun, 23 Jun 2013 13:41:07 -0700 (PDT)
+Path: md6ni17918wic.0!nntp.google.com!fu-berlin.de!uni-berlin.de!news.dfncis.de!not-for-mail
+From: Joerg Meier <joergmmeier@arcor.de>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: convert byte array to hex string using BigInteger
+Date: Sun, 23 Jun 2013 22:41:06 +0200
+Lines: 25
+Message-ID: <151xqy4tau28d$.nq94zzouq9ya$.dlg@40tude.net>
+References: <kpur29$5v4$1@news.albasani.net> <2lf9s8dkji8grt44qenen8k731pghra5rf@4ax.com> <qdnytcrvwob4.14l9nuassw2g5$.dlg@40tude.net> <9pjes8t6m7echl5a8m3bioeji2j6tjv0rb@4ax.com>
+Mime-Version: 1.0
+X-Trace: news.dfncis.de lt2gfjbbwT2HZGbBXQM/CguICdyHoLmF7zkiGIJ/e2FUbScH9kDi18ll48
+Cancel-Lock: sha1:ni2/pmWpkzctEeWMW7UK7u5/wfg=
+User-Agent: 40tude_Dialog/2.0.15.1
+X-Antivirus: avast! (VPS 130623-1, 23.06.2013), Outbound message
+X-Antivirus-Status: Clean
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+
+On Sun, 23 Jun 2013 12:40:29 -0700, Roedy Green wrote:
+
+> On Sat, 22 Jun 2013 00:26:49 +0200, Joerg Meier <joergmmeier@arcor.de>
+> wrote, quoted or indirectly quoted someone who said :
+>>For a reason I was unable to discern it was actually a teensy bit slower
+>>than the Oracle implementation.
+> The code looks almost identical. Probably the difference was caused by
+> different "warmup" times before starting to measure.  You have to give
+> it time to apply the hotspot.
+
+I looped both versions multiple times, and while times varied, yours was
+consistently slower. But, like I said in my other post, not nearly by
+enough as to prefer one over the other.
+
+For what it's worth, I just noticed that my code is from OpenJDK, but I
+tested the code from Oracle. Is there still a difference with these
+classes, or are they identical now ? I'm not near my dev PC with the Oracle
+JDK/sources right now.
+
+Liebe Gruesse,
+		Joerg
+
+-- 
+Ich lese meine Emails nicht, replies to Email bleiben also leider
+ungelesen.
+
+
+From 5586986308092791918
+X-Google-Thread: 10a146,9730213e38c467f5
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.204.72.1 with SMTP id k1mr2095175bkj.1.1372093075876;
+        Mon, 24 Jun 2013 09:57:55 -0700 (PDT)
+Path: md6ni21108wic.0!nntp.google.com!goblin1!goblin.stu.neva.ru!eternal-september.org!feeder.eternal-september.org!mx05.eternal-september.org!.POSTED!not-for-mail
+From: Daniele Futtorovic <da.futt.news@laposte-dot-net.invalid>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+Date: Mon, 24 Jun 2013 18:57:53 +0200
+Organization: A noiseless patient Spider
+Lines: 57
+Message-ID: <kq9tgp$8ct$1@dont-email.me>
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com> <b24an6FlpvpU1@mid.individual.net> <UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com> <b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad> <ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com> <19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me> <kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad> <kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad> <kq1nda$fbk$1@dont-email.me> <lf7xt.83078$1p2.22506@newsfe25.iad> <kq4mdh$fbm$1@dont-email.me> <l_WdnQVSU6BKcljMnZ2dnUVZ8jOdnZ2d@bt.com> <kq5k56$rqe$1@dont-email.me> <jq-dnbtLwcyYLVvMnZ2dnUVZ7qCdnZ2d@bt.com>
+Mime-Version: 1.0
+Injection-Date: Mon, 24 Jun 2013 16:52:41 +0000 (UTC)
+Injection-Info: mx05.eternal-september.org; posting-host="b5bf9bd97bf5fe37cc54cc2429c49296";
+	logging-data="8605"; mail-complaints-to="abuse@eternal-september.org";	posting-account="U2FsdGVkX18ywfjycIBhfe31nZTKsjmd"
+User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:17.0) Gecko/20130509 Thunderbird/17.0.6
+In-Reply-To: <jq-dnbtLwcyYLVvMnZ2dnUVZ7qCdnZ2d@bt.com>
+Cancel-Lock: sha1:ZvAIcXqD1anKWONi3E+MZULmEmk=
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+
+On 23/06/2013 10:21, lipska the kat allegedly wrote:
+> On 23/06/13 02:53, Daniele Futtorovic wrote:
+>> On 22/06/2013 20:41, lipska the kat allegedly wrote:
+>>> On 22/06/13 18:25, Daniele Futtorovic wrote:
+>>>> The aforementioned is mitigated in code that is internal to a
+>>>> component (in the spirit of encapsulation, code ought to be divided
+>>>> into components such that the density of interrelation of code
+>>>> within a component is always strictly greater than that of
+>>>> interrelation of code in different components).
+>>>
+>>> You mean it should be cohesive (the code in a component), still, why
+>>> use one word when fifty will do.
+>>>
+>>> as you say.
+>>>
+>>> "verbosity is but a pathetic front to mask either their lack of
+>>> professionalism" [sic]
+>>
+>> No, I did not simply say it should be cohesive. If you want to
+>> substitute "cohesiveness" for "density of interrelation" (which is fair
+>> enough), I said it should be more cohesive within the component than
+>> between components, and that this is what characterises something as
+>> being a component. Not the same thing.
+> 
+>> But still, assuming it were the same thing for a moment (which, again,
+>> it is not by a wide stretch), do you really think that completely
+>> twisting my words, under the guise of quoting me, to proceed to
+>> advocate, for a natural and hence inexact language, a practice which you
+>> rebuke me for advocating for a computer and hence exact language is
+>> going to induce me to take you seriously?
+> 
+> What is this obsession that people on this group seem to have with being
+> taken seriously? I couldn't care less if you 'take me seriously' I have
+> nothing to prove to you or anyone else so please don't waste any more
+> time on 'taking me seriously'. When you come out with complete bollocks
+> like ...
+> 
+> "verbosity is but a pathetic front to mask either their lack of
+> professionalism" [sic]
+> 
+> Then expect me to react. It's nothing personal fercrissakes.
+
+To conclude this discussion (as I am not inclined to debate with someone
+I can't take seriously), let me point out once more that that quote is
+the product of your very imagination; for by omitting the quotes around
+the word "verbosity" and by omitting the context from what I originally
+wrote, you have entirely distorted the original meaning of what I wrote,
+to wit, that to someone who argues they should leave out essential
+functionality out of their code because that essential functionality
+would make their code too verbose, "verbose" (that is, the argument of
+verbosity) is but a front to mask their lack of professionalism, and not
+what verbosity is actually about. You'd have to read that to which I was
+responding, viz. Arved's posting, to understand why I was making that
+distinction.
+
+-- 
+DF.
+
+
+From -1303313983053407543
+X-Google-Thread: 9dc47a6fbc,9730213e38c467f5
+X-Google-Attributes: gid9dc47a6fbc,public,usenet
+X-Google-NewGroupId: yes
+X-Google-Language: ENGLISH,ASCII
+X-Received: by 10.224.57.65 with SMTP id b1mr26784282qah.2.1372094097493;
+        Mon, 24 Jun 2013 10:14:57 -0700 (PDT)
+Path: 10ni2435qax.0!nntp.google.com!npeer02.iad.highwinds-media.com!news.highwinds-media.com!feed-me.highwinds-media.com!newsfeed1.swip.net!feeder.erje.net!eu.feeder.erje.net!border3.nntp.ams.giganews.com!Xl.tags.giganews.com!border1.nntp.ams.giganews.com!nntp.giganews.com!local2.nntp.ams.giganews.com!nntp.bt.com!news.bt.com.POSTED!not-for-mail
+NNTP-Posting-Date: Mon, 24 Jun 2013 12:14:56 -0500
+Date: Mon, 24 Jun 2013 18:14:55 +0100
+From: lipska the kat <"nospam at neversurrender dot co dot uk">
+Organization: Trollbusters 3
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130308 Thunderbird/17.0.4
+MIME-Version: 1.0
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+References: <324f929f-772e-4004-81e1-6b454cdae794@googlegroups.com> <b24an6FlpvpU1@mid.individual.net> <UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com> <b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad> <ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com> <19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me> <kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad> <kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad> <kq1nda$fbk$1@dont-email.me> <lf7xt.83078$1p2.22506@newsfe25.iad> <kq4mdh$fbm$1@dont-email.me> <l_WdnQVSU6BKcljMnZ2dnUVZ8jOdnZ2d@bt.com> <kq5k56$rqe$1@dont-email.me> <jq-dnbtLwcyYLVvMnZ2dnUVZ7qCdnZ2d@bt.com> <kq9tgp$8ct$1@dont-email.me>
+In-Reply-To: <kq9tgp$8ct$1@dont-email.me>
+Message-ID: <ycKdnQ0xhogN41XMnZ2dnUVZ8uOdnZ2d@bt.com>
+Lines: 65
+X-Usenet-Provider: http://www.giganews.com
+X-AuthenticatedUsername: NoAuthUser
+X-Trace: sv3-wiLqm+l6NL4nU+p5KdOKlnmgypaJlxUwhxg8RKPrpz8FZaiZzTZwHLA6ngGvHSvaeDwypgiAVzUIS3X!bI4Jz3fSs/AQtoV76NbojicSUEVA6fkFMyx8fyPjA0SJlDERQF9vWLFrNaqPwRtLQBtUobBWZRM=
+X-Complaints-To: abuse@btinternet.com
+X-DMCA-Complaints-To: abuse@btinternet.com
+X-Abuse-and-DMCA-Info: Please be sure to forward a copy of ALL headers
+X-Abuse-and-DMCA-Info: Otherwise we will be unable to process your complaint properly
+X-Postfilter: 1.3.40
+Bytes: 5120
+X-Original-Bytes: 5059
+X-Received-Bytes: 5313
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 8bit
+
+On 24/06/13 17:57, Daniele Futtorovic wrote:
+> On 23/06/2013 10:21, lipska the kat allegedly wrote:
+>> On 23/06/13 02:53, Daniele Futtorovic wrote:
+>>> On 22/06/2013 20:41, lipska the kat allegedly wrote:
+>>>> On 22/06/13 18:25, Daniele Futtorovic wrote:
+>>>>> The aforementioned is mitigated in code that is internal to a
+>>>>> component (in the spirit of encapsulation, code ought to be divided
+>>>>> into components such that the density of interrelation of code
+>>>>> within a component is always strictly greater than that of
+>>>>> interrelation of code in different components).
+>>>>
+>>>> You mean it should be cohesive (the code in a component), still, why
+>>>> use one word when fifty will do.
+>>>>
+>>>> as you say.
+>>>>
+>>>> "verbosity is but a pathetic front to mask either their lack of
+>>>> professionalism" [sic]
+>>>
+>>> No, I did not simply say it should be cohesive. If you want to
+>>> substitute "cohesiveness" for "density of interrelation" (which is fair
+>>> enough), I said it should be more cohesive within the component than
+>>> between components, and that this is what characterises something as
+>>> being a component. Not the same thing.
+>>
+>>> But still, assuming it were the same thing for a moment (which, again,
+>>> it is not by a wide stretch), do you really think that completely
+>>> twisting my words, under the guise of quoting me, to proceed to
+>>> advocate, for a natural and hence inexact language, a practice which you
+>>> rebuke me for advocating for a computer and hence exact language is
+>>> going to induce me to take you seriously?
+>>
+>> What is this obsession that people on this group seem to have with being
+>> taken seriously? I couldn't care less if you 'take me seriously' I have
+>> nothing to prove to you or anyone else so please don't waste any more
+>> time on 'taking me seriously'. When you come out with complete bollocks
+>> like ...
+>>
+>> "verbosity is but a pathetic front to mask either their lack of
+>> professionalism" [sic]
+>>
+>> Then expect me to react. It's nothing personal fercrissakes.
+>
+> To conclude this discussion (as I am not inclined to debate with someone
+> I can't take seriously), let me point out once more that that quote is
+> the product of your very imagination; for by omitting the quotes around
+> the word "verbosity" and by omitting the context from what I originally
+> wrote, you have entirely distorted the original meaning of what I wrote,
+> to wit, that to someone who argues they should leave out essential
+> functionality out of their code because that essential functionality
+> would make their code too verbose, "verbose" (that is, the argument of
+> verbosity) is but a front to mask their lack of professionalism, and not
+> what verbosity is actually about. You'd have to read that to which I was
+> responding, viz. Arved's posting, to understand why I was making that
+> distinction.
+
+I see, well thank you for clearing that up ...
+I'm also delighted to hear that you don't take me seriously.
+It means we concur in our opinion of each other.
+
+lipska
+
+-- 
+Lipska the Kat�: Troll hunter, sandbox destroyer
+and farscape dreamer of Aeryn Sun
+
+
+From -3310022193370594320
+X-Google-Thread: 9dc47a6fbc,9730213e38c467f5
+X-Google-Attributes: gid9dc47a6fbc,public,usenet
+X-Google-NewGroupId: yes
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.185.115 with SMTP id fb19mr3825839wic.0.1372107621580;
+        Mon, 24 Jun 2013 14:00:21 -0700 (PDT)
+Path: b5ni20560wiz.1!nntp.google.com!proxad.net!feeder1-2.proxad.net!news.mixmin.net!eternal-september.org!feeder.eternal-september.org!mx05.eternal-september.org!.POSTED!not-for-mail
+From: Gene Wirchenko <genew@telus.net>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+Date: Mon, 24 Jun 2013 13:00:38 -0700
+Organization: A noiseless patient Spider
+Lines: 16
+Message-ID: <i89hs8p13bde92qjtudd1ajehin9eqq7fa@4ax.com>
+References: <UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com> <b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad> <ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com> <19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me> <kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad> <kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad> <kq0k30$ubf$1@dont-email.me> <6euehy3ijswn.e08p5nxwbfbf.dlg@40tude.net> <kq2fnu$osv$1@dont-email.me>
+Mime-Version: 1.0
+Injection-Info: mx05.eternal-september.org; posting-host="60d0d39a542030f45c674d6e1df82370";
+	logging-data="8918"; mail-complaints-to="abuse@eternal-september.org";	posting-account="U2FsdGVkX1/QKnjz9MDVGjGgjBzDORFSDDQVPXWvt7M="
+X-Newsreader: Forte Agent 4.2/32.1118
+Cancel-Lock: sha1:QoUDEtQ0KdpTVd4lqkE98llJ6xw=
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+On Fri, 21 Jun 2013 21:14:39 +0000 (UTC), Martin Gregorie
+<martin@address-in-sig.invalid> wrote:
+
+[snip]
+
+>Consequently, you didn't bother with storing the century unless you 
+>really had to, e.g. you had people on file with birthdays in the previous 
+>century. 
+
+     In alt.folklore.computers, I have read posts by people who have
+stated that there wre programs that had only one digit for year and
+when the 1970's started, the report programs had to be updated.
+
+Sincerely,
+
+Gene Wirchenko
+
+
+From 2796161453183448662
+X-Google-Thread: 10a146,9730213e38c467f5
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.187.47 with SMTP id fp15mr3773743wic.5.1372109703424;
+        Mon, 24 Jun 2013 14:35:03 -0700 (PDT)
+Path: md6ni21775wic.0!nntp.google.com!feeder1.cambriumusenet.nl!feed.tweaknews.nl!195.71.90.67.MISMATCH!news.unit0.net!eternal-september.org!feeder.eternal-september.org!mx05.eternal-september.org!.POSTED!not-for-mail
+From: Martin Gregorie <martin@address-in-sig.invalid>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+Date: Mon, 24 Jun 2013 21:29:48 +0000 (UTC)
+Organization: A noiseless patient Spider
+Lines: 48
+Message-ID: <kqadoc$2vs$4@dont-email.me>
+References: <UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com>
+	<b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad>
+	<ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com>
+	<19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me>
+	<kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad>
+	<kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad>
+	<kq0k30$ubf$1@dont-email.me> <6euehy3ijswn.e08p5nxwbfbf.dlg@40tude.net>
+	<kq2fnu$osv$1@dont-email.me> <i89hs8p13bde92qjtudd1ajehin9eqq7fa@4ax.com>
+Mime-Version: 1.0
+Injection-Date: Mon, 24 Jun 2013 21:29:48 +0000 (UTC)
+Injection-Info: mx05.eternal-september.org; posting-host="e5160e2be48f1ea550cf61512446f525";
+	logging-data="3068"; mail-complaints-to="abuse@eternal-september.org";	posting-account="U2FsdGVkX19OeZTw9QX7Q1WsQ0G1e6uL0KCTijAyXzo="
+User-Agent: Pan/0.139 (Sexual Chocolate; GIT bf56508
+	git://git.gnome.org/pan2)
+Cancel-Lock: sha1:2rwvm2TS9O75kfsCh45eKTmBZFQ=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On Mon, 24 Jun 2013 13:00:38 -0700, Gene Wirchenko wrote:
+
+> On Fri, 21 Jun 2013 21:14:39 +0000 (UTC), Martin Gregorie
+> <martin@address-in-sig.invalid> wrote:
+> 
+> [snip]
+> 
+>>Consequently, you didn't bother with storing the century unless you
+>>really had to, e.g. you had people on file with birthdays in the
+>>previous century.
+> 
+>      In alt.folklore.computers, I have read posts by people who have
+> stated that there wre programs that had only one digit for year and when
+> the 1970's started, the report programs had to be updated.
+>
+I saw a note about that quite recently, but have never seen one myself. 
+
+OTOH, I did see a payroll master file in which the century part of the 
+employee birth date was an after-market patch (and probably after-take-on 
+too).
+
+This ran in an ICL 1900 mainframe. To briefly recap, the standard 1900 
+date was stored internally as a 24 bit signed integer, based on day zero 
+being 31Dec1899. The 1900 architecture was based round 24 bit words, each 
+of which could hold 4 six-bit ISO characters and used two-shift character 
+encoding, so using a word to hold dates made a lot of sense, but, 
+although this allowed a date range of around 1670 AD to 2330 AD, the ICL 
+subroutines for converting between binary and human-readable dates did 
+not handle centuries: dates could only be formatted as dd/mm/yy. But I 
+digress...
+
+One more fact: ICL 1900 tape and disk records were always variable 
+length, so the first word in the record contained the record length (in 
+words) in its lowest 12 bits as an unsigned integer. The upper 12 bits 
+were unused.... 
+
+You can see where this is going, can't you!
+
+Yep, the century was held as two characters stored in the top 12 bits of 
+the record length word (either '18' or '19') and extracted from the 
+employee's birth date as part of the process of reading input data from a 
+punched card or inserted when printing payslips, reports etc.
+
+
+-- 
+martin@   | Martin Gregorie
+gregorie. | Essex, UK
+org       |
+
+
+From -880318476496110574
+X-Google-Thread: 10a146,9730213e38c467f5
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.180.106.197 with SMTP id gw5mr959310wib.1.1372110486139;
+        Mon, 24 Jun 2013 14:48:06 -0700 (PDT)
+Path: b5ni20653wiz.1!nntp.google.com!proxad.net!feeder1-2.proxad.net!feeder.erje.net!eu.feeder.erje.net!eternal-september.org!feeder.eternal-september.org!mx05.eternal-september.org!.POSTED!not-for-mail
+From: Martin Gregorie <martin@address-in-sig.invalid>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: About java program.
+Date: Mon, 24 Jun 2013 21:42:51 +0000 (UTC)
+Organization: A noiseless patient Spider
+Lines: 11
+Message-ID: <kqaegr$bdc$1@dont-email.me>
+References: <UoednTl5R618JiDMnZ2dnUVZ8iadnZ2d@bt.com>
+	<b263siF2vkkU1@mid.individual.net> <uBDvt.60965$5i1.39234@newsfe15.iad>
+	<ILKdnZ-vg53OjiLMnZ2dnUVZ7tmdnZ2d@bt.com>
+	<19wnriq53qxel.u9rt8wy6z52g.dlg@40tude.net> <kpnleo$7os$1@dont-email.me>
+	<kpo1dr$cji$1@dont-email.me> <rK3wt.42579$f_1.22147@newsfe05.iad>
+	<kpsfn7$k9k$1@dont-email.me> <oYOwt.19280$9m5.18160@newsfe26.iad>
+	<kq0k30$ubf$1@dont-email.me> <6euehy3ijswn.e08p5nxwbfbf.dlg@40tude.net>
+	<kq2fnu$osv$1@dont-email.me> <i89hs8p13bde92qjtudd1ajehin9eqq7fa@4ax.com>
+	<kqadoc$2vs$4@dont-email.me>
+Mime-Version: 1.0
+Injection-Date: Mon, 24 Jun 2013 21:42:51 +0000 (UTC)
+Injection-Info: mx05.eternal-september.org; posting-host="e5160e2be48f1ea550cf61512446f525";
+	logging-data="11692"; mail-complaints-to="abuse@eternal-september.org";	posting-account="U2FsdGVkX1/JJL7je5nzSv6a4hq+KpemA25LSzbhehw="
+User-Agent: Pan/0.139 (Sexual Chocolate; GIT bf56508
+	git://git.gnome.org/pan2)
+Cancel-Lock: sha1:qCRzsrzexuHORpfY3BXQ9o+9wSk=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On Mon, 24 Jun 2013 21:29:48 +0000, Martin Gregorie wrote:
+
+> but, although this allowed a date range of around 1670 AD to 2330 AD,
+>
+should, of course, be 21066 BC to 24866 AD
+
+
+-- 
+martin@   | Martin Gregorie
+gregorie. | Essex, UK
+org       |
+
+
+From -5202160397247715566
+X-Google-Thread: 10a146,52310c9bacdfb877
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII
+X-Received: by 10.180.11.239 with SMTP id t15mr3875669wib.3.1372121631388;
+        Mon, 24 Jun 2013 17:53:51 -0700 (PDT)
+Path: b5ni20366wiz.1!nntp.google.com!fu-berlin.de!dotsrc.org!filter.dotsrc.org!news.dotsrc.org!not-for-mail
+Date: Mon, 24 Jun 2013 20:53:49 -0400
+From: =?ISO-8859-1?Q?Arne_Vajh=F8j?= <arne@vajhoej.dk>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:17.0) Gecko/20130509 Thunderbird/17.0.6
+MIME-Version: 1.0
+Newsgroups: comp.lang.java.programmer
+Subject: Re: what is server JRE?
+References: <4b9f32a4-ff17-497e-a223-3cfaf95cda6f@googlegroups.com> <kpi835$8ml$1@speranza.aioe.org> <b246p8Fl0o3U1@mid.dfncis.de> <a503aea1-1ee3-4438-93c0-882bf483d4a2@googlegroups.com> <0865d249-be61-4cf9-88b4-4999e1684bc4@googlegroups.com> <51bfa0a8$0$32110$14726298@news.sunsite.dk> <1519df0b-53d5-4830-8e7f-e38b62b1e14b@googlegroups.com>
+In-Reply-To: <1519df0b-53d5-4830-8e7f-e38b62b1e14b@googlegroups.com>
+Lines: 20
+Message-ID: <51c8ea1d$0$32105$14726298@news.sunsite.dk>
+Organization: SunSITE.dk - Supporting Open source
+NNTP-Posting-Host: 72.192.23.141
+X-Trace: news.sunsite.dk DXC=oCo7BfXcXEZ8AmV=S2QQ[\YSB=nbEKnk[T9KUH[EGR]T[3=]\_16Q0_TYcHEIhNcYXUJ[^3k1A0GXi2XV[5gi2hWo9lanHc=P]_
+X-Complaints-To: staff@sunsite.dk
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 8bit
+
+On 6/18/2013 4:00 AM, Lew wrote:
+> Arne Vajh�j wrote:
+>> Lew wrote:
+>>> mche...@gmail.com wrote:
+>>>> thank you all Gentlemen
+>>>
+>>> Do you have evidence that all the respondents were male?
+>>
+>> Joe, Sven and Arne are usually males.
+>
+> "Joe" is not always a male, and I did not see a "Joe" in the thread.
+
+A bit of googling suggest that JLP is a Joe.
+
+> Regardless, I wasn't asking you anyway.
+
+No. You posted to the entire world.
+
+Arne
+
+
+
+From 694541128256763330
+X-Google-Thread: 10a146,52310c9bacdfb877
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII
+X-Received: by 10.180.9.170 with SMTP id a10mr3885057wib.6.1372121668985;
+        Mon, 24 Jun 2013 17:54:28 -0700 (PDT)
+Path: b5ni20366wiz.1!nntp.google.com!fu-berlin.de!dotsrc.org!filter.dotsrc.org!news.dotsrc.org!not-for-mail
+Date: Mon, 24 Jun 2013 20:54:27 -0400
+From: =?ISO-8859-1?Q?Arne_Vajh=F8j?= <arne@vajhoej.dk>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:17.0) Gecko/20130509 Thunderbird/17.0.6
+MIME-Version: 1.0
+Newsgroups: comp.lang.java.programmer
+Subject: Re: what is server JRE?
+References: <4b9f32a4-ff17-497e-a223-3cfaf95cda6f@googlegroups.com> <kpi835$8ml$1@speranza.aioe.org> <b246p8Fl0o3U1@mid.dfncis.de> <a503aea1-1ee3-4438-93c0-882bf483d4a2@googlegroups.com> <0865d249-be61-4cf9-88b4-4999e1684bc4@googlegroups.com> <51bfa0a8$0$32110$14726298@news.sunsite.dk> <1519df0b-53d5-4830-8e7f-e38b62b1e14b@googlegroups.com> <kpp5a0$tic$1@dont-email.me>
+In-Reply-To: <kpp5a0$tic$1@dont-email.me>
+Lines: 23
+Message-ID: <51c8ea44$0$32105$14726298@news.sunsite.dk>
+Organization: SunSITE.dk - Supporting Open source
+NNTP-Posting-Host: 72.192.23.141
+X-Trace: news.sunsite.dk DXC=oCo7BfXcXE:oDTKD0DTdP>YSB=nbEKnk;T9KUH[EGR]4[3=]\_16Q0?TYcHEIhNcY8UJ[^3k1A0G8i2XV[5gi2h7o9lanHc=P]?
+X-Complaints-To: staff@sunsite.dk
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 8bit
+
+On 6/18/2013 4:27 AM, Jeff Higgins wrote:
+> On 06/18/2013 04:00 AM, Lew wrote:
+>> Arne Vajh�j wrote:
+>>> Lew wrote:
+>>>> mche...@gmail.com wrote:
+>>>>> thank you all Gentlemen
+>>>>
+>>>> Do you have evidence that all the respondents were male?
+>>>
+>>> Joe, Sven and Arne are usually males.
+>>
+>> "Joe" is not always a male, and I did not see a "Joe" in the thread.
+>>
+>> Regardless, I wasn't asking you anyway.
+>>
+> Gentlemen
+
+Why ignore me?
+
+:-) :-) :-)
+
+Arne
+
+
+
+From 6737309976979940226
+X-Google-Thread: 10a146,d830bdbb661450bb
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII-7-bit
+X-Received: by 10.224.215.68 with SMTP id hd4mr28951725qab.5.1372146840999;
+        Tue, 25 Jun 2013 00:54:00 -0700 (PDT)
+X-Received: by 10.50.66.208 with SMTP id h16mr716759igt.11.1372146840808; Tue,
+ 25 Jun 2013 00:54:00 -0700 (PDT)
+Path: fv2ni168qab.0!nntp.google.com!j2no1772527qak.0!postnews.google.com!glegroupsg2000goo.googlegroups.com!not-for-mail
+Newsgroups: comp.lang.java.programmer
+Date: Tue, 25 Jun 2013 00:54:00 -0700 (PDT)
+In-Reply-To: <fcc9fce9-c4b7-47e1-be60-95145496ee3b@m40g2000vbt.googlegroups.com>
+Complaints-To: groups-abuse@google.com
+Injection-Info: glegroupsg2000goo.googlegroups.com; posting-host=14.96.222.231;
+ posting-account=oj1tuAoAAAA9ntJpeCg2jhWOwAyYWQv_
+NNTP-Posting-Host: 14.96.222.231
+References: <fcc9fce9-c4b7-47e1-be60-95145496ee3b@m40g2000vbt.googlegroups.com>
+User-Agent: G2/1.0
+MIME-Version: 1.0
+Message-ID: <b6ea89e0-f4a6-4e83-a96d-3e8fa9d57379@googlegroups.com>
+Subject: Buy generic soma online
+From: buypharmacypill@gmail.com
+Injection-Date: Tue, 25 Jun 2013 07:54:00 +0000
+Content-Type: text/plain; charset=ISO-8859-1
+
+Soma is used in blend with rest and physical remedy to treat harm and supplementary aching musculoskeletal condition. Soma acts by growing the hormones that evade the feeling of pain from getting to the brains. 
+
+Soma is not recommended for the use of children below 12 years. Soma is to some extent soluble in water but can be dissolved completely in alcohols and acetone. You can buy Generic soma or carisoprodol from RX247 online at very good price. 
+
+New York City
+
+Call Us on our TOLL FREE Customer Services Number. 1-855-251-3111
+
+E - Mail - rx247online@ gmail.com
+Web site ->: http://www.rx247online.com/soma-carisoprodol.html
+
+
+From -5255364976360565831
+X-Google-Thread: 10a146,52310c9bacdfb877
+X-Google-NewGroupId: yes
+X-Google-Attributes: gid9dc47a6fbc,domainid0,public,usenet
+X-Google-Language: ENGLISH,ASCII
+X-Received: by 10.180.185.132 with SMTP id fc4mr4593378wic.7.1372167042846;
+        Tue, 25 Jun 2013 06:30:42 -0700 (PDT)
+Path: b5ni21930wiz.1!nntp.google.com!goblin2!goblin1!goblin.stu.neva.ru!eternal-september.org!feeder.eternal-september.org!mx05.eternal-september.org!.POSTED!not-for-mail
+From: Jeff Higgins <jeff@invalid.invalid>
+Newsgroups: comp.lang.java.programmer
+Subject: Re: what is server JRE?
+Date: Tue, 25 Jun 2013 09:31:58 -0400
+Organization: A noiseless patient Spider
+Lines: 25
+Message-ID: <kqc5o6$1ql$1@dont-email.me>
+References: <4b9f32a4-ff17-497e-a223-3cfaf95cda6f@googlegroups.com> <kpi835$8ml$1@speranza.aioe.org> <b246p8Fl0o3U1@mid.dfncis.de> <a503aea1-1ee3-4438-93c0-882bf483d4a2@googlegroups.com> <0865d249-be61-4cf9-88b4-4999e1684bc4@googlegroups.com> <51bfa0a8$0$32110$14726298@news.sunsite.dk> <1519df0b-53d5-4830-8e7f-e38b62b1e14b@googlegroups.com> <kpp5a0$tic$1@dont-email.me> <51c8ea44$0$32105$14726298@news.sunsite.dk>
+Mime-Version: 1.0
+Injection-Date: Tue, 25 Jun 2013 13:25:26 +0000 (UTC)
+Injection-Info: mx05.eternal-september.org; posting-host="6b9e92482af47766954d85fb77d372f5";
+	logging-data="1877"; mail-complaints-to="abuse@eternal-september.org";	posting-account="U2FsdGVkX18KQ+eN1YTATDYzIfXEplc3AKeftNHUFZw="
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:17.0) Gecko/20130529 Icedove/17.0.5
+In-Reply-To: <51c8ea44$0$32105$14726298@news.sunsite.dk>
+Cancel-Lock: sha1:cIspBAjPeCfMCKmIf69BliGjw3E=
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 8bit
+
+On 06/24/2013 08:54 PM, Arne Vajh�j wrote:
+> On 6/18/2013 4:27 AM, Jeff Higgins wrote:
+>> On 06/18/2013 04:00 AM, Lew wrote:
+>>> Arne Vajh�j wrote:
+>>>> Lew wrote:
+>>>>> mche...@gmail.com wrote:
+>>>>>> thank you all Gentlemen
+>>>>>
+>>>>> Do you have evidence that all the respondents were male?
+>>>>
+>>>> Joe, Sven and Arne are usually males.
+>>>
+>>> "Joe" is not always a male, and I did not see a "Joe" in the thread.
+>>>
+>>> Regardless, I wasn't asking you anyway.
+>>>
+>> Gentlemen
+>
+> Why ignore me?
+>
+> :-) :-) :-)
+>
+I've meant to thank you for your patience, Sir, I'll take this opportunity.
+Thank you.
+
+
