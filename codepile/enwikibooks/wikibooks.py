@@ -1,15 +1,31 @@
+from genericpath import exists
 import os
 import json
 import pandas as pd
 from codepile.dataset import RawDataset, Scraper, Dataset
+import gdown
 
 import requests
 from bs4 import BeautifulSoup
 
+WIKIBOOK_DUMPS_URL = "https://dumps.wikimedia.org/enwikibooks/20220901/enwikibooks-20220901-pages-meta-current.xml.bz2"
+COMPUTING_WIKIBOOKS_URL = "https://drive.google.com/file/d/1RqG63qdxIrdGVscRQnECx2tO2csyaFX0/view?usp=sharing"
+ALL_WIKIBOOKS_URL = "https://drive.google.com/file/d/1GbL4MiIwMnzeIIp4HEieMopkYNFvjp-H/view?usp=sharing"
 
 class WikiBookScraper(Scraper):
     # tempdir: wikiextractor output directory
     # target dir: parquest file directory
+
+    def download_wiki_parser(self):
+        # download wikidump
+        if os.path.exists(self.tempdir, exists=True):
+            os.mkdir(self.tempdir)
+        os.system(f"wget {WIKIBOOK_DUMPS_URL} -O {self.tempdir}/enwikibooks-20220820-pages-meta-current.xml.bz2")
+        os.system(f"bzip2 -d {self.tempdir}/enwikibooks-20220820-pages-meta-current.xml.bz2")
+    
+        # wikiextractor process
+        os.system(f"python wikiextractor_keep_block/WikiExtractor.py  --json {self.tempdir}/enwikibooks-20220820-pages-meta-current.xml -o {self.tempdir}/enwikibooks_json_keep_block")
+
 
     def _scrape_titles(self, category_url):
         # get all books title from category_url
@@ -47,7 +63,7 @@ class WikiBookScraper(Scraper):
 
     def get_all_wikibooks(self):
         wikibooks = []
-        for path, currentDirectory, files in os.walk(self.tempdir):
+        for path, currentDirectory, files in os.walk(os.path.join(self.tempdir, "enwikibooks_json_keep_block")):
             for file in files:
                 wikibooks.append(os.path.join(path, file))
 
@@ -74,6 +90,7 @@ class WikiBookScraper(Scraper):
         return self.df_books, self.df_books.iloc[idx_list]
 
     def scrape(self):
+        self.download_wiki_parser()
         df_all, df_computing = self.get_wikibooks_by_category()
         df_all.to_parquet(f"{self.target_dir}/all_wikibooks.parquet.gzip", compression='gzip')
         df_computing.to_parquet(f"{self.target_dir}/computing_wikibooks.parquet.gzip", compression='gzip')
@@ -83,10 +100,20 @@ class WikiBookScraper(Scraper):
 class WikiBookDataset(Dataset):
     def __init__(self, tempdir, target_dir):
         self.scraper = WikiBookScraper(tempdir, target_dir)
-    def download(self):
-        self.scraper.download()
+
+    def download(self, return_df=False):
+        if not os.path.exists(os.path.join(self.scraper.target_dir, 'computing_wikibooks.parquet.gzip')):
+            try:
+                gdown.download(COMPUTING_WIKIBOOKS_URL, os.path.join(self.scraper.target_dir, 'computing_wikibooks.parquet.gzip'), quiet=False, fuzzy=True)
+                gdown.download(ALL_WIKIBOOKS_URL, os.path.join(self.scraper.target_dir, 'all_wikibooks.parquet.gzip'), quiet=False, fuzzy=True)
+            except:
+                self.scraper.scrape()
+        if return_df:
+            return pd.read_parquet(os.path.join(self.scraper.target_dir, 'computing_wikibooks.parquet.gzip'))
 
 
 if __name__=="__main__":
-    data = WikiBookDataset(tempdir="data/enwikibooks_json_keep_block/", target_dir="data/enwikibooks_parquet/")
-    data.download()
+    data = WikiBookDataset(tempdir="data/", target_dir="data/")
+    df = data.download(return_df=True)
+    print(df.head())
+    df.head().to_parquet("test/computing_wikibook_dummy.parquet")
