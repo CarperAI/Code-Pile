@@ -1,20 +1,23 @@
 import sys
 import argparse
 from codepile.stackexchange.stackexchange import *
+from codepile.discourse.discourse import *
 from codepile.dataset import Dataset
 
 class CodePile(Dataset):
     def __init__(self, tempdir, target_dir):
         self.subdatasets = []
-
+        print('hi go')
         subsets = [
-            StackExchangeDataset
+            #StackExchangeDataset
+            DiscourseDataset
             ]
         for d in subsets:
             self.subdatasets.append(d(tempdir, target_dir))
 
     def download(self):
         for d in self.subdatasets:
+            print('ok scrape')
             d.scraper.scrape()
 
     def process(self):
@@ -38,6 +41,7 @@ def process(args):
 def cli(cli_args, *args, **kwargs):
     parser = argparse.ArgumentParser('codepile dataset')
 
+    print('cli')
     subparsers = parser.add_subparsers()
 
     download_parser = subparsers.add_parser('download')
