@@ -7,7 +7,6 @@ from codepile.dataset import Dataset
 class CodePile(Dataset):
     def __init__(self, tempdir, target_dir):
         self.subdatasets = []
-        print('hi go')
         subsets = [
             #StackExchangeDataset
             DiscourseDataset
@@ -17,7 +16,6 @@ class CodePile(Dataset):
 
     def download(self):
         for d in self.subdatasets:
-            print('ok scrape')
             d.scraper.scrape()
 
     def process(self):
@@ -41,7 +39,6 @@ def process(args):
 def cli(cli_args, *args, **kwargs):
     parser = argparse.ArgumentParser('codepile dataset')
 
-    print('cli')
     subparsers = parser.add_subparsers()
 
     download_parser = subparsers.add_parser('download')
