@@ -4,10 +4,10 @@ from pathlib import Path
 from pprint import pprint
 
 import dask.bag as db
-import dask.dataframe as dd
 import pyarrow as pa
 from codepile.dataset import (Analyser, Dataset, DatasetInfo, DatasetSources,
                               Processor, RawDataset, Scraper)
+from dask.distributed import Client
 from unidiff import PatchSet
 
 
@@ -102,6 +102,7 @@ class GitHubDiffScraper(Scraper):
 
 if __name__ == "__main__":
     read_path = Path(__file__).parent / "test_file.json"
+    client = Client(n_workers=8, threads_per_worker=2)
     schema = pa.schema([
         (pa.field("commit", pa.string())),
         (pa.field("message", pa.string())),
