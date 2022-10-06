@@ -4,6 +4,7 @@ from pathlib import Path
 from pprint import pprint
 
 import dask.bag as db
+import numpy as np
 import pyarrow as pa
 from codepile.dataset import (Analyser, Dataset, DatasetInfo, DatasetSources,
                               Processor, RawDataset, Scraper)
@@ -15,6 +16,7 @@ def process_ind_patch(patch_diff) -> dict:
     """Process patch to get diff data."""
     patch_parsed_diff: dict = {
         "hunks": [],
+        "hunks_process": [],
     }
 
     patch_parsed_diff["addition_count"] = patch_diff.added
@@ -29,7 +31,8 @@ def process_ind_patch(patch_diff) -> dict:
         patch_diff_line = patch_diff_split[2].split("\n")
         patch_diff_line_numbers = [list(map(int, hunk.strip("-+").split(",")))
                                    for hunk in patch_diff_split[1].strip().split(" ")]
-        patch_parsed_diff["hunks"].append(patch_diff_line_numbers + patch_diff_line[:-1])
+        patch_parsed_diff["hunks_process"].append(patch_diff_line_numbers + patch_diff_line[:-1])
+        patch_parsed_diff["hunks"].append(patch_diff_ind)
     return patch_parsed_diff
 
 
@@ -66,12 +69,13 @@ def apply_reverse_patch(diff_list: list, commit_hash: str, repo_name: str, lengt
         # if file_length < length_threshold:
         files_list.append(raw_file)
         # Iterate over hunks for this file and apply the reverse patch.
-        for hunk in diff["hunks"]:
+        for hunk in diff["hunks_process"]:
             hunk_list = []
             for line in hunk[3:]:
                 if line.startswith("-") or line.startswith(" "):
                     hunk_list.append(line[1:] + "\n")
             files_list[-1][hunk[0][0] - 1:hunk[0][0] + hunk[1][1] - 1] = hunk_list
+        del diff["hunks_process"]
 
     return files_list
 
@@ -83,7 +87,7 @@ def process_commit(commit_data: dict) -> dict:
     # Get list of files, each of which is a list of strings, one for each line.
     files_list = apply_reverse_patch(diff_list, commit_data["commit"], commit_data["repo_name"])
     commit_data["before_files"] = files_list
-    commit_data["diff"] = [json.dumps(diff) for diff in diff_list]
+    commit_data["diff"] = diff_list
     return commit_data
 
 
@@ -103,12 +107,19 @@ class GitHubDiffScraper(Scraper):
 if __name__ == "__main__":
     read_path = Path(__file__).parent / "test_file.json"
     client = Client(n_workers=8, threads_per_worker=2)
+    diff_struct = pa.struct([
+        ("addition_count", pa.int32()),
+        ("deletion_count", pa.int32()),
+        ("src_file", pa.string()),
+        ("tgt_file", pa.string()),
+        ("hunks", pa.list_(pa.string())),
+    ])
     schema = pa.schema([
         (pa.field("commit", pa.string())),
         (pa.field("message", pa.string())),
         (pa.field("repo_name", pa.string())),
         (pa.field("before_files", pa.list_(pa.list_(pa.string())))),
-        (pa.field("diff", pa.list_(pa.string()))),
+        (pa.field("diff", pa.list_(diff_struct))),
     ])
     db.read_text(read_path).map(json.loads).map(process_commit).to_dataframe().to_parquet("test.parquet",
                                                                                           schema=schema)
