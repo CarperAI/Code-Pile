@@ -13,7 +13,7 @@ import boto3
 
 
 LIST_DATASET = ['CodeContest', 'TopCoder']
-CP_S3_BUCKET = "s3://s-eai-neox/data/codepile/cpdata/"
+CP_S3_BUCKET = "s-eai-neox"
 
 class CPDataset(Dataset):
     def __init__(self, config):
@@ -96,16 +96,16 @@ class CPDataset(Dataset):
 
     def fetch_raw(self, return_df=True):
         
-        if not os.path.exists(directory):
+        if not os.path.exists(self.config.raw_data_dir):
             os.makedirs(self.config.raw_data_dir)
 
         if not os.path.exists(os.path.join(self.config.raw_data_dir, 'CodeContest_raw.pickle')):
             s3 = boto3.client('s3')
-            s3.download_file(CP_S3_BUCKET, "CodeContest_raw.pickle", os.path.join(self.config.raw_data_dir, 'CodeContest_raw.pickle'))
+            s3.download_file(CP_S3_BUCKET, "data/codepile/cpdata/CodeContest_raw.pickle", os.path.join(self.config.raw_data_dir, 'CodeContest_raw.pickle'))
         
         if not os.path.exists(os.path.join(self.config.raw_data_dir, 'TopCoder_raw.pickle')):
             s3 = boto3.client('s3')
-            s3.download_file(CP_S3_BUCKET, "TopCoder_raw.pickle", os.path.join(self.config.raw_data_dir, 'TopCoder_raw.pickle'))
+            s3.download_file(CP_S3_BUCKET, "data/codepile/cpdata/TopCoder_raw.pickle", os.path.join(self.config.raw_data_dir, 'TopCoder_raw.pickle'))
 
         if return_df:
             return {'CodeContest': pd.read_pickle(os.path.join(self.config.raw_data_dir, 'CodeContest_raw.pickle')),
