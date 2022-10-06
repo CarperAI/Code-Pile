@@ -10,12 +10,25 @@ import xmltodict
 import simplejson
 import os
 from pathlib import Path
-import pandas as pd
 import re
 from tqdm import tqdm
 import py7zr
 
+import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
+from lxml import etree
+from functools import partial
+from more_itertools import chunked
+
+
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col,lit,create_map, collect_list
+from pyspark.sql.types import StringType
+
+
 from codepile.dataset import Processor
+from .types_meta import *
 
 class StackExchangeProcessor(Processor):
     def __init__(self, dump_src_dir, temp_dir):
@@ -23,19 +36,25 @@ class StackExchangeProcessor(Processor):
         self.temp_dir = temp_dir
         self.output_dir = temp_dir
 
-        self.exclude_sites = [] # exclude list has precedence over include list
-        self.include_sites = ["devops.stackexchange.com", "substrate.stackexchange.com"] # "superuser.com", "askubuntu.com"
+        self.exclude_sites = ["stackoverflow.com", "math.stackexchange.com", "superuser.com"] # exclude list has precedence over include list
+        self.include_sites = [] # "superuser.com", "askubuntu.com"
         self.tables_to_consider = ["Posts", "Comments", "Users"]
-        self.intermediate_format = "parquet" # parquet or json
+        self.intermediate_format = "parquet" # parquet
+        self.batch_size = 10000
 
         self.include_columns = {
-            "Posts": ["Id", "PostTypeId", "Body", "OwnerUserId", "ParentId"],
-            "Users": ["Id", "Reputation", "DisplayName", "AccountId"],
-            "Comments": ["Id", "PostId", "Text", "UserId"]
+            "Posts": ["Id", "PostTypeId", "AcceptedAnswerId", "Body", "OwnerUserId", "ParentId", "Score", "Title", "Tags", "ContentLicense", "AnswerCount", "CommentCount", "ViewCount", "FavoriteCount", "CreationDate"],
+            "Users": ["Id", "Reputation", "DisplayName", "AboutMe", "Views", "AccountId", "CreationDate"],
+            "Comments": ["Id", "PostId", "Score", "Text", "UserId", "ContentLicense", "CreationDate"]
         }
         self.prepare_directories()
+        self.build_schema_meta()
+        spark_dir = "/Users/vanga/Downloads/temp"
 
-    def process(self, force_unzip=False, force_process=False):
+        self.spark = SparkSession.builder.config("spark.worker.cleanup.enabled", "true").config("spark.local.dir", spark_dir).config("spark.driver.memory", "8G").config("spark.executor.cores", 10).master("local[16]").appName('spark-stats').getOrCreate()
+
+
+    def process(self, force_unzip=False, force_xml_conversion=False, force_process=False):
         print(f"Processing tables: {self.tables_to_consider}")
         sites_to_process = set()
         for zip_file in os.listdir(self.dump_src_dir):
@@ -56,7 +75,7 @@ class StackExchangeProcessor(Processor):
         for site in sites_to_process:
             try:
                 print(f"Processing site: {site}")
-                self.convert_xml(site)
+                self.convert_xml(site, force_xml_conversion)
                 self.denormalize_data(site, force_process)
             except Exception as e:
                 print(f"Failed to process the site: '{site}'")
@@ -108,45 +127,90 @@ class StackExchangeProcessor(Processor):
                 files_to_extract.add(fn)
     
         if len(files_to_extract) > 0:
+            print("Extracting..")
             with py7zr.SevenZipFile(zip_file, 'r') as archive:
                 archive.extract(path=dest_dir, targets=list(files_to_extract))
+    
+    def build_schema_meta(self):
+        post_schema = pa.schema([(k,a()) for k,p,a in post_types])
+        post_schema_python = {k:p for k,p,a in post_types}
 
-    def convert_xml(self, site):
+        user_schema = pa.schema([(k,a()) for k,p,a in user_types])
+        user_schema_python = {k:p for k,p,a in user_types}
+
+        comment_schema = pa.schema([(k,a()) for k,p,a in comment_types])
+        comment_schema_python = {k:p for k,p,a in comment_types}
+        self.python_schemas = {
+            "Posts": post_schema_python,
+            "Users": user_schema_python,
+            "Comments": comment_schema_python
+        }
+        self.schemas = {
+            "Posts": post_schema,
+            "Users": user_schema,
+            "Comments": comment_schema
+        }
+
+    def convert_xml(self, site, force_conversion):
+        # most of the xml parsing logic is taken from the work of https://github.com/flowpoint
+        def parse_xml(source_xml, output_dirpath) -> dict :
+            # use lxml because pyarrow readxml has trouble with types
+            for event, element in etree.iterparse(source_xml, events=('end',), tag='row'):
+                j = dict(element.attrib)
+                yield j
+
+                # cleanup this element, and parents, to save memory
+                # https://stackoverflow.com/questions/7171140/using-python-iterparse-for-large-xml-files
+                element.clear(keep_tail=True)
+                while element.getprevious() is not None:
+                    del element.getparent()[0]
+
+        def cast_dict_to_schema(schema, data: dict):
+            d = dict()
+            for k, type_ in schema.items():
+                if k in data:
+                    d[k] = type_(data[k])
+                else:
+                    d[k] = None
+            return d
+
         xml_src_dir = self.get_site_xml_dir(site)
         dest_dir = self.get_site_intermediate_dir(site)
         format = self.intermediate_format
         os.makedirs(dest_dir, exist_ok=True)
+
         for table in self.tables_to_consider:
-            file_name = table + ".xml"
-            src_abs_path = os.path.join(xml_src_dir, file_name)
-            target_file = os.path.join(dest_dir, table + "." + format)
-            if os.path.exists(target_file):
-                print(f"file '{table}' is already converted from xml")
+            schema = self.schemas[table]
+            python_schema = self.python_schemas[table]
+            target_path = os.path.join(dest_dir, f"{table}.parquet")
+            if os.path.exists(target_path) and not force_conversion:
+                print(f"table '{table}' is already converted from xml")
                 continue
-            with open(src_abs_path, 'r') as xml_file:
-                data_dict = xmltodict.parse(xml_file.read())
-                if format == "parquet":
-                    df = pd.DataFrame.from_dict(data_dict[table.lower()]['row'])
-                    df.rename(columns=lambda x: re.sub('@','',x), inplace=True)
-                    if table == "Posts":
-                        self.transform_tags_column(df)
-                    df.to_parquet(target_file)
-                elif format == "json":
-                    with open(target_file, 'w') as json_file_o:
-                        json_file_o.write(simplejson.dumps(data_dict[table.lower()]['row'], ignore_nan=True))
-                else:
-                    raise ValueError(f"Unsupported target format type: {self.intermediate_format}. supported values are 'parquet', 'json'")
+
+            writer = pq.ParquetWriter(target_path, schema)
+
+            xml_stream = parse_xml(os.path.join(xml_src_dir, f"{table}.xml"), dest_dir)
+
+            corrected_types_steam = map(
+                    partial(cast_dict_to_schema, python_schema),
+                    xml_stream)
+
+            chunked_stream = chunked(corrected_types_steam, self.batch_size)
+
+            for chunk in tqdm(chunked_stream):
+                batch = pa.RecordBatch.from_pylist(
+                        chunk,
+                        schema=schema)
+
+                writer.write_batch(batch)
                 print(f"Finished converting {table} from xml to {format}")
 
-    def load_data_into_pandas(self, src_dir, tables, format="parquet"):
+    def load_data_into_spark_dfs(self, src_dir, tables, format="parquet"):
         dfs = {}
         for table in tables:
             table_path = os.path.join(src_dir, table + "." + format)
             if format == "parquet":
-                df = pd.read_parquet(table_path, columns=self.include_columns[table])
-            elif format == "json":
-                df = pd.read_json(table_path)
-                df.rename(columns=lambda x: re.sub('@','',x), inplace=True) # TODO: this renaming could happen during xml to json conversion itself.
+                df = self.spark.read.parquet(table_path).select(self.include_columns[table])
             else:
                 raise ValueError("Unsuported format")
             dfs[table] = df
@@ -156,63 +220,70 @@ class StackExchangeProcessor(Processor):
         df['Tags'] = df['Tags'].str.replace('><',',').str.replace('<','').str.replace('>','').str.split(',')
 
     def get_questions_subset(self, df):
-        questions_df = df[df['PostTypeId'] == "1"]
+        questions_df = df.filter(df['PostTypeId'] == "1")
         return questions_df
 
+    def get_answers_subset(self, df):
+        answers_df = df.filter(df['PostTypeId'] == "2")
+        return answers_df
+
     def denormalize_data(self, site, force_process):
+        def create_map_args(df):
+            args = []
+            for c in df.columns:
+                args.append(lit(c))
+                args.append(col(c).cast(StringType()))
+            return args
+
         site_temp_dir = self.get_site_intermediate_dir(site)
-        
         output_site_dir = os.path.join(self.output_dir, site)
         os.makedirs(output_site_dir, exist_ok=True)        
-        if self.intermediate_format == "parquet":
-            output_file = os.path.join(output_site_dir, "questions.parquet")
-        else:
-            output_file = os.path.join(output_site_dir, "questions.json")
-
-        if os.path.exists(output_file) and not force_process:
+        questions_output_dir = os.path.join(output_site_dir, "questions")
+        if os.path.exists(questions_output_dir) and not force_process:
             print(f"Skipping, site '{site}' already processed")
             return
 
-
-        dfs = self.load_data_into_pandas(site_temp_dir, self.tables_to_consider)
-        posts_columns = self.include_columns["Posts"]
-        comments_columns = self.include_columns["Comments"]
-        users_columns = self.include_columns["Users"]
-        posts_df = dfs['Posts'][posts_columns]
+        dfs = self.load_data_into_spark_dfs(site_temp_dir, self.tables_to_consider)
+        posts_df = dfs['Posts']
+        posts_df = posts_df.filter((posts_df.PostTypeId == "1") | (posts_df.PostTypeId == "2"))
         posts_df = posts_df[(posts_df.PostTypeId == "1") | (posts_df.PostTypeId == "2")]
-        comments_df = dfs['Comments'][comments_columns]
-        users_df = dfs['Users'][users_columns]
-        users_df = users_df.add_prefix("user_")
-        tqdm.pandas()
+        comments_df = dfs['Comments']
+        users_df = dfs['Users']
+        users_df = users_df.select(*(col(x).alias('user_' + x) for x in users_df.columns))
 
         # join user info with posts
-        print("Adding user info to posts")    
-        posts_df = pd.merge(posts_df, users_df, left_on='OwnerUserId', right_on='user_Id', how='left').progress_apply(lambda x: x).drop('user_Id', axis=1)
+        print("Adding user info to posts")
+        posts_df = posts_df.join(users_df, posts_df.OwnerUserId == users_df.user_Id, "left")
+        #TODO: drop user_Id
         # join user info with comments
         print("Adding user info to comments")
-        comments_df = pd.merge(comments_df, users_df, left_on='UserId', right_on='user_Id', how='left').progress_apply(lambda x: x).drop('user_Id', axis=1)
+        comments_df = comments_df.join(users_df, comments_df.UserId == users_df.user_Id, "left")
 
         # group comments by posts and populate a list of dictionaries
-        print("Grouping comments")
-        comments_grouped = comments_df.groupby('PostId').progress_apply(lambda x: x.to_dict('records')).to_frame("comments")
+        comments_dicted = comments_df.withColumn("dict",
+            create_map(create_map_args(comments_df))
+        ).select(["Id", "PostId", "dict"])
+        comments_grouped = comments_dicted.groupby("PostId").agg(collect_list("dict").alias("comments"))
 
         # populate posts with comments
         print("Adding comments to posts")
-        posts_df = pd.merge(posts_df, comments_grouped, left_on="Id", right_on="PostId", how='left').progress_apply(lambda x: x)
-        
+        posts_df = posts_df.join(comments_grouped, posts_df.Id == comments_grouped.PostId, "left").select(posts_df["*"], comments_grouped["comments"])        
 
         questions_df = self.get_questions_subset(posts_df)
-        print(f"Found {questions_df.shape[0]} questions")
+        answers_df = self.get_answers_subset(posts_df)
+
+
+        answers_dicted = answers_df.withColumn("dict",
+            create_map(create_map_args(answers_df))
+        ).select(["Id", "ParentId", "dict"])
 
         # group answers by questions
         print("Grouping answers by questions")
-        answers_grouped = posts_df[posts_df.PostTypeId == "2"].groupby("ParentId").progress_apply(lambda x: x.to_dict('records')).to_frame("answers")
+        answers_grouped = answers_dicted.groupby("ParentId").agg(collect_list("dict").alias("answers"))
+
         # populate questions with answers 
         print("Adding answers to questions")
-        questions_df = pd.merge(questions_df, answers_grouped, left_on='Id', right_on='ParentId', how='left').drop('ParentId', axis=1).progress_apply(lambda x: x)
-
-        if self.intermediate_format == "parquet":
-            questions_df.to_parquet(output_file)
-        else:
-            questions_df.to_json(output_file)
+        questions_df = questions_df.join(answers_grouped, questions_df.Id == answers_grouped.ParentId, "left").select(questions_df["*"], answers_grouped["answers"])
+        
+        questions_df.coalesce(1).write.mode("overwrite").option("maxRecordsPerFile", 100000).parquet(questions_output_dir)
         print(f"Finished processing site: '{site}'")
