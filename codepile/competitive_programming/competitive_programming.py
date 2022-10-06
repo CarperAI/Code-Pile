@@ -6,15 +6,40 @@ import pandas as pd
 from tqdm import tqdm
 from bs4 import BeautifulSoup
 from codepile.dataset import DatasetInfo, DatasetSources, RawDataset, Scraper, Processor, Analyser, Dataset
+from codepile.codepile import Config
+from datetime import datetime
 
 LIST_DATASET = ['CodeContest', 'TopCoder']
 CODE_CONTEST_URL_RAW = "https://drive.google.com/file/d/1MOdiZ6sCgJiUcrRNUMJTN06RWhei2q90/view?usp=sharing"
 TOPCODER_URL_RAW = "https://drive.google.com/file/d/1Mvvsm_a70gNTWKkPEcjX2AR29XkP2sws/view?usp=sharing"
 
 class CPDataset(Dataset):
-    def __init__(self, tempdir, target_dir):
-        self.tempdir = tempdir
-        self.target_dir = target_dir
+    def __init__(self, config):
+        self.config = config
+        self.info = DatasetInfo(
+            id="CPDataset",
+            description="Competitive Programming Dataset Take From CodeContest, Topcoder, Google CodeJam",
+            size=3,
+            source_uri="https://huggingface.co/datasets/deepmind/code_contests",
+            dataset_pros="Programming Problem with Tutorial and Solution bring explicit context for language model",
+            dataset_cons="Domain related to Competitive Programming Only",
+            languages=["english"],
+            coding_languages=["python", "c++", "java"],
+            modalities=["source_code"],
+            source_license="MIT",
+            source_citation="CodeContest",
+            data_owner="Duy Phung",
+            contributers=["Duy Phung"],
+            data_end=datetime(2022, 10, 6),
+       )
+    
+    def info(self):
+        return self.info
+    
+    def id(self):
+        return self.info.id
+    
+
 
     def make_format_code_contest(self, sample):
         title = sample['name']
@@ -69,21 +94,25 @@ class CPDataset(Dataset):
 
     def fetch_raw(self, return_df=True):
 
-        if not os.path.exists(os.path.join(self.target_dir, 'CodeContest_raw.pickle')):
-            gdown.download(url=CODE_CONTEST_URL_RAW, output=os.path.join(self.target_dir, 'CodeContest_raw.pickle'), quiet=False, fuzzy=True)
+        if not os.path.exists(os.path.join(self.config.raw_data_dir, 'CodeContest_raw.pickle')):
+            gdown.download(url=CODE_CONTEST_URL_RAW, output=os.path.join(self.config.raw_data_dir, 'CodeContest_raw.pickle'), quiet=False, fuzzy=True)
         
-        if not os.path.exists(os.path.join(self.target_dir, 'TopCoder_raw.pickle')):
-            gdown.download(url=TOPCODER_URL_RAW, output=os.path.join(self.target_dir, 'TopCoder_raw.pickle'), quiet=False, fuzzy=True)
+        if not os.path.exists(os.path.join(self.config.raw_data_dir, 'TopCoder_raw.pickle')):
+            gdown.download(url=TOPCODER_URL_RAW, output=os.path.join(self.config.raw_data_dir, 'TopCoder_raw.pickle'), quiet=False, fuzzy=True)
 
         if return_df:
-            return {'CodeContest': pd.read_pickle(os.path.join(self.target_dir, 'CodeContest_raw.pickle')),
-                    'TopCoder': pd.read_pickle(os.path.join(self.target_dir, 'TopCoder_raw.pickle'))}
+            return {'CodeContest': pd.read_pickle(os.path.join(self.config.raw_data_dir, 'CodeContest_raw.pickle')),
+                    'TopCoder': pd.read_pickle(os.path.join(self.config.raw_data_dir, 'TopCoder_raw.pickle'))}
     
     def download(self):
         self.fetch_raw(return_df=False)
 
 
 if __name__=="__main__":
-
-    cp_dataset = CPDataset('data/', 'data/')
+    config = Config(
+        raw_data_dir="data/",
+        output_data_dir="data/",
+        tmpdir="/tmp"
+    )
+    cp_dataset = CPDataset(config)
     cp_dataset.download()
