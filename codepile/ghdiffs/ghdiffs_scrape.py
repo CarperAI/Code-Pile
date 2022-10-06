@@ -2,6 +2,7 @@ import json
 import urllib.request
 from pathlib import Path
 from pprint import pprint
+from xml.dom.minidom import ReadOnlySequentialNamedNodeMap
 
 import dask.bag as db
 import numpy as np
@@ -33,93 +34,94 @@ def process_ind_patch(patch_diff) -> dict:
                                    for hunk in patch_diff_split[1].strip().split(" ")]
         patch_parsed_diff["hunks_process"].append(patch_diff_line_numbers + patch_diff_line[:-1])
         patch_parsed_diff["hunks"].append(patch_diff_ind)
+    patch_parsed_diff["hunks"] = "".join(patch_parsed_diff["hunks"])
     return patch_parsed_diff
 
 
-def patch_parse(commit_hash: str, repo_name: str) -> list:
-    """Parse a commit to get diff data."""
-    diff_url = (f"https://github.com/{repo_name}/commit/{commit_hash}.diff")
+def get_before_file(file_diff: dict, commit_hash: str, repo_name: str) -> str:
+    repo_owner, repo_name = repo_name.split("/")
+    if file_diff["src_file"] == "/dev/null":
+        return ""
+    # Get raw after file.
+    file_raw_url = (f"https://raw.githubusercontent.com/{repo_owner}/"
+                    f"{repo_name}/{commit_hash}/{file_diff['tgt_file'][2:]}")
+    raw_file = urllib.request.urlopen(file_raw_url)
+    raw_file_encoding = raw_file.headers.get_charsets()[0]
+    raw_file = [line.decode(raw_file_encoding) for line in raw_file.readlines()]
+    # file_length = sum(1 for _ in raw_file)
+    # if file_length < length_threshold:
+    # files_list.append(raw_file)
+    # Iterate over hunks for this file and apply the reverse patch.
+    for hunk in file_diff["hunks_process"]:
+        hunk_list = []
+        for line in hunk[3:]:
+            if line.startswith("-") or line.startswith(" "):
+                hunk_list.append(line[1:] + "\n")
+        raw_file[hunk[0][0] - 1:hunk[0][0] + hunk[1][1] - 1] = hunk_list
+    del file_diff["hunks_process"]  # Deletes this item from the dict in parent functions
+    return "".join(raw_file)
+
+
+def process_commit(commit_data: dict) -> list[dict]:
+    """
+    Process a commit dictionary to get the before files and diff dict.
+
+    Args:
+        commit_data (dict): Dictionary containing commit hash, repo name, and
+        commit message.
+
+    Returns:
+        list[dict]: A list of dicts, where each dict contains the data for a
+        change to a single file.
+    """
+    # Scrape a commit's diff file.
+    diff_url = f"https://github.com/{commit_data['repo_name']}/commit/{commit_data['commit']}.diff"
     diff = urllib.request.urlopen(diff_url)
     encoding = diff.headers.get_charsets()[0]
     patch = PatchSet(diff, encoding=encoding)
-    diff_list: list = []
+    commit_list: list[dict] = []
     for patch_ind in patch:
         # Skip if the file is not a python file.
         # if not patch_ind.target_file.endswith(".py"):
         #     continue
-        diff_list.append(process_ind_patch(patch_ind))
-    return diff_list
-
-
-def apply_reverse_patch(diff_list: list, commit_hash: str, repo_name: str, length_threshold: int = 4096) -> list:
-    """Apply reverse patch to get before files. Returns list of modified files."""
-    files_list: list = []
-    repo_owner, repo_name = repo_name.split("/")
-    for diff in diff_list:
-        if diff["src_file"] == "/dev/null":
-            files_list.append([])
-            continue
-        # Get raw after file.
-        file_raw_url = (f"https://raw.githubusercontent.com/{repo_owner}/"
-                        f"{repo_name}/{commit_hash}/{diff['tgt_file'][2:]}")
-        raw_file = urllib.request.urlopen(file_raw_url)
-        raw_file_encoding = raw_file.headers.get_charsets()[0]
-        raw_file = [line.decode(raw_file_encoding) for line in raw_file.readlines()]
-        # file_length = sum(1 for _ in raw_file)
-        # if file_length < length_threshold:
-        files_list.append(raw_file)
-        # Iterate over hunks for this file and apply the reverse patch.
-        for hunk in diff["hunks_process"]:
-            hunk_list = []
-            for line in hunk[3:]:
-                if line.startswith("-") or line.startswith(" "):
-                    hunk_list.append(line[1:] + "\n")
-            files_list[-1][hunk[0][0] - 1:hunk[0][0] + hunk[1][1] - 1] = hunk_list
-        del diff["hunks_process"]
-
-    return files_list
-
-
-def process_commit(commit_data: dict) -> dict:
-    """Process a commit hash and repo name to get the before files and diff dict."""
-    # Get dict containing diff data.
-    diff_list = patch_parse(commit_data["commit"], commit_data["repo_name"])
-    # Get list of files, each of which is a list of strings, one for each line.
-    files_list = apply_reverse_patch(diff_list, commit_data["commit"], commit_data["repo_name"])
-    commit_data["before_files"] = files_list
-    commit_data["diff"] = diff_list
-    return commit_data
+        diff_dict: dict = process_ind_patch(patch_ind)
+        diff_dict.update(commit_data)
+        diff_dict["before_file"] = get_before_file(diff_dict, commit_data["commit"], commit_data["repo_name"])
+        commit_list.append(diff_dict)
+    return commit_list
 
 
 class GitHubDiffDataset(Dataset):
     def __init__(self, config):
-        pass
+        self.config = config
+        self.scraper = GitHubDiffScraper(self.config)
+
+    def download(self, *args, **kwargs) -> RawDataset:
+        return self.scraper.scrape()
+
+    def process(self):
+        raise NotImplementedError
 
 
 class GitHubDiffScraper(Scraper):
     def __init__(self, config):
-        pass
+        # TODO: Dask multi-node scheduling here
+        client = Client(n_workers=config.n_workers, threads_per_worker=config.threads_per_worker)
+        self.read_path = Path(config.read_path)
+        self.save_path = Path(config.save_path)
 
-    def scrape(self):
-        pass
+    def scrape(self) -> RawDataset:
+        _ = (
+            db.read_text(self.read_path).map(json.loads)
+            .map(process_commit).flatten().to_dataframe()
+            .to_parquet(self.save_path)
+        )
+        dataset = RawDataset(storage_uris=self.save_path, complete=True)
+        return dataset
 
 
 if __name__ == "__main__":
     read_path = Path(__file__).parent / "test_file.json"
+    save_path = Path(__file__).parent / "test.parquet"
     client = Client(n_workers=8, threads_per_worker=2)
-    diff_struct = pa.struct([
-        ("addition_count", pa.int32()),
-        ("deletion_count", pa.int32()),
-        ("src_file", pa.string()),
-        ("tgt_file", pa.string()),
-        ("hunks", pa.list_(pa.string())),
-    ])
-    schema = pa.schema([
-        (pa.field("commit", pa.string())),
-        (pa.field("message", pa.string())),
-        (pa.field("repo_name", pa.string())),
-        (pa.field("before_files", pa.list_(pa.list_(pa.string())))),
-        (pa.field("diff", pa.list_(diff_struct))),
-    ])
-    db.read_text(read_path).map(json.loads).map(process_commit).to_dataframe().to_parquet("test.parquet",
-                                                                                          schema=schema)
+    db.read_text(read_path).map(json.loads).map(process_commit).flatten().to_dataframe().to_parquet(save_path)
