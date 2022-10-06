@@ -8,10 +8,12 @@ from bs4 import BeautifulSoup
 from codepile.dataset import DatasetInfo, DatasetSources, RawDataset, Scraper, Processor, Analyser, Dataset
 from codepile.codepile import Config
 from datetime import datetime
+from boto3.session import Session
+import boto3
+
 
 LIST_DATASET = ['CodeContest', 'TopCoder']
-CODE_CONTEST_URL_RAW = "https://drive.google.com/file/d/1MOdiZ6sCgJiUcrRNUMJTN06RWhei2q90/view?usp=sharing"
-TOPCODER_URL_RAW = "https://drive.google.com/file/d/1Mvvsm_a70gNTWKkPEcjX2AR29XkP2sws/view?usp=sharing"
+CP_S3_BUCKET = "s3://s-eai-neox/data/codepile/cpdata/"
 
 class CPDataset(Dataset):
     def __init__(self, config):
@@ -93,12 +95,17 @@ class CPDataset(Dataset):
             raise ValueError('Unknown source')
 
     def fetch_raw(self, return_df=True):
+        
+        if not os.path.exists(directory):
+            os.makedirs(self.config.raw_data_dir)
 
         if not os.path.exists(os.path.join(self.config.raw_data_dir, 'CodeContest_raw.pickle')):
-            gdown.download(url=CODE_CONTEST_URL_RAW, output=os.path.join(self.config.raw_data_dir, 'CodeContest_raw.pickle'), quiet=False, fuzzy=True)
+            s3 = boto3.client('s3')
+            s3.download_file(CP_S3_BUCKET, "CodeContest_raw.pickle", os.path.join(self.config.raw_data_dir, 'CodeContest_raw.pickle'))
         
         if not os.path.exists(os.path.join(self.config.raw_data_dir, 'TopCoder_raw.pickle')):
-            gdown.download(url=TOPCODER_URL_RAW, output=os.path.join(self.config.raw_data_dir, 'TopCoder_raw.pickle'), quiet=False, fuzzy=True)
+            s3 = boto3.client('s3')
+            s3.download_file(CP_S3_BUCKET, "TopCoder_raw.pickle", os.path.join(self.config.raw_data_dir, 'TopCoder_raw.pickle'))
 
         if return_df:
             return {'CodeContest': pd.read_pickle(os.path.join(self.config.raw_data_dir, 'CodeContest_raw.pickle')),
