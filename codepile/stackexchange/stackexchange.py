@@ -35,9 +35,14 @@ StackExchangeInfo = DatasetInfo(
 
 class StackExchangeScraper(Scraper):
     def scrape(self) -> RawDataset:
+        exclude_files = ["stackoverflow.com-PostHistory.7z", "stackoverflow.com-Votes.7z", "stackoverflow.com-Badges.7z"] # exclude soem large files that are not needed. We can only do this for stackoverflow.com data as the dumps are available for each table separately.
         item = ia.get_item('stackexchange')
+        file_names = []
+        for file in item.files:
+            if file['name'] not in exclude_files:
+                file_names.append(file['name'])
         metadata = item.metadata
-        ia.download('stackexchange', checksum=True, verbose=True, destdir=self.target_dir)
+        item.download(files=file_names, checksum=True, verbose=True, destdir=self.target_dir)
 
         return RawDataset(storage_uris=['file:///{self.target_dir}'],
                 metadata=str(metadata))
@@ -48,4 +53,4 @@ class StackExchangeDataset(Dataset):
         self.scraper = StackExchangeScraper(tempdir, target_dir)
         self.processor = StackExchangeProcessor(target_dir, tempdir)
     def download(self):
-        self.scraper.download()
+        self.scraper.scrape()

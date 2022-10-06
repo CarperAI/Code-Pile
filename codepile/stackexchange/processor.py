@@ -41,6 +41,7 @@ class StackExchangeProcessor(Processor):
         self.tables_to_consider = ["Posts", "Comments", "Users"]
         self.intermediate_format = "parquet" # parquet
         self.batch_size = 10000
+        self.max_records_per_output_file = 1000000
 
         self.include_columns = {
             "Posts": ["Id", "PostTypeId", "AcceptedAnswerId", "Body", "OwnerUserId", "ParentId", "Score", "Title", "Tags", "ContentLicense", "AnswerCount", "CommentCount", "ViewCount", "FavoriteCount", "CreationDate"],
@@ -49,12 +50,11 @@ class StackExchangeProcessor(Processor):
         }
         self.prepare_directories()
         self.build_schema_meta()
-        spark_dir = "/Users/vanga/Downloads/temp"
-
-        self.spark = SparkSession.builder.config("spark.worker.cleanup.enabled", "true").config("spark.local.dir", spark_dir).config("spark.driver.memory", "8G").config("spark.executor.cores", 10).master("local[16]").appName('spark-stats').getOrCreate()
+        self.spark_dir = "/Users/vanga/Downloads/temp"
 
 
     def process(self, force_unzip=False, force_xml_conversion=False, force_process=False):
+        self.spark = SparkSession.builder.config("spark.worker.cleanup.enabled", "true").config("spark.local.dir", self.spark_dir).config("spark.driver.memory", "16G").master("local[16]").appName('spark-stats').getOrCreate()        
         print(f"Processing tables: {self.tables_to_consider}")
         sites_to_process = set()
         for zip_file in os.listdir(self.dump_src_dir):
@@ -63,13 +63,21 @@ class StackExchangeProcessor(Processor):
             site = self.site_name_from_zipfile(zip_file)
             if self.skip_site(site):
                 continue
+
+            output_site_dir = os.path.join(self.output_dir, site)
+            os.makedirs(output_site_dir, exist_ok=True)        
+            questions_output_dir = os.path.join(output_site_dir, "questions")
+            spark_success_file = os.path.join(questions_output_dir, "_SUCCESS")
+            if os.path.exists(spark_success_file) and not force_process:
+                print(f"Skipping, site '{site}' is already processed")
+                return            
             
             src_abs_path = os.path.join(self.dump_src_dir, zip_file)
             try:
                 self.extract_dump(src_abs_path, site, force_unzip)
                 sites_to_process.add(site)
             except Exception as e:
-                print(f"Failed to extract compressed file '{zip_file}'")
+                print(f"Failed to extract compressed file '{zip_file}', {e}")
             
         print(f"Processing {len(sites_to_process)} site/s")
         for site in sites_to_process:
@@ -239,9 +247,6 @@ class StackExchangeProcessor(Processor):
         output_site_dir = os.path.join(self.output_dir, site)
         os.makedirs(output_site_dir, exist_ok=True)        
         questions_output_dir = os.path.join(output_site_dir, "questions")
-        if os.path.exists(questions_output_dir) and not force_process:
-            print(f"Skipping, site '{site}' already processed")
-            return
 
         dfs = self.load_data_into_spark_dfs(site_temp_dir, self.tables_to_consider)
         posts_df = dfs['Posts']
@@ -285,5 +290,5 @@ class StackExchangeProcessor(Processor):
         print("Adding answers to questions")
         questions_df = questions_df.join(answers_grouped, questions_df.Id == answers_grouped.ParentId, "left").select(questions_df["*"], answers_grouped["answers"])
         
-        questions_df.coalesce(1).write.mode("overwrite").option("maxRecordsPerFile", 100000).parquet(questions_output_dir)
+        questions_df.coalesce(1).write.mode("overwrite").option("maxRecordsPerFile", self.max_records_per_output_file).parquet(questions_output_dir)
         print(f"Finished processing site: '{site}'")
