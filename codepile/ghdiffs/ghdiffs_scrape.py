@@ -1,10 +1,10 @@
 import json
 import urllib.request
+import argparse
 from pathlib import Path
-import datetime
 import dask.bag as db
 from codepile.dataset import (Dataset, DatasetInfo, RawDataset, Scraper)
-from dask.distributed import Client
+from dask.distributed import Client, progress
 from unidiff import PatchSet
 
 
@@ -19,10 +19,12 @@ def process_ind_patch(patch_diff) -> dict:
     patch_parsed_diff["deletion_count"] = patch_diff.removed
     patch_parsed_diff["src_file"] = patch_diff.source_file
     patch_parsed_diff["tgt_file"] = patch_diff.target_file
-    patch_parsed_diff["file_extension"] = Path(patch_diff.target_file).suffix
+    if patch_parsed_diff["tgt_file"] == "/dev/null":
+        patch_parsed_diff["file_extension"] = Path(patch_diff.source_file).suffix
+    else:
+        patch_parsed_diff["file_extension"] = Path(patch_diff.target_file).suffix
     # patch_parsed_diff["patch_info"] = patch_diff.patch_info
-    patch_diff_list = list(patch_diff)
-    for patch_diff_ind in patch_diff_list:
+    for patch_diff_ind in patch_diff:
         patch_diff_ind = str(patch_diff_ind)
         patch_diff_split = patch_diff_ind.split("@@")
         patch_diff_line = patch_diff_split[2].split("\n")
@@ -36,29 +38,33 @@ def process_ind_patch(patch_diff) -> dict:
 
 def get_before_file(file_diff: dict, commit_hash: str, repo_name: str) -> str:
     repo_owner, repo_name = repo_name.split("/")
-    if file_diff["src_file"] == "/dev/null" or file_diff["tgt_file"] == "/dev/null":
-        return ""
-    # Get raw after file.
-    file_raw_url = (f"https://raw.githubusercontent.com/{repo_owner}/"
-                    f"{repo_name}/{commit_hash}/{file_diff['tgt_file'][2:]}")
-    try:
-        raw_file = urllib.request.urlopen(file_raw_url)
-        raw_file_encoding = raw_file.headers.get_charsets()[0]
-        raw_file = [line.decode(raw_file_encoding) for line in raw_file.readlines()]
-    except Exception as e:
-        print(e)
-        print(file_raw_url)
-        return ""
-    # file_length = sum(1 for _ in raw_file)
-    # if file_length < length_threshold:
-    # files_list.append(raw_file)
-    # Iterate over hunks for this file and apply the reverse patch.
-    for hunk in file_diff["hunks_process"]:
-        hunk_list = []
-        for line in hunk[3:]:
-            if line.startswith("-") or line.startswith(" "):
-                hunk_list.append(line[1:] + "\n")
-        raw_file[hunk[0][0] - 1:hunk[0][0] + hunk[1][1] - 1] = hunk_list
+    if file_diff["src_file"] == "/dev/null":
+        raw_file = ["Add"]
+    elif file_diff["tgt_file"] == "/dev/null":
+        # If file is deleted, get before file from the raw diff, which will be the full file.
+        raw_file = [line[1:] + "\n" for line in file_diff["hunks_process"][0][3:]]
+    else:
+        # Get raw after file.
+        file_raw_url = (f"https://raw.githubusercontent.com/{repo_owner}/"
+                        f"{repo_name}/{commit_hash}/{file_diff['tgt_file'][2:]}")
+        try:
+            raw_file = urllib.request.urlopen(file_raw_url)
+            raw_file_encoding = raw_file.headers.get_charsets()[0]
+            raw_file = [line.decode(raw_file_encoding) for line in raw_file.readlines()]
+        except Exception as e:
+            print(e)
+            print(file_raw_url)
+            return ""
+        # file_length = sum(1 for _ in raw_file)
+        # if file_length < length_threshold:
+        # files_list.append(raw_file)
+        # Iterate over hunks for this file and apply the reverse patch.
+        for hunk in file_diff["hunks_process"]:
+            hunk_list = []
+            for line in hunk[3:]:
+                if line.startswith("-") or line.startswith(" "):
+                    hunk_list.append(line[1:] + "\n")
+            raw_file[hunk[0][0] - 1:hunk[0][0] + hunk[1][1] - 1] = hunk_list
     del file_diff["hunks_process"]  # Deletes this item from the dict in parent functions
     return "".join(raw_file)
 
@@ -80,13 +86,14 @@ def process_commit(commit_data: dict) -> list[dict]:
     try:
         diff = urllib.request.urlopen(diff_url)
     except Exception as e:
+        print(e)
         return []
     encoding = diff.headers.get_charsets()[0]
     patch = PatchSet(diff, encoding=encoding)
     commit_list: list[dict] = []
     for patch_ind in patch:
         # Skip if the file is not a python file.
-        # if not patch_ind.target_file.endswith(".py"):
+        # if not Path(patch_ind.target_file).suffix == ".py":
         #     continue
         diff_dict: dict = process_ind_patch(patch_ind)
         diff_dict.update(commit_data)
@@ -120,25 +127,28 @@ class GitHubDiffDataset(Dataset):
 class GitHubDiffScraper(Scraper):
     def __init__(self, config):
         # TODO: Dask multi-node scheduling here
-        client = Client(n_workers=16, threads_per_worker=1)
-        self.read_path = Path(config["read_path"])
-        self.save_path = Path(config["save_path"])
+        client = Client(n_workers=config.n_workers, threads_per_worker=config.threads_per_worker)
+        self.read_path = Path(config.read_path)
+        self.save_path = Path(config.save_path)
 
     def scrape(self) -> RawDataset:
-        _ = (
+        result = (
             db.read_text(self.read_path).map(json.loads)
             .map(process_commit).flatten().to_dataframe()
             .to_parquet(self.save_path)
         )
+        progress(result)
         dataset = RawDataset(storage_uris=["https://github.com/CarperAI/Code-Pile"], complete=True)
         return dataset
 
 
 if __name__ == "__main__":
-    read_path = Path(__file__).parent / "full_test.json"
-    save_path = Path(__file__).parent / "full_test.parquet"
-    config = {"read_path": read_path, "save_path": save_path}
+    parser = argparse.ArgumentParser('codepile dataset tool')
+
+    parser.add_argument('--read_path', type=str)
+    parser.add_argument('--save_path', type=str)
+    parser.add_argument('--n_workers', type=int, default=8)
+    parser.add_argument('--threads_per_worker', type=int, default=2)
+    config = parser.parse_args()
     ghdiff_dataset = GitHubDiffDataset(config)
     ghdiff_dataset.download()
-    # client = Client(n_workers=16, threads_per_worker=1)
-    # db.read_text(read_path).map(json.loads).map(process_commit).flatten().to_dataframe().to_parquet(save_path)
