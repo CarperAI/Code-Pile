@@ -127,7 +127,7 @@ class GitHubDiffDataset(Dataset):
 class GitHubDiffScraper(Scraper):
     def __init__(self, config):
         # TODO: Dask multi-node scheduling here
-        client = Client(n_workers=config.n_workers, threads_per_worker=config.threads_per_worker)
+        self.client = Client(n_workers=config.n_workers, threads_per_worker=config.threads_per_worker)
         self.read_path = Path(config.read_path)
         self.save_path = Path(config.save_path)
 
