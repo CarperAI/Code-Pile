@@ -12,7 +12,7 @@ from boto3.session import Session
 import boto3
 
 
-LIST_DATASET = ['CodeContest', 'TopCoder']
+LIST_DATASET = ['CodeContest', 'TopCoder', "GoogleCodeJam"]
 CP_S3_BUCKET = "s-eai-neox"
 
 class CPDataset(Dataset):
@@ -85,12 +85,30 @@ class CPDataset(Dataset):
         solutions = "\n".join(lst)
         text = title + "\n" + problem + "\n" + "<correct_solutions>\n" + solutions + "\n</correct_solutions>"
         return text
+    
+    def make_format_ggcodejam(self, sample):
+        name = sample['problem_name']
+        description = sample['problem']
+        analysis = sample['analysis']
+        solutions = sample['solutions']
+        title = "<title> " + name + " </title>"
+        problem = "<problem>\n" + description + "\n</problem>"
+        hint = "<hint>\n" + analysis + "\n</hint>"
+        lst = []
+        for author in solutions:
+            lst.append(f"<code author={author}>\n" + solutions[author] + "\n</code>")
+        solutions = "\n".join(lst)
+        text = title + "\n" + problem + "\n" + hint + "\n" +  "<correct_solutions>\n" + solutions + "\n</correct_solutions>"
+        return text        
+
 
     def make_format(self, sample, source):
         if source == 'CodeContest':
             return self.make_format_code_contest(sample)
         elif source == 'TopCoder':
             return self.make_format_topcoder(sample)
+        elif source == "GoogleCodeJam":
+            return self.make_format_ggcodejam(sample)
         else:
             raise ValueError('Unknown source')
 
@@ -106,16 +124,23 @@ class CPDataset(Dataset):
         if not os.path.exists(os.path.join(self.config.raw_data_dir, 'TopCoder_raw.pickle')):
             s3 = boto3.client('s3')
             s3.download_file(CP_S3_BUCKET, "data/codepile/cpdata/TopCoder_raw.pickle", os.path.join(self.config.raw_data_dir, 'TopCoder_raw.pickle'))
+        
+        if not os.path.exists(os.path.join(self.config.raw_data_dir, 'GoogleCodeJam_raw.pickle')):
+            s3 = boto3.client('s3')
+            s3.download_file(CP_S3_BUCKET, "data/codepile/cpdata/GoogleCodeJam_raw.pickle", os.path.join(self.config.raw_data_dir, 'GoogleCodeJam_raw.pickle'))
 
         if return_df:
             return {'CodeContest': pd.read_pickle(os.path.join(self.config.raw_data_dir, 'CodeContest_raw.pickle')),
-                    'TopCoder': pd.read_pickle(os.path.join(self.config.raw_data_dir, 'TopCoder_raw.pickle'))}
+                    'TopCoder': pd.read_pickle(os.path.join(self.config.raw_data_dir, 'TopCoder_raw.pickle')), 
+                    'GoogleCodeJam': pd.read_pickle(os.path.join(self.config.raw_data_dir, 'GoogleCodeJam_raw.pickle'))}
     
     def download(self):
         self.fetch_raw(return_df=False)
 
 
 if __name__=="__main__":
+    if not os.path.exists("data/"):
+        os.makedirs("data/")
     config = Config(
         raw_data_dir="data/",
         output_data_dir="data/",
