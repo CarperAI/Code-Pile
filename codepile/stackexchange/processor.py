@@ -28,7 +28,7 @@ from pyspark.sql.types import StringType
 
 
 from codepile.dataset import Processor
-from .types_meta import *
+from types_meta import *
 
 class StackExchangeProcessor(Processor):
     def __init__(self, dump_src_dir, temp_dir):
@@ -50,7 +50,7 @@ class StackExchangeProcessor(Processor):
         }
         self.prepare_directories()
         self.build_schema_meta()
-        self.spark_dir = "/Users/vanga/Downloads/temp"
+        self.spark_dir = temp_dir
 
 
     def process(self, force_unzip=False, force_xml_conversion=False, force_process=False):

@@ -4,7 +4,7 @@ from datetime import datetime
 
 import internetarchive as ia
 
-from .processor import StackExchangeProcessor
+from processor import StackExchangeProcessor
 
 '''
 # example
@@ -35,7 +35,7 @@ StackExchangeInfo = DatasetInfo(
 
 class StackExchangeScraper(Scraper):
     def scrape(self) -> RawDataset:
-        exclude_files = ["stackoverflow.com-PostHistory.7z", "stackoverflow.com-Votes.7z", "stackoverflow.com-Badges.7z"] # exclude soem large files that are not needed. We can only do this for stackoverflow.com data as the dumps are available for each table separately.
+        exclude_files = ["stackoverflow.com-PostHistory.7z", "stackoverflow.com-Votes.7z", "stackoverflow.com-Badges.7z"] # exclude some large files that are not needed. We can only do this for stackoverflow.com data as the dumps are available for each table separately. We could also exclude some sites that are not english based.
         item = ia.get_item('stackexchange')
         file_names = []
         for file in item.files:
