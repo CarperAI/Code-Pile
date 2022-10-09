@@ -1,10 +1,7 @@
 import os
-from typing_extensions import Self
 import pandas as pd
-from topcoder import TopCoderDataset
 from competitive_programming import CPDataset
-from unittest import TestCase
-
+from codepile.codepile import Config
 
 from unittest import TestCase
 class TestCPDataset(TestCase):
@@ -12,7 +9,12 @@ class TestCPDataset(TestCase):
         if not os.path.exists('data/'):
             os.mkdir('data/')
 
-        cp_dataset = CPDataset("data/", "data/")
+        config = Config(
+            raw_data_dir="data/",
+            output_data_dir="data/",
+            tmpdir="/tmp"
+        )
+        cp_dataset = CPDataset(config)
         cp_dataset.download()
 
         self.cc_dummy = pd.read_pickle("test/CodeContest_dummy.pickle")
