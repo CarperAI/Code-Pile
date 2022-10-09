@@ -52,6 +52,8 @@ class AI4Code_Kaggle(Dataset):
 
 
 if __name__=="__main__":
+    if not os.path.exists("data/"):
+            os.makedirs("data/")
     config = Config(
         raw_data_dir="data/",
         output_data_dir="data/",

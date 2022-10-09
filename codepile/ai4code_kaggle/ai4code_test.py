@@ -6,16 +6,21 @@ from ai4code_kaggle import AI4Code_Kaggle
 import os
 import pandas as pd
 from ai4code_kaggle import AI4Code_Kaggle
+from codepile.codepile import Config
 
 from unittest import TestCase
 class TestAI4CodeDataset(TestCase):
 
     def setUp(self):
             
-        # make directory if not exists
-        if not os.path.exists('data'):
-            os.mkdir('data')
-        ai4code_dataset = AI4Code_Kaggle("data/", "data/")
+        if not os.path.exists("data/"):
+                os.makedirs("data/")
+        config = Config(
+            raw_data_dir="data/",
+            output_data_dir="data/",
+            tmpdir="/tmp"
+        )
+        ai4code_dataset = AI4Code_Kaggle(config)
         ai4code_dataset.download()
 
         self.dummy = pd.read_parquet("test/ai4code_kaggle_dummy.parquet")
