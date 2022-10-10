@@ -5,6 +5,9 @@ import re
 import os
 import sys
 import random
+import tarfile, io
+
+from urllib.parse import urlparse
 
 from scrapy.crawler import CrawlerProcess
 from scrapy.spidermiddlewares.httperror import HttpError
@@ -29,10 +32,10 @@ class DiscourseSpider(scrapy.Spider):
             'Accept': 'application/json'
             }
     user_agent = 'Mozilla/5.0 (compatible; Carper-GooseBot/8000; +https://carper.ai/)'
-    download_delay = 1
+    download_delay = 0
 
     scheduler_priority_queue = 'scrapy.pqueues.DownloaderAwarePriorityQueue'
-    concurrent_requests_per_domain = 4
+    #concurrent_requests_per_domain = 2
     concurrent_requests = 1000
 
 
@@ -42,9 +45,13 @@ class DiscourseSpider(scrapy.Spider):
     scrapetopics = False
     scrapeindex = True
 
+    usetarballs = False
+
     failures = {}
 
     def start_requests(self):
+        pathlib.Path('discourse').mkdir(parents=True, exist_ok=True)
+        # TODO - need some way of specifying which crawl index file to use
         with open('discourse/index.json', 'r') as indexfd:
             urls = json.loads(indexfd.read())
             random.shuffle(urls)
@@ -59,7 +66,7 @@ class DiscourseSpider(scrapy.Spider):
                     yield self.create_request(url + 'site', 20)
         
     def create_request(self, url, priority=0):
-        return scrapy.Request(url=url, callback=self.parse, headers=self.headers, errback=self.handle_errback, priority=priority + random.randint(0, 10))
+        return scrapy.Request(url=url, callback=self.parse, headers=self.headers, errback=self.handle_errback, priority=priority) # + random.randint(0, 10))
 
     def parse(self, response):
         try:
@@ -72,16 +79,26 @@ class DiscourseSpider(scrapy.Spider):
 
         #print(jsondata)
         #print(response.request.headers)
-        m = re.match(r"^(https?://)([^/]+)(/.*?)?(/[^/]+(:?\.json)?)?$", response.url)
+        #m = re.match(r"^(https?://)([^/]+)(/.*?)?$", response.url)
 
-        if not m:
-            print("Warning: couldn't understand URL", response.url)
-            return
+        #if not m:
+        #    print("Warning: couldn't understand URL", response.url)
+        #    return
 
-        protocol = m.group(1)
-        domain = m.group(2)
-        urlpath = m.group(3) or ''
-        filename = m.group(4) or urlpath
+        #protocol = m.group(1)
+        #domain = m.group(2)
+        #urlpath = m.group(3)
+        #filename = m.group(4) or urlpath
+
+        url = urlparse(response.url)
+        protocol = url.scheme + '://'
+        domain = url.netloc
+        urlpath = url.path
+        if url.query:
+            urlpath += url.query
+
+        if urlpath[-1] == '/':
+            urlpath += 'index'
 
         baseurl = protocol + domain + urlpath
 
@@ -89,7 +106,7 @@ class DiscourseSpider(scrapy.Spider):
 
         if 'category_list' in jsondata:
             #print ('domain: %s\turlpath: %s\tfilename: %s' % (domain, urlpath, filename))
-            self.write_file(datapath, 'categories', response.text)
+            self.write_file(domain, urlpath, response.text)
             for category in jsondata['category_list']['categories']:
                 if self.scrapetopics:
                     if 'topic_url' in category and category['topic_url'] is not None:
@@ -105,8 +122,7 @@ class DiscourseSpider(scrapy.Spider):
                     
 
         if 'topic_list' in jsondata:
-            #print(filename, response.url)
-            self.write_file(datapath, filename, response.text)
+            self.write_file(domain, urlpath, response.text)
             if 'more_topics_url' in jsondata['topic_list']:
                 nexturl = protocol + domain + jsondata['topic_list']['more_topics_url']
                 #print('Add next page URL', nexturl, self.headers)
@@ -115,11 +131,11 @@ class DiscourseSpider(scrapy.Spider):
             if self.scrapetopics:
                 topics = jsondata['topic_list']['topics']
                 for topic in topics:
-                    crawlfname = datapath + '/t/%d.json' % topic['id']
+                    crawlfname = datapath + '/t/%s/%d' % (topic['slug'], topic['id'])
                     if not os.path.isfile(crawlfname): 
                         # TODO - to facilitate continuous crawling, we probably want to check the last crawled time, and refresh if our list data indicates new posts
                         # As implemented, this is just a one-shot crawl that can be resumed. It'll grab new topics, but not refresh any changed ones
-                        topicurl = protocol + domain + '/t/%d' % topic['id']
+                        topicurl = protocol + domain + '/t/%s/%d' % (topic['slug'], topic['id'])
                         #print('New topicurl: ' + topicurl)
                         yield self.create_request(topicurl)
                     #else:
@@ -130,17 +146,38 @@ class DiscourseSpider(scrapy.Spider):
             #pathlib.Path(datapath).mkdir(parents=True, exist_ok=True)
             #with open(crawlfname, 'w') as fd:
             #    fd.write(response.text)
-            self.write_file(datapath, filename, response.text)
+            self.write_file(domain, urlpath, response.text)
         if 'categories' in jsondata:
             #print('got full list of categories, probably the site index', jsondata)
-            self.write_file(datapath, filename, response.text)
-    def write_file(self, datapath, filename, contents):
-            crawlfname = datapath + filename + '.json'
+            self.write_file(domain, urlpath, response.text)
+    def write_file(self, domain, filepath, contents):
+        if domain == '' or not self.usetarballs:
+            crawlfname = 'discourse/%s%s' % (domain, filepath)
+            datapath = os.path.dirname(crawlfname)
 
             pathlib.Path(datapath).mkdir(parents=True, exist_ok=True)
 
             with open(crawlfname, 'w') as fd:
+                #print("write file", crawlfname)
                 fd.write(contents)
+        else:
+            tarballname = 'discourse/%s.tar' % domain
+            if len(contents) > 0:
+                tarinfo = tarfile.TarInfo(filepath)
+                encoded = contents.encode()
+                tarinfo.size = len(encoded)
+                file = io.BytesIO(encoded)
+                try:
+                    tar = tarfile.open(tarballname, 'a')
+                    tar.addfile(tarinfo, file)
+                    tar.close()
+                    print("write tarball", tarballname)
+                except tarfile.ReadError:
+                    print("oh no", filepath)
+                    pass
+
+            else:
+                print('wtf why', tarballname, filepath)
     def handle_errback(self, failure):
         if failure.check(HttpError):
             print("["  + bcolors.WARNING + 'WARNING' + bcolors.ENDC + "]\tfailed to fetch URL %s" % (failure.value.response.url))
@@ -154,7 +191,7 @@ class DiscourseSpider(scrapy.Spider):
     def write_failure(self, url, reason):
         self.failures[url] = reason
         #print("[FAILURE] %s (%s)" % (url, reason))
-        self.write_file('discourse/', 'failures', json.dumps(self.failures, indent=2))
+        self.write_file('', 'failures.json', json.dumps(self.failures, indent=2))
 
 
 
@@ -174,8 +211,23 @@ class DiscourseTopicSpider(DiscourseSpider):
 
 
 def generateCrawlSummary():
-    with open('discourse/index.json') as index:
-        sites = json.loads(index.read())
+    try :
+        with open('discourse/failures.json') as failurefd:
+            failures = json.loads(failurefd.read())
+        with open('discourse/index.json') as index:
+            sites = json.loads(index.read())
+    except FileNotFoundError:
+        print("[ " + bcolors.FAIL + 'ERROR ' + bcolors.ENDC + '] couldn\'t read index or failure files')
+        return
+    faildomains = {}
+    for failurl in failures:
+            m = re.match(r"^(https?://)([^/]+)(/.*?)$", failurl)
+            if m:
+                protocol = m.group(1)
+                domain = m.group(2)
+                faildomains[domain] = failures[failurl]
+
+    if failures and sites:
         crawlsummary = {
             '_totals': {
                 'sites': 0,
@@ -187,17 +239,30 @@ def generateCrawlSummary():
             }
         print('Collecting crawl stats...')
         for site in sites:
-            m = re.match(r"^(https?://)([^/]+)(/.*?)$", site)
-            if m:
-                protocol = m.group(1)
-                domain = m.group(2)
+            url = urlparse(site)
+            protocol = url.scheme + '://'
+            domain = url.netloc
+            urlpath = url.path
+            if url.query:
+                urlpath += url.query
+            #m = re.match(r"^(https?://)([^/]+)(/.*?)$", site)
+            #if m:
+            #    protocol = m.group(1)
+            #    domain = m.group(2)
+
+            if True:
                 crawlsummary[domain] = {}
-                fname = 'discourse/%s/site/site.json' % domain
+                tarballname = 'discourse/%s.tar' % domain
+                fname = 'discourse/%s/site' % domain
                 crawlsummary['_totals']['sites'] += 1
                 crawlsummary[domain]['topic_count'] = 0
                 crawlsummary[domain]['post_count'] = 0
                 crawlsummary[domain]['category_count'] = 0
                 crawlsummary[domain]['categories'] = {}
+
+                if domain in faildomains:
+                    crawlsummary[domain]['failure'] = faildomains[domain]
+
                 if os.path.isfile(fname): 
                     #print('open file', fname)
                     with open(fname, 'r') as sitefd:
@@ -208,6 +273,25 @@ def generateCrawlSummary():
                             crawlsummary[domain]['topic_count'] = crawlsummary[domain]['topic_count'] + category['topic_count']
                             crawlsummary[domain]['post_count'] = crawlsummary[domain]['post_count'] + category['post_count']
                             crawlsummary[domain]['category_count'] += 1
+                elif os.path.isfile(tarballname): 
+                    print("open tarball", tarballname)
+                    try:
+                        tar = tarfile.open(tarballname, 'r')
+                        extractfile = (urlpath or '/') + 'site'
+                        try:
+                            tarreader = tar.extractfile(extractfile)
+                            sitejson = json.loads(tarreader.read(6553600))
+                            for category in sitejson['categories']:
+                                crawlsummary[domain]['categories'][category['slug']] = category
+                                crawlsummary[domain]['topic_count'] = crawlsummary[domain]['topic_count'] + category['topic_count']
+                                crawlsummary[domain]['post_count'] = crawlsummary[domain]['post_count'] + category['post_count']
+                                crawlsummary[domain]['category_count'] += 1
+                        except KeyError:
+                            pass
+                        tar.close()
+                    except tarfile.ReadError:
+                        print("oh no", filepath)
+                        pass
                 crawlsummary['_totals']['topic_count'] += crawlsummary[domain]['topic_count']
                 crawlsummary['_totals']['post_count'] += crawlsummary[domain]['post_count']
                 crawlsummary['_totals']['category_count'] += crawlsummary[domain]['category_count']
@@ -216,6 +300,7 @@ def generateCrawlSummary():
         with open('discourse/crawlsummary.json', 'w') as crawlsummaryfd:
             crawlsummaryfd.write(json.dumps(crawlsummary, indent=2))
         print('Done.  Crawl summary written to discourse/crawlsummary.json')
+        print(crawlsummary['_totals'])
 
 
 if __name__ == "__main__":
