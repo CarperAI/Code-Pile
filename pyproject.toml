@@ -11,9 +11,8 @@ version = "0.0.1"
 dependencies = [
     "pydantic",
     "internetarchive",
-    "xmltodict",
-    "simplejson",
-    "pandas",
     "py7zr",
+    "more_itertools",
+    "pandas",
     "pyarrow"
 ]

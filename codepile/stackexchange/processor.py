@@ -5,16 +5,11 @@
 # Uses pandas "merge", "groupby" and "apply" features do one-one and one-many joins. one-many relationship leads to a nested list of dicts.
 # By default unzipping, xml conversion and denormaliztion steps are skipped if the target files are present
 
-
-import xmltodict
-import simplejson
 import os
 from pathlib import Path
-import re
 from tqdm import tqdm
 import py7zr
 
-import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 from lxml import etree
@@ -31,10 +26,10 @@ from codepile.dataset import Processor
 from types_meta import *
 
 class StackExchangeProcessor(Processor):
-    def __init__(self, dump_src_dir, temp_dir):
-        self.dump_src_dir = dump_src_dir # directory where the downloaded zip files are present for all the sites
-        self.temp_dir = temp_dir
-        self.output_dir = temp_dir
+    def __init__(self, config, id):
+        self.dump_src_dir = config.raw_data_dir # directory where the downloaded zip files are present for all the sites
+        self.temp_dir = config.tmpdir
+        self.output_dir = self.temp_dir
 
         self.exclude_sites = ["stackoverflow.com", "math.stackexchange.com", "superuser.com"] # exclude list has precedence over include list
         self.include_sites = [] # "superuser.com", "askubuntu.com"
@@ -50,7 +45,7 @@ class StackExchangeProcessor(Processor):
         }
         self.prepare_directories()
         self.build_schema_meta()
-        self.spark_dir = temp_dir
+        self.spark_dir = self.temp_dir
 
 
     def process(self, force_unzip=False, force_xml_conversion=False, force_process=False):

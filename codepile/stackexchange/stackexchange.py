@@ -6,10 +6,8 @@ import internetarchive as ia
 
 from processor import StackExchangeProcessor
 
-'''
-# example
-StackExchangeInfo = DatasetInfo(
-        identifier='StackExchange',
+STACKEXCHANGEINFO = DatasetInfo(
+        id='StackExchange',
         description='',
         data_end=datetime(2022,1,1),
         data_start=10,
@@ -31,10 +29,10 @@ StackExchangeInfo = DatasetInfo(
         data_owner='me',
         contributers=['me']
         )
-'''
 
 class StackExchangeScraper(Scraper):
     def scrape(self) -> RawDataset:
+        target_dir = self.config.target_dir
         exclude_files = ["stackoverflow.com-PostHistory.7z", "stackoverflow.com-Votes.7z", "stackoverflow.com-Badges.7z"] # exclude some large files that are not needed. We can only do this for stackoverflow.com data as the dumps are available for each table separately. We could also exclude some sites that are not english based.
         item = ia.get_item('stackexchange')
         file_names = []
@@ -42,15 +40,25 @@ class StackExchangeScraper(Scraper):
             if file['name'] not in exclude_files:
                 file_names.append(file['name'])
         metadata = item.metadata
-        item.download(files=file_names, checksum=True, verbose=True, destdir=self.target_dir)
+        item.download(files=file_names, checksum=True, verbose=True, destdir=target_dir)
 
-        return RawDataset(storage_uris=['file:///{self.target_dir}'],
+        return RawDataset(storage_uris=['file:///{target_dir}'],
                 metadata=str(metadata))
 
 
 class StackExchangeDataset(Dataset):
-    def __init__(self, tempdir, target_dir):
-        self.scraper = StackExchangeScraper(tempdir, target_dir)
-        self.processor = StackExchangeProcessor(target_dir, tempdir)
+    def __init__(self, config):
+        self.config = config
+        self.scraper = StackExchangeScraper(config, self.id)
+        self.processor = StackExchangeProcessor(config, self.id)
+
     def download(self):
         self.scraper.scrape()
+
+    @property
+    def info(self):
+        return STACKEXCHANGEINFO
+
+    @property
+    def id(self):
+        return "StackExchange"

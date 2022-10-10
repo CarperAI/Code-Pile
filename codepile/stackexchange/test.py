@@ -4,13 +4,19 @@ from pyspark.sql import SparkSession
 from unittest import TestCase
 
 from stackexchange import StackExchangeDataset
+from codepile.codepile import Config
 class TestStackExchangeDataset(TestCase):
 
     def test(self):
         this_dir = os.path.dirname(__file__)
         dump_dir = os.path.join(this_dir, "./tests/data/dumps")
         temp_dir = os.path.join(this_dir, "./tests/data/temp")
-        se_dataset = StackExchangeDataset(temp_dir, dump_dir)
+        config = Config(
+            raw_data_dir=dump_dir,
+            tmpdir=temp_dir,
+            output_data_dir=temp_dir
+        )
+        se_dataset = StackExchangeDataset(config)
 
         se_dataset.process(force_unzip=True, force_xml_conversion=True, force_process=True)
 
