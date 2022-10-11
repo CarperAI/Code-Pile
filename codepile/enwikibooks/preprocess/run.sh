@@ -1,0 +1,1 @@
+python main.py --data_files ../data/computing_wikibooks.parquet.gzip --output_dir ../data/ --text_column text
