@@ -9,5 +9,9 @@ name = "Code-Pile"
 version = "0.0.1"
 dependencies = [
     "pydantic",
-    "internetarchive"
+    "internetarchive",
+    "py7zr",
+    "more_itertools",
+    "pandas",
+    "pyarrow"
 ]
