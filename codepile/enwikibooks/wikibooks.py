@@ -1,17 +1,41 @@
-from genericpath import exists
 import os
 import json
 import pandas as pd
-from codepile.dataset import RawDataset, Scraper, Dataset
+from codepile.dataset import RawDataset, Scraper, Dataset, DatasetInfo
+from codepile.codepile import Config
 import boto3
 import requests
+from datetime import datetime
 from bs4 import BeautifulSoup
 
 BOOKS_S3_BUCKET = "s-eai-neox"
 
 class WikiBookDataset(Dataset):
-    def __init__(self, tempdir, target_dir):
-        self.scraper = WikiBookScraper(tempdir, target_dir)
+
+    def __init__(self, config):
+        self.config = config
+        self.info = DatasetInfo(
+            id="WikiBook Dataset",
+            description="The books deal with computing: usually defined as the activity of using and developing computer technology, computer hardware, and software get from Wikibook",
+            size=3,
+            source_uri="https://en.wikibooks.org/wiki/Department:Computing",
+            dataset_pros="Books guarantee lience problems",
+            dataset_cons="Small size",
+            languages=["english"],
+            coding_languages=["python, c++, java"],
+            modalities=["code_review"],
+            source_license="Free",
+            source_citation="Wikibook",
+            data_owner="Duy Phung",
+            contributers=["Duy Phung"],
+            data_end=datetime(2022, 10, 12)
+       )
+    
+    def info(self):
+        return self.info
+    
+    def id(self):
+        return self.info.id
 
     def fetch_raw(self, return_df=False):
         if not os.path.exists(self.config.raw_data_dir):
