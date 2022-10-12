@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from competitive_programming import CPDataset
+from codepile.competitive_programming.competitive_programming import CPDataset
 from codepile.codepile import Config
 
 from unittest import TestCase

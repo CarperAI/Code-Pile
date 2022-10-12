@@ -1,7 +1,6 @@
 import os
 import json
 import requests
-import gdown
 import pandas as pd
 from tqdm import tqdm
 from bs4 import BeautifulSoup
