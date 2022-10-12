@@ -41,8 +41,6 @@ class CPDataset(Dataset):
     def id(self):
         return self.info.id
     
-
-
     def make_format_code_contest(self, sample):
         title = sample['name']
         description = sample['description']
@@ -54,52 +52,41 @@ class CPDataset(Dataset):
         solutions = sample['solutions']
         incorrect_solutions = sample['incorrect_solutions']
         hint = sample['hint_string']
-        title = "<title> " + title + " </title>"
-        problem = "<problem "  + "source=" + source +  " tags=" + ','.join(tags) \
-            + " time_limit=" + time_limit + " memory_limit=" \
-            + memory_limit + " difficulty=" + difficulty + ">\n"
-        problem = problem + description + "\n</problem>"
-        lst = []
+        prompt = "Problem title: " + title + "\n"
+        prompt = prompt + "Problem statement: " + description + "\n"
+        prompt = prompt + "Problem categories: " + ','.join(tags) + "\n"
+        prompt = prompt + "Time limit: " + time_limit + "\n"
+        prompt = prompt + "Memory limit: " + memory_limit + "\n"
+        prompt = prompt + "Difficulty: " + description + "\n"
+        prompt = prompt + "Hint: " + hint + "\n"
         for sol in solutions:
-            lst.append("<code language=" + sol['language'] + ">\n" + sol['solution'] + "\n</code>")
-        solutions = "\n".join(lst)
-        lst = []
+            prompt = prompt + f"Here is a correct solution with {sol['language']} programming language: \n" + sol['solution'] + "\n"
         for sol in incorrect_solutions:
-            lst.append("<code language=" + sol['language'] + ">\n" + sol['solution'] + "\n</code>")
-        incorrect_solutions = "\n".join(lst)
-        text = title + "\n" + problem + "\n" + "<hint> " + hint + "\n</hint>" \
-            + "\n" +  "<correct_solutions>\n" + solutions + "\n</correct_solutions>" \
-            + "\n" +  "<incorrect_solutions>\n" + incorrect_solutions + "\n</incorrect_solutions>"
-        return text
+            prompt = prompt + f"Here is an incorrect solution with {sol['language']} programming language: \n" + sol['solution'] + "\n"
+        return prompt
     
     def make_format_topcoder(self, sample):
         name = sample['name']
         description = sample['description']
         solutions = sample['solutions']
-
-        title = "<title> " + name + " </title>"
-        problem = "<problem>\n" + description + "\n</problem>"
-        lst = []
+        prompt = "Problem title: " + name + "\n"
+        prompt = prompt + "Problem statement: " + description + "\n"
         for sol in solutions:
-            lst.append("<code>\n" + sol.strip() + "\n</code>")
-        solutions = "\n".join(lst)
-        text = title + "\n" + problem + "\n" + "<correct_solutions>\n" + solutions + "\n</correct_solutions>"
-        return text
+            prompt = prompt + f"Here is a correct solution: \n" + sol.strip() + "\n"
+        return prompt
     
     def make_format_ggcodejam(self, sample):
         name = sample['problem_name']
         description = sample['problem']
         analysis = sample['analysis']
         solutions = sample['solutions']
-        title = "<title> " + name + " </title>"
-        problem = "<problem>\n" + description + "\n</problem>"
-        hint = "<hint>\n" + analysis + "\n</hint>"
-        lst = []
+
+        prompt = "Problem title: " + name + "\n"
+        prompt = prompt + "Problem statement: " + description + "\n"
+        prompt = prompt + "Hint: " + analysis + "\n"
         for author in solutions:
-            lst.append(f"<code author={author}>\n" + solutions[author] + "\n</code>")
-        solutions = "\n".join(lst)
-        text = title + "\n" + problem + "\n" + hint + "\n" +  "<correct_solutions>\n" + solutions + "\n</correct_solutions>"
-        return text        
+            prompt = prompt + f"Here is a correct solution: \n" + solutions[author] + "\n"
+        return prompt        
 
 
     def make_format(self, sample, source):
