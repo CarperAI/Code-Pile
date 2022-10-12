@@ -10,6 +10,7 @@ version = "0.0.1"
 dependencies = [
     "beautifulsoup4",
     "boto3",
+    "gdown",
     "pydantic",
     "internetarchive",
     "py7zr",
