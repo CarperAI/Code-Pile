@@ -32,7 +32,7 @@ STACKEXCHANGEINFO = DatasetInfo(
 
 class StackExchangeScraper(Scraper):
     def scrape(self) -> RawDataset:
-        target_dir = self.config.target_dir
+        target_dir = self.config.raw_data_dir
         exclude_files = ["stackoverflow.com-PostHistory.7z", "stackoverflow.com-Votes.7z", "stackoverflow.com-Badges.7z"] # exclude some large files that are not needed. We can only do this for stackoverflow.com data as the dumps are available for each table separately. We could also exclude some sites that are not english based.
         item = ia.get_item('stackexchange')
         file_names = []

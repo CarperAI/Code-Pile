@@ -18,7 +18,7 @@ from more_itertools import chunked
 
 
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col,lit,create_map, collect_list
+from pyspark.sql.functions import col,lit,create_map, collect_list, to_json
 from pyspark.sql.types import StringType
 
 
@@ -235,7 +235,7 @@ class StackExchangeProcessor(Processor):
             args = []
             for c in df.columns:
                 args.append(lit(c))
-                args.append(col(c).cast(StringType()))
+                args.append(col(c))
             return args
 
         site_temp_dir = self.get_site_intermediate_dir(site)
@@ -267,7 +267,7 @@ class StackExchangeProcessor(Processor):
 
         # populate posts with comments
         print("Adding comments to posts")
-        posts_df = posts_df.join(comments_grouped, posts_df.Id == comments_grouped.PostId, "left").select(posts_df["*"], comments_grouped["comments"])        
+        posts_df = posts_df.join(comments_grouped, posts_df.Id == comments_grouped.PostId, "left").select(posts_df["*"], to_json(comments_grouped["comments"]).alias("comments"))
 
         questions_df = self.get_questions_subset(posts_df)
         answers_df = self.get_answers_subset(posts_df)
@@ -283,7 +283,7 @@ class StackExchangeProcessor(Processor):
 
         # populate questions with answers 
         print("Adding answers to questions")
-        questions_df = questions_df.join(answers_grouped, questions_df.Id == answers_grouped.ParentId, "left").select(questions_df["*"], answers_grouped["answers"])
+        questions_df = questions_df.join(answers_grouped, questions_df.Id == answers_grouped.ParentId, "left").select(questions_df["*"], to_json(answers_grouped["answers"]).alias("answers"))
         
         questions_df.coalesce(1).write.mode("overwrite").option("maxRecordsPerFile", self.max_records_per_output_file).parquet(questions_output_dir)
         print(f"Finished processing site: '{site}'")
