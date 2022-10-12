@@ -2,4 +2,4 @@
 ```bash
 bash run.sh
 ```
-## Almost source code from https://github.com/bigscience-workshop/data-preparation
+Noted: Almost source code from [bigscience-workshop](https://github.com/bigscience-workshop/data-preparation)
