@@ -8,6 +8,8 @@ build-backend = "setuptools.build_meta"
 name = "Code-Pile"
 version = "0.0.1"
 dependencies = [
+    "beautifulsoup4",
+    "boto3",
     "pydantic",
     "internetarchive",
     "py7zr",
