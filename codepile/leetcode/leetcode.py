@@ -7,6 +7,7 @@ import gdown
 from .processor import LeetCodeProcessor
 
 LEETCODE_DUMP_URL = "https://drive.google.com/file/d/1fT2cDXF_4U79Z6h0y0ImljICb-xbotUq/view?usp=sharing"
+LEETCODE_DUMP_ZIP_NAME = "leetcode.tar.bz2"
 LEETCODE_PARQUET_ZIP_NAME = "leetcode_topics_with_questions.parquet.gzip"
 
 '''
@@ -30,10 +31,11 @@ LeetCodeInfo = DatasetInfo(
 '''
 class LeetCodeScraper(Scraper):
     def scrape(self, metadata) -> RawDataset:
-        if not os.path.exists(os.path.join(self.config.output_data_dir, LEETCODE_PARQUET_ZIP_NAME)):
+        if not (os.path.exists(os.path.join(self.config.output_data_dir, LEETCODE_PARQUET_ZIP_NAME)) \
+            or os.path.exists(os.path.join(self.config.output_data_dir, LEETCODE_DUMP_ZIP_NAME))):
             gdown.download(
                 url=LEETCODE_DUMP_URL, 
-                output=os.path.join(self.config.raw_data_dir, 'leetcode.tar.bz2'),
+                output=os.path.join(self.config.raw_data_dir, LEETCODE_DUMP_ZIP_NAME),
                 quiet=False, fuzzy=True)
         return RawDataset(storage_uris=['file:///{self.config.raw_data_dir}'],
                 metadata=str(metadata))
