@@ -1,10 +1,10 @@
 import os
 import pandas as pd
-from wikibooks import WikiBookDataset
+from codepile.codepile import Config
+from codepile.enwikibooks.wikibooks import WikiBookDataset
 
 from unittest import TestCase
 class TestWikiBookDataset(TestCase):
-    
     def setUp(self):
         if not os.path.exists("data/"):
             os.makedirs("data/")
