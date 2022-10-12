@@ -37,6 +37,11 @@ class WikiBookDataset(Dataset):
     def id(self):
         return self.info.id
 
+    def make_format(self, sample):
+        title = sample['title']
+        text = sample['text']
+        return f"Book title: {title}\nBook Content: \n{text}"
+
     def fetch_raw(self, return_df=False):
         if not os.path.exists(self.config.raw_data_dir):
             os.makedirs(self.config.raw_data_dir)
