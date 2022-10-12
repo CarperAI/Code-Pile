@@ -6,6 +6,7 @@
 # By default unzipping, xml conversion and denormaliztion steps are skipped if the target files are present
 
 import os
+import shutil
 from pathlib import Path
 from tqdm import tqdm
 import py7zr
@@ -31,7 +32,7 @@ class StackExchangeProcessor(Processor):
         self.temp_dir = config.tmpdir
         self.output_dir = self.temp_dir
 
-        self.exclude_sites = ["stackoverflow.com", "math.stackexchange.com", "superuser.com"] # exclude list has precedence over include list
+        self.exclude_sites = [] # exclude list has precedence over include list
         self.include_sites = [] # "superuser.com", "askubuntu.com"
         self.tables_to_consider = ["Posts", "Comments", "Users"]
         self.intermediate_format = "parquet" # parquet
@@ -48,7 +49,7 @@ class StackExchangeProcessor(Processor):
         self.spark_dir = self.temp_dir
 
 
-    def process(self, force_unzip=False, force_xml_conversion=False, force_process=False):
+    def process(self, raw_data, force_unzip=False, force_xml_conversion=False, force_process=False):
         self.spark = SparkSession.builder.config("spark.worker.cleanup.enabled", "true").config("spark.local.dir", self.spark_dir).config("spark.driver.memory", "16G").master("local[16]").appName('spark-stats').getOrCreate()        
         print(f"Processing tables: {self.tables_to_consider}")
         sites_to_process = set()
@@ -65,7 +66,7 @@ class StackExchangeProcessor(Processor):
             spark_success_file = os.path.join(questions_output_dir, "_SUCCESS")
             if os.path.exists(spark_success_file) and not force_process:
                 print(f"Skipping, site '{site}' is already processed")
-                return            
+                continue            
             
             src_abs_path = os.path.join(self.dump_src_dir, zip_file)
             try:
@@ -80,6 +81,9 @@ class StackExchangeProcessor(Processor):
                 print(f"Processing site: {site}")
                 self.convert_xml(site, force_xml_conversion)
                 self.denormalize_data(site, force_process)
+                # delete temporary data
+                shutil.rmtree(os.path.join(self.temp_dir, "xml", site))
+                shutil.rmtree(os.path.join(self.temp_dir, "parquet", site))
             except Exception as e:
                 print(f"Failed to process the site: '{site}'")
                 print(e)
@@ -130,7 +134,7 @@ class StackExchangeProcessor(Processor):
                 files_to_extract.add(fn)
     
         if len(files_to_extract) > 0:
-            print("Extracting..")
+            print(f"'{site}': extracting: {files_to_extract}")
             with py7zr.SevenZipFile(zip_file, 'r') as archive:
                 archive.extract(path=dest_dir, targets=list(files_to_extract))
     
@@ -156,7 +160,7 @@ class StackExchangeProcessor(Processor):
 
     def convert_xml(self, site, force_conversion):
         # most of the xml parsing logic is taken from the work of https://github.com/flowpoint
-        def parse_xml(source_xml, output_dirpath) -> dict :
+        def parse_xml(source_xml) -> dict :
             # use lxml because pyarrow readxml has trouble with types
             for event, element in etree.iterparse(source_xml, events=('end',), tag='row'):
                 j = dict(element.attrib)
@@ -192,7 +196,7 @@ class StackExchangeProcessor(Processor):
 
             writer = pq.ParquetWriter(target_path, schema)
 
-            xml_stream = parse_xml(os.path.join(xml_src_dir, f"{table}.xml"), dest_dir)
+            xml_stream = parse_xml(os.path.join(xml_src_dir, f"{table}.xml"))
 
             corrected_types_steam = map(
                     partial(cast_dict_to_schema, python_schema),
@@ -206,7 +210,7 @@ class StackExchangeProcessor(Processor):
                         schema=schema)
 
                 writer.write_batch(batch)
-                print(f"Finished converting {table} from xml to {format}")
+            print(f"Finished converting {table} from xml to {format}")
 
     def load_data_into_spark_dfs(self, src_dir, tables, format="parquet"):
         dfs = {}

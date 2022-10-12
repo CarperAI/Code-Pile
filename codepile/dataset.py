@@ -137,7 +137,7 @@ class Dataset(ABC):
         p = os.path.join(self.config.tmpdir, self.info.id)
         with open(os.path.join(p, 'raw_data.json'), 'r') as f:
             raw_data = RawDataset.parse_raw(f.read())
-        self.processor.process(raw_data, args, kwargs)
+        self.processor.process(raw_data, *args, **kwargs)
 
     def analyse(self, *args, **kwargs):
         self.analyser.analyse()
