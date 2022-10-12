@@ -1,5 +1,4 @@
 import os
-import gdown
 import pandas as pd
 from codepile.dataset import DatasetInfo, DatasetSources, RawDataset, Scraper, Processor, Analyser, Dataset
 from codepile.codepile import Config
