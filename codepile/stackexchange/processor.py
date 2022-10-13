@@ -24,7 +24,7 @@ from pyspark.sql.types import StringType
 
 
 from codepile.dataset import Processor
-from types_meta import *
+from codepile.stackexchange.types_meta import *
 
 class StackExchangeProcessor(Processor):
     def __init__(self, config, id):
@@ -36,21 +36,21 @@ class StackExchangeProcessor(Processor):
         self.include_sites = [] # "superuser.com", "askubuntu.com"
         self.tables_to_consider = ["Posts", "Comments", "Users"]
         self.intermediate_format = "parquet" # parquet
-        self.batch_size = 10000
-        self.max_records_per_output_file = 1000000
+        self.batch_size = 100000 # number of records to buffer while converting from xml to parquet
+        self.max_records_per_output_file = 1000000 # max number of files per output parquet file, helps partition data for larger sites like stackoverflow.com
 
         self.include_columns = {
             "Posts": ["Id", "PostTypeId", "AcceptedAnswerId", "Body", "OwnerUserId", "ParentId", "Score", "Title", "Tags", "ContentLicense", "AnswerCount", "CommentCount", "ViewCount", "FavoriteCount", "CreationDate"],
             "Users": ["Id", "Reputation", "DisplayName", "AboutMe", "Views", "AccountId", "CreationDate"],
             "Comments": ["Id", "PostId", "Score", "Text", "UserId", "ContentLicense", "CreationDate"]
-        }
+        } # columns to be included in the output joined data
         self.prepare_directories()
         self.build_schema_meta()
         self.spark_dir = self.temp_dir
 
 
     def process(self, raw_data, force_unzip=False, force_xml_conversion=False, force_process=False):
-        self.spark = SparkSession.builder.config("spark.worker.cleanup.enabled", "true").config("spark.local.dir", self.spark_dir).config("spark.driver.memory", "16G").master("local[16]").appName('spark-stats').getOrCreate()        
+        self.spark = SparkSession.builder.config("spark.worker.cleanup.enabled", "true").config("spark.local.dir", self.spark_dir).config("spark.driver.memory", "16G").config("spark.executor.cores", 12).config("spark.executor.memory", "16g").master("local[16]").appName('stackexchange').getOrCreate()        
         print(f"Processing tables: {self.tables_to_consider}")
         sites_to_process = set()
         for zip_file in os.listdir(self.dump_src_dir):

@@ -4,7 +4,7 @@ from datetime import datetime
 
 import internetarchive as ia
 
-from processor import StackExchangeProcessor
+from codepile.stackexchange.processor import StackExchangeProcessor
 
 STACKEXCHANGEINFO = DatasetInfo(
         id='StackExchange',
