@@ -5,15 +5,15 @@ Download, extract, read, dedup, and clean usenet archives.
 
 ## Usage:
 
-Run `codepile.usenet.usenet.main(temp, dest)`
+`Dataset.download` has the following options:
 
-- **temp** - location where files will be downloaded and extracted from Internet Archives.
-- **dest** - processed xml files stored here.
-- **files** - (Optional, Highly Recommended) A subset of files to fetch from the archive for testing purposes. Default is None. Leave blank to download and process ALL files in the archive.
-- **ia_id** - Internet Archive identifier, default is '[usenet-comp](https://archive.org/details/usenet-comp)'
+- **files** (optional) - A subset of groups to fetch from the archive (See groups below). If empty processes the entire usenet-comp archive.
 
-**Example Usage:**
+### Groups
 
-`main('temp', 'dest', ['comp.lang.basic.visual.mbox.zip', ], )`
+Usenet is made up of multiple logical groupings of topics. For instance, comp.lang.java.programming consists of all
+questions and answers related to the java programming language.
 
-Fetches and processes only the [visual basic](https://archive.org/download/usenet-comp) item from the usenet-comp archives.
+usenet-comp groups all groups that come under the comp heading. Approx 30 GB of messages.
+
+This scraper allows you to process all comp groups or a subset such as only java groups, c++ related groups, etc.
