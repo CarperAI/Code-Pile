@@ -1,4 +1,8 @@
-# Code-Pile 
+# Code-Pile
+
+![pytest](https://github.com/CarperAI/Code-Pile/actions/workflows/python_starter.yml/badge.svg)
+
+
 This repository contains the processing scripts to scrape/process the code-pile dataset.
 
 ## Table of Contents
