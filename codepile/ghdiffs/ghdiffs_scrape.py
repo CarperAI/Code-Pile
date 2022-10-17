@@ -67,6 +67,54 @@ def get_before_file(file_diff: dict, commit_hash: str, repo_name: str, length_th
     return "".join(raw_file)
 
 
+def process_commit(commit_data: dict, config: argparse.Namespace) -> list[dict]:
+    """
+    Process a commit dictionary to get the before files and diff dict.
+
+    Args:
+        commit_data (dict): Dictionary containing commit hash, repo name, and
+        commit message.
+
+    Returns:
+        list[dict]: A list of dicts, where each dict contains the data for a
+        change to a single file.
+    """
+    if config.python_only and commit_data["language_name"] != "Python":
+        return []
+    # Scrape a commit's diff file.
+    diff_url = f"https://github.com/{commit_data['repo_name']}/commit/{commit_data['commit']}.diff"
+    try:
+        diff = urllib.request.urlopen(diff_url)
+        encoding = diff.headers.get_charsets()[0]
+        patch = PatchSet(diff, encoding=encoding)
+        if len(patch) == 0:
+            return []
+    except Exception as e:
+        # print(e, diff_url)
+        return []
+    commit_list: list[dict] = []
+    # Iterate over files within the diff.
+    for patch_ind in patch:
+        if config.ignore_deletions and patch_ind.target_file == "/dev/null":
+            continue
+        if config.diff_length_threshold > 0 and sum(len(hunk) for hunk in patch_ind) > config.diff_length_threshold:
+            continue
+        diff_dict: dict = process_ind_patch(patch_ind)
+        diff_dict["before_file"] = get_before_file(diff_dict, commit_data["commit"], commit_data["repo_name"],
+                                                    length_threshold=config.code_length_threshold)
+        if not diff_dict["before_file"]:
+            # Happens if exception is thrown or file is too long.
+            continue
+        diff_dict["commit"] = commit_data["commit"]
+        diff_dict["message"] = commit_data["message"]
+        diff_dict["repo_name"] = commit_data["repo_name"]
+        diff_dict["language_name"] = commit_data["language_name"]
+        diff_dict["author_name"] = commit_data["author"]["name"]
+        diff_dict["license"] = commit_data["license"]
+        commit_list.append(diff_dict)
+    return commit_list
+
+
 class GitHubDiffDataset(Dataset):
     def __init__(self, config):
         self.config = config
@@ -92,13 +140,11 @@ class GitHubDiffDataset(Dataset):
 class GitHubDiffScraper(Scraper):
     def __init__(self, config):
         # TODO: Dask multi-node scheduling here
+        # TODO: Release the GIL inside process_commit
+        self.config = config
         self.client = Client(n_workers=config.n_workers, threads_per_worker=config.threads_per_worker)
         self.read_path = Path(config.read_path)
         self.save_path = Path(config.save_path)
-        self.python_only = config.python_only
-        self.diff_length_threshold = config.diff_length_threshold
-        self.code_length_threshold = config.code_length_threshold
-        self.ignore_deletions = config.ignore_deletions
 
     def scrape(self) -> RawDataset:
         meta_spec = {'hunks': str, 'addition_count': int, 'deletion_count': int,
@@ -108,59 +154,12 @@ class GitHubDiffScraper(Scraper):
                      'license': str}
         result = (
             db.read_text(self.read_path).map(json.loads)
-            .map(self.process_commit).flatten().to_dataframe(meta=meta_spec)
+            .map(process_commit, config=self.config).flatten().to_dataframe(meta=meta_spec)
             .to_parquet(self.save_path)
         )
         progress(result)
         dataset = RawDataset(storage_uris=["https://github.com/CarperAI/Code-Pile"], complete=True)
         return dataset
-
-    def process_commit(self, commit_data: dict) -> list[dict]:
-        """
-        Process a commit dictionary to get the before files and diff dict.
-
-        Args:
-            commit_data (dict): Dictionary containing commit hash, repo name, and
-            commit message.
-
-        Returns:
-            list[dict]: A list of dicts, where each dict contains the data for a
-            change to a single file.
-        """
-        if self.python_only and commit_data["language_name"] != "Python":
-            return []
-        # Scrape a commit's diff file.
-        diff_url = f"https://github.com/{commit_data['repo_name']}/commit/{commit_data['commit']}.diff"
-        try:
-            diff = urllib.request.urlopen(diff_url)
-            encoding = diff.headers.get_charsets()[0]
-            patch = PatchSet(diff, encoding=encoding)
-            if len(patch) == 0:
-                return []
-        except Exception as e:
-            # print(e, diff_url)
-            return []
-        commit_list: list[dict] = []
-        # Iterate over files within the diff.
-        for patch_ind in patch:
-            if self.ignore_deletions and patch_ind.target_file == "/dev/null":
-                continue
-            if self.diff_length_threshold > 0 and sum(len(hunk) for hunk in patch_ind) > self.diff_length_threshold:
-                continue
-            diff_dict: dict = process_ind_patch(patch_ind)
-            diff_dict["before_file"] = get_before_file(diff_dict, commit_data["commit"], commit_data["repo_name"],
-                                                       length_threshold=self.code_length_threshold)
-            if not diff_dict["before_file"]:
-                # Happens if exception is thrown or file is too long.
-                continue
-            diff_dict["commit"] = commit_data["commit"]
-            diff_dict["message"] = commit_data["message"]
-            diff_dict["repo_name"] = commit_data["repo_name"]
-            diff_dict["language_name"] = commit_data["language_name"]
-            diff_dict["author_name"] = commit_data["author"]["name"]
-            diff_dict["license"] = commit_data["license"]
-            commit_list.append(diff_dict)
-        return commit_list
 
 
 if __name__ == "__main__":
