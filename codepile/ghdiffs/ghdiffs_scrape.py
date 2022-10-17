@@ -24,7 +24,6 @@ def process_ind_patch(patch_diff) -> dict:
         patch_parsed_diff["file_extension"] = Path(patch_diff.source_file).suffix
     else:
         patch_parsed_diff["file_extension"] = Path(patch_diff.target_file).suffix
-    # patch_parsed_diff["patch_info"] = patch_diff.patch_info
     for patch_diff_ind in patch_diff:
         patch_diff_ind = str(patch_diff_ind)
         patch_diff_split = patch_diff_ind.split("@@")
@@ -55,8 +54,7 @@ def get_before_file(file_diff: dict, commit_hash: str, repo_name: str, length_th
             if length_threshold > 0 and len(raw_file) > length_threshold:
                 return ""
         except Exception as e:
-            print(e)
-            print(file_raw_url)
+            # print(e, file_raw_url)
             return ""
         # Iterate over hunks for this file and apply the reverse patch.
         for hunk in file_diff["hunks_process"]:
@@ -94,7 +92,7 @@ class GitHubDiffDataset(Dataset):
 class GitHubDiffScraper(Scraper):
     def __init__(self, config):
         # TODO: Dask multi-node scheduling here
-        # self.client = Client(n_workers=config.n_workers, threads_per_worker=config.threads_per_worker)
+        self.client = Client(n_workers=config.n_workers, threads_per_worker=config.threads_per_worker)
         self.read_path = Path(config.read_path)
         self.save_path = Path(config.save_path)
         self.python_only = config.python_only
@@ -103,10 +101,14 @@ class GitHubDiffScraper(Scraper):
         self.ignore_deletions = config.ignore_deletions
 
     def scrape(self) -> RawDataset:
-        # TODO: pass meta dataframe
+        meta_spec = {'hunks': str, 'addition_count': int, 'deletion_count': int,
+                     'src_file': str, 'tgt_file': str, 'file_extension': str,
+                     'before_file': str, 'commit': str, 'message': str,
+                     'repo_name': str, 'language_name': str, 'author_name': str,
+                     'license': str}
         result = (
             db.read_text(self.read_path).map(json.loads)
-            .map(self.process_commit).flatten().to_dataframe()
+            .map(self.process_commit).flatten().to_dataframe(meta=meta_spec)
             .to_parquet(self.save_path)
         )
         progress(result)
@@ -133,8 +135,10 @@ class GitHubDiffScraper(Scraper):
             diff = urllib.request.urlopen(diff_url)
             encoding = diff.headers.get_charsets()[0]
             patch = PatchSet(diff, encoding=encoding)
+            if len(patch) == 0:
+                return []
         except Exception as e:
-            print(e)
+            # print(e, diff_url)
             return []
         commit_list: list[dict] = []
         # Iterate over files within the diff.
@@ -149,7 +153,12 @@ class GitHubDiffScraper(Scraper):
             if not diff_dict["before_file"]:
                 # Happens if exception is thrown or file is too long.
                 continue
-            diff_dict.update(commit_data)
+            diff_dict["commit"] = commit_data["commit"]
+            diff_dict["message"] = commit_data["message"]
+            diff_dict["repo_name"] = commit_data["repo_name"]
+            diff_dict["language_name"] = commit_data["language_name"]
+            diff_dict["author_name"] = commit_data["author"]["name"]
+            diff_dict["license"] = commit_data["license"]
             commit_list.append(diff_dict)
         return commit_list
 
@@ -165,7 +174,7 @@ if __name__ == "__main__":
     parser.add_argument('--diff_length_threshold', type=int, default=1000,
                         help="Maximum number of lines in the diff for a *single* file. Set to 0 for no limit.")
     parser.add_argument('--code_length_threshold', type=int, default=1000,
-                        help="Maximum number of lines in code files")
+                        help="Maximum number of lines in code files. Set to 0 for no limit.")
     parser.add_argument('--ignore_deletions', type=bool, default=True,
                         help="Ignore file deletion diffs.")
     config = parser.parse_args()
