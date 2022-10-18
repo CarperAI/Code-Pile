@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 from codepile.tools.filtering import fitering_pipeline, fixes_text, uniform_whitespace, document_normalization
 from codepile.tools.near_deduplication.minhash_deduplication import deduplicate_dataset
 from datasets import Dataset
+from lm_dataformat import Archive, Reader
 
 
 BOOKS_S3_BUCKET = "s-eai-neox"
@@ -77,7 +78,12 @@ class WikiBookDataset(Dataset):
         # 
         # hf near-deduplication
         hf_dataset, duplicate_clusters = deduplicate_dataset(hf_dataset)
-
+        # convert to lmdata_format
+        ar = Archive(self.config.output_data_dir)
+        for content in hf_dataset['content']:
+            ar.add_data(content, meta={"source": self.__class__.__name__}, "fields": list(hf_dataset.features.keys()))
+        ar.commit()
+        
 
 if __name__=="__main__":
     if not os.path.exists("data/"):
