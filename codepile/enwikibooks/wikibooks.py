@@ -9,8 +9,11 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from codepile.tools.filtering import fitering_pipeline, fixes_text, uniform_whitespace, document_normalization
 from codepile.tools.near_deduplication.minhash_deduplication import deduplicate_dataset
+from codepile.tools.bigscience_pii_detect_redact import run_pii_batch
 from datasets import Dataset
 from lm_dataformat import Archive, Reader
+from functools import partial
+
 
 
 BOOKS_S3_BUCKET = "s-eai-neox"
@@ -75,8 +78,13 @@ class WikiBookDataset(Dataset):
         hf_dataset = Dataset.from_pandas(raw_df) 
         # hf dataset filtering 
         hf_dataset = hf_dataset.filter(lambda sample: fitering_pipeline(sample['content']) == False) 
-        # add PII - 
-        # 
+        # run PII
+        hf_dataset = hf_dataset.map(
+            partial(run_pii_batch),
+            batched=True,
+            batch_size=16,
+            num_proc=8
+        )
         # hf near-deduplication
         hf_dataset, duplicate_clusters = deduplicate_dataset(hf_dataset)
         import ipdb; ipdb.set_trace()
