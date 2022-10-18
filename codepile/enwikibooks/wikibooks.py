@@ -53,7 +53,8 @@ class WikiBookDataset(Dataset):
 
         if not os.path.exists(os.path.join(self.config.raw_data_dir, 'computing_wikibooks.parquet')):
             s3 = boto3.client('s3')
-            s3.download_file(BOOKS_S3_BUCKET, "data/codepile/books/computing_wikibooks.parquet", os.path.join(self.config.raw_data_dir, 'computing_wikibooks.parquet'))
+            s3.download_file(BOOKS_S3_BUCKET, "data/codepile/books/computing_wikibooks.parquet", 
+                            os.path.join(self.config.raw_data_dir, 'computing_wikibooks.parquet'))
 
         if return_df:
             return pd.read_parquet(os.path.join(self.config.raw_data_dir, 'computing_wikibooks.parquet'))
@@ -78,10 +79,12 @@ class WikiBookDataset(Dataset):
         # 
         # hf near-deduplication
         hf_dataset, duplicate_clusters = deduplicate_dataset(hf_dataset)
+        import ipdb; ipdb.set_trace()
         # convert to lmdata_format
         ar = Archive(self.config.output_data_dir)
         for content in hf_dataset['content']:
-            ar.add_data(content, meta={"source": self.__class__.__name__}, "fields": list(hf_dataset.features.keys()))
+            ar.add_data(content, meta={"source": self.__class__.__name__,
+                "fields": list(hf_dataset.features.keys())})
         ar.commit()
         
 
