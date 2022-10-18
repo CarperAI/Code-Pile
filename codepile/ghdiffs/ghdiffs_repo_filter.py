@@ -32,8 +32,12 @@ class GitHubDiffFilter:
         if not os.path.isdir("tmp"):
             logger.info(f"Sucessfully added `tmp/` path")
             os.mkdir("tmp")
-
         self.ckpt_path = os.path.join("tmp","ckpt.json")
+        
+        if os.path.exists(self.ckpt_path):
+            self.to_start = read_json_file(self.ckpt_path)["index"]
+        else:
+            self.to_start = 0
         self.repos_df =  pd.read_csv(repo_file_string)
         self.top_repos_list = self.get_top_repo_list()
         self.checkpoint_list = [] #Would contain the curr_index of the last saved file.
@@ -58,6 +62,9 @@ class GitHubDiffFilter:
         file_index = 0
         output_list = []
         output_file_index = 0
+        
+        #Start_ind
+        github_diff_files = github_diff_files[self.to_start:]
         for github_diff_file in tqdm(github_diff_files,total=len(github_diff_files)):
             file_index += 1 # File index.
 
