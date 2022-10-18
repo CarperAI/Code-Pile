@@ -1,4 +1,4 @@
-from typing import Union, Optional, TypeAlias, Literal, Any
+from typing import Union, Optional, Literal, Any
 import os
 from abc import ABC, abstractmethod
 import uuid
@@ -137,8 +137,7 @@ class Dataset(ABC):
         p = os.path.join(self.config.tmpdir, self.info.id)
         with open(os.path.join(p, 'raw_data.json'), 'r') as f:
             raw_data = RawDataset.parse_raw(f.read())
-
-        self.processor.process(raw_data)
+        self.processor.process(raw_data, *args, **kwargs)
 
     def analyse(self, *args, **kwargs):
         self.analyser.analyse()
@@ -155,6 +154,5 @@ class Dataset(ABC):
         # hardcode this value for now, but it needs to be unique
         # to prevent processing conflicts
         return self.info.id
-
 
 
