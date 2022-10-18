@@ -6,7 +6,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "Code-Pile"
-requires-python = ">=3.9"
+description = "The Code-Pile dataset is a multi category text dataset about code and Software Development"
+readme = "README.md"
+requires-python = ">=3.8"
 version = "0.0.1"
 dependencies = [
     "beautifulsoup4",
@@ -16,5 +18,7 @@ dependencies = [
     "py7zr",
     "more_itertools",
     "pandas",
-    "pyarrow"
+    "pyarrow",
+    "lxml",
+    "pyspark"
 ]

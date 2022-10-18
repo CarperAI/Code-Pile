@@ -1,6 +1,6 @@
 # Code-Pile 
 
-![pytest](https://github.com/CarperAI/Code-Pile/actions/workflows/python_starter.yml/badge.svg)
+[![test_working](https://github.com/CarperAI/Code-Pile/actions/workflows/test_working.yml/badge.svg)](https://github.com/CarperAI/Code-Pile/actions/workflows/test_working.yml)
 
 This repository contains the processing scripts to scrape/process the code-pile dataset.
 This project is very young, expect breaking changes.
@@ -8,6 +8,7 @@ This project is very young, expect breaking changes.
 ## Table of Contents
 * Project Description
 * How to use the Code-Pile (todo)
+* Building and Development
 * How to Contribute
 * Additional Resources
 
@@ -21,8 +22,31 @@ It's not finished, ask on discord
 
 cli prototype example (subject to change):
 ```
+python -m codepile.codepile configure
 python -m codepile.codepile download config.json
 python -m codepile.codepile process config.json
+```
+
+## Building and Development
+install the tool
+```
+pip install .
+```
+
+build archive and wheel
+```
+python3 -m build . 
+```
+
+setup development environment
+```
+python -m venv .venv
+pip install --editable .
+```
+
+run tests manually
+```
+pytest
 ```
 
 ## How to Contribute
@@ -77,5 +101,5 @@ Closely related projects:
 * [Collins stackexchange gist](https://gist.github.com/craffel/a1e2aff893776d0ef2b0a95ed0fd7e7a)
 
 Previous work:
-* [Codeparrot] (https://github.com/huggingface/transformers/tree/main/examples/research_projects/codeparrot)
+* [Codeparrot](https://github.com/huggingface/transformers/tree/main/examples/research_projects/codeparrot)
 * ...
