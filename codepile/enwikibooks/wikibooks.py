@@ -7,6 +7,10 @@ import boto3
 import requests
 from datetime import datetime
 from bs4 import BeautifulSoup
+from codepile.tools.filtering import fitering_pipeline, fixes_text, uniform_whitespace, document_normalization
+from codepile.tools.near_deduplication.minhash_deduplication import deduplicate_dataset
+from datasets import Dataset
+
 
 BOOKS_S3_BUCKET = "s-eai-neox"
 
@@ -57,6 +61,18 @@ class WikiBookDataset(Dataset):
         df = self.fetch_raw(return_df)
         return df
     
+    def process(self):
+        raw_df = pd.read_parquet(os.path.join(self.config.raw_data_dir, 'computing_wikibooks.parquet'))
+        raw_df = raw_df.reset_index(drop=True)
+        if 'id' not in raw_df.columns.values:
+            raw_df['id'] = raw_df.index
+        raw_df['content'] = raw_df.apply(lambda row: self.make_format(row), axis = 1)
+        normalize_funcs = [fixes_text, uniform_whitespace]
+        raw_df['content'] = raw_df['content'].apply(lambda x: document_normalization(x, normalize_funcs))
+        hf_dataset = Dataset.from_pandas(raw_df)
+        hf_dataset = hf_dataset.filter(lambda sample: fitering_pipeline(sample['content']) == False)
+        hf_dataset, duplicate_clusters = deduplicate_dataset(hf_dataset)
+
 
 if __name__=="__main__":
     if not os.path.exists("data/"):
@@ -67,4 +83,5 @@ if __name__=="__main__":
         tmpdir="/tmp"
     )
     book_dataset = WikiBookDataset(config)
-    print(book_dataset.download(True))
+    book_dataset.download(False)
+    book_dataset.process()
