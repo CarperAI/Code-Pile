@@ -64,14 +64,14 @@ class WikiBookDataset(Dataset):
     def process(self):
         raw_df = pd.read_parquet(os.path.join(self.config.raw_data_dir, 'computing_wikibooks.parquet'))
         raw_df = raw_df.reset_index(drop=True)
-        if 'id' not in raw_df.columns.values:
+        if 'id' not in raw_df.columns.values: # create id 
             raw_df['id'] = raw_df.index
-        raw_df['content'] = raw_df.apply(lambda row: self.make_format(row), axis = 1)
-        normalize_funcs = [fixes_text, uniform_whitespace]
+        raw_df['content'] = raw_df.apply(lambda row: self.make_format(row), axis = 1) # content function will contain text/code to convert into lm_dataformat
+        normalize_funcs = [fixes_text, uniform_whitespace] # normalize text
         raw_df['content'] = raw_df['content'].apply(lambda x: document_normalization(x, normalize_funcs))
-        hf_dataset = Dataset.from_pandas(raw_df)
-        hf_dataset = hf_dataset.filter(lambda sample: fitering_pipeline(sample['content']) == False)
-        hf_dataset, duplicate_clusters = deduplicate_dataset(hf_dataset)
+        hf_dataset = Dataset.from_pandas(raw_df) 
+        hf_dataset = hf_dataset.filter(lambda sample: fitering_pipeline(sample['content']) == False) # hf filtering 
+        hf_dataset, duplicate_clusters = deduplicate_dataset(hf_dataset) # hf deduplication
 
 
 if __name__=="__main__":
