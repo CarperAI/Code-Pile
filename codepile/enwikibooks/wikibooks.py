@@ -87,7 +87,7 @@ class WikiBookDataset(Dataset):
         )
         # hf near-deduplication
         hf_dataset, duplicate_clusters = deduplicate_dataset(hf_dataset)
-        import ipdb; ipdb.set_trace()
+        #import ipdb; ipdb.set_trace()
         # convert to lmdata_format
         ar = Archive(self.config.output_data_dir)
         for content in hf_dataset['content']:
