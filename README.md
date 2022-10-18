@@ -49,6 +49,13 @@ run tests manually
 pytest
 ```
 
+run tests with s3 downloads
+requires access credentials
+```
+pytests --download
+```
+
+
 ## How to Contribute
 Think about the most usefull Code-data for the next generation of textual Code Models. 
 

@@ -22,3 +22,8 @@ dependencies = [
     "lxml",
     "pyspark"
 ]
+
+[tool.pytest.ini_options]
+markers = [
+    "s3_download: marks tests as downloading from s3, so they need credentials",
+]

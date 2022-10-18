@@ -3,14 +3,15 @@ import os
 from pyspark.sql import SparkSession
 from unittest import TestCase
 
-from stackexchange import StackExchangeDataset
+from codepile.stackexchange.stackexchange import StackExchangeDataset
 from codepile.codepile import Config
-class TestStackExchangeDataset(TestCase):
+import pytest
 
-    def test(self):
+class TestStackExchangeDataset(TestCase):
+    def test_processor_row_count(self):
         this_dir = os.path.dirname(__file__)
-        dump_dir = os.path.join(this_dir, "./tests/data/dumps")
-        temp_dir = os.path.join(this_dir, "./tests/data/temp")
+        dump_dir = os.path.join(this_dir, "./data/dumps")
+        temp_dir = os.path.join(this_dir, "./data/temp")
         config = Config(
             raw_data_dir=dump_dir,
             tmpdir=temp_dir,
@@ -33,10 +34,3 @@ class TestStackExchangeDataset(TestCase):
         df2 = spark.read.parquet(site2_output_dir)
         self.assertEqual(df1.count(), 27, "Output row count doesn't match")
         self.assertEqual(df2.count(), 28, "Output row count doesn't match")
-
-if __name__ == '__main__':
-    TestStackExchangeDataset().test()
-
-
-
-
