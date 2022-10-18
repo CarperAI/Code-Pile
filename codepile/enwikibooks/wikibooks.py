@@ -69,9 +69,14 @@ class WikiBookDataset(Dataset):
         raw_df['content'] = raw_df.apply(lambda row: self.make_format(row), axis = 1) # content function will contain text/code to convert into lm_dataformat
         normalize_funcs = [fixes_text, uniform_whitespace] # normalize text
         raw_df['content'] = raw_df['content'].apply(lambda x: document_normalization(x, normalize_funcs))
+        # 
         hf_dataset = Dataset.from_pandas(raw_df) 
-        hf_dataset = hf_dataset.filter(lambda sample: fitering_pipeline(sample['content']) == False) # hf filtering 
-        hf_dataset, duplicate_clusters = deduplicate_dataset(hf_dataset) # hf deduplication
+        # hf dataset filtering 
+        hf_dataset = hf_dataset.filter(lambda sample: fitering_pipeline(sample['content']) == False) 
+        # add PII - 
+        # 
+        # hf near-deduplication
+        hf_dataset, duplicate_clusters = deduplicate_dataset(hf_dataset)
 
 
 if __name__=="__main__":
