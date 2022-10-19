@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 from codepile.tools.filtering import fitering_pipeline, fixes_text, uniform_whitespace, document_normalization
 from codepile.tools.near_deduplication.minhash_deduplication import deduplicate_dataset
 from codepile.tools.bigscience_pii_detect_redact import run_pii_batch
-from datasets import Dataset
+import datasets
 from lm_dataformat import Archive, Reader
 from functools import partial
 
@@ -75,7 +75,7 @@ class WikiBookDataset(Dataset):
         normalize_funcs = [fixes_text, uniform_whitespace] # normalize text
         raw_df['content'] = raw_df['content'].apply(lambda x: document_normalization(x, normalize_funcs))
         # 
-        hf_dataset = Dataset.from_pandas(raw_df) 
+        hf_dataset = datasets.Dataset.from_pandas(raw_df) 
         # hf dataset filtering 
         hf_dataset = hf_dataset.filter(lambda sample: fitering_pipeline(sample['content']) == False) 
         # run PII
@@ -89,7 +89,7 @@ class WikiBookDataset(Dataset):
         hf_dataset, duplicate_clusters = deduplicate_dataset(hf_dataset)
         #import ipdb; ipdb.set_trace()
         # convert to lmdata_format
-        ar = Archive(self.config.output_data_dir)
+        ar = Archive(str(self.config.output_data_dir))
         for content in hf_dataset['content']:
             ar.add_data(content, meta={"source": self.__class__.__name__,
                 "fields": list(hf_dataset.features.keys())})
@@ -101,7 +101,7 @@ if __name__=="__main__":
             os.makedirs("data/")
     config = Config(
         raw_data_dir="data/",
-        output_data_dir="data/",
+        output_data_dir="data_lm/",
         tmpdir="/tmp"
     )
     book_dataset = WikiBookDataset(config)
