@@ -20,16 +20,19 @@ class DiscourseScraper(Scraper):
             "SCHEDULER_PRIORITY_QUEUE": 'scrapy.pqueues.DownloaderAwarePriorityQueue',
             "CONCURRENT_REQUESTS": 1000,
             "LOG_LEVEL": "WARN",
-            "AUTOTHROTTLE_ENABLED": True,
+            "DOWNLOAD_DELAY": .6,
+            "CONCURRENT_REQUESTS_PER_DOMAIN": 1,
+            "AUTOTHROTTLE_ENABLED": False,
             "AUTOTHROTTLE_DEBUG": True,
-            "REACTOR_THREADPOOL_MAXSIZE": 50,
-            "JOBDIR": "scrapy-job",
+            "AUTOTHROTTLE_TARGET_CONCURRENCY": .5,
+            "REACTOR_THREADPOOL_MAXSIZE": 100,
+            #"JOBDIR": "scrapy-job",
         }
 
         # TODO - crawl type should be an argument we can pass in
         crawltype = 'topics'
 
-        if crawltype == 'summary':
+        if crawltype == 'stats':
             # use DiscourseSummarySpider to generate crawl summary by grabbing the index from every site
             crawlsettings['RETRY_ENABLED'] = False
             process = CrawlerProcess(crawlsettings)
@@ -43,6 +46,9 @@ class DiscourseScraper(Scraper):
             process = CrawlerProcess(crawlsettings)
             process.crawl(DiscourseTopicSpider)
             process.start()
+        elif crawltype == 'summary':
+            # Generate a summary of all the sites that were crawled
+            generateCrawlSummary()
 
         if self.profiler_enabled:
             profiler.disable()
