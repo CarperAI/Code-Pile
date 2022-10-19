@@ -5,7 +5,7 @@ import argparse
 from pathlib import Path
 import dask.bag as db
 from codepile.dataset import (Dataset, DatasetInfo, RawDataset, Scraper)
-from dask.distributed import Client, progress
+from dask.distributed import Client, progress, LocalCluster
 from unidiff import PatchSet
 
 
@@ -54,7 +54,6 @@ def get_before_file(file_diff: dict, commit_hash: str, repo_name: str, length_th
             if length_threshold > 0 and len(raw_file) > length_threshold:
                 return ""
         except Exception as e:
-            # print(e, file_raw_url)
             return ""
         # Iterate over hunks for this file and apply the reverse patch.
         for hunk in file_diff["hunks_process"]:
@@ -99,6 +98,9 @@ def process_commit(commit_data: dict, config: argparse.Namespace) -> list[dict]:
             continue
         if config.diff_length_threshold > 0 and sum(len(hunk) for hunk in patch_ind) > config.diff_length_threshold:
             continue
+        # Filter non-text files.
+        if patch_ind.added == 0 and patch_ind.removed == 0:
+            continue
         diff_dict: dict = process_ind_patch(patch_ind)
         diff_dict["before_file"] = get_before_file(diff_dict, commit_data["commit"], commit_data["repo_name"],
                                                     length_threshold=config.code_length_threshold)
@@ -140,9 +142,9 @@ class GitHubDiffDataset(Dataset):
 class GitHubDiffScraper(Scraper):
     def __init__(self, config):
         # TODO: Dask multi-node scheduling here
-        # TODO: Release the GIL inside process_commit
         self.config = config
-        self.client = Client(n_workers=config.n_workers, threads_per_worker=config.threads_per_worker)
+        cluster = LocalCluster(n_workers=config.n_workers, threads_per_worker=config.threads_per_worker)
+        self.client = Client(cluster)
         self.read_path = Path(config.read_path)
         self.save_path = Path(config.save_path)
 
@@ -168,7 +170,7 @@ if __name__ == "__main__":
     parser.add_argument('--read_path', type=str)
     parser.add_argument('--save_path', type=str)
     parser.add_argument('--n_workers', type=int, default=8)
-    parser.add_argument('--threads_per_worker', type=int, default=2)
+    parser.add_argument('--threads_per_worker', type=int, default=1)
     parser.add_argument('--python_only', type=bool, default=False)
     parser.add_argument('--diff_length_threshold', type=int, default=1000,
                         help="Maximum number of lines in the diff for a *single* file. Set to 0 for no limit.")
