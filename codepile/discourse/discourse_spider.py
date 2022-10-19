@@ -4,6 +4,7 @@ import pathlib
 import re
 import os
 import sys
+import time
 import random
 import tarfile, io
 
@@ -32,11 +33,11 @@ class DiscourseSpider(scrapy.Spider):
             'Accept': 'application/json'
             }
     user_agent = 'Mozilla/5.0 (compatible; Carper-GooseBot/8000; +https://carper.ai/)'
-    download_delay = 0
+    #download_delay = 0
 
     scheduler_priority_queue = 'scrapy.pqueues.DownloaderAwarePriorityQueue'
     #concurrent_requests_per_domain = 2
-    concurrent_requests = 1000
+    #concurrent_requests = 10
 
 
     scrapelatest = False
@@ -57,23 +58,28 @@ class DiscourseSpider(scrapy.Spider):
             random.shuffle(urls)
             for url in urls:
                 if self.scrapelatest:
-                    yield self.create_request(url, 10)
+                    yield self.create_request(url, '/', 0)
                 if self.scrapetop:
-                    yield self.create_request(url + 'top', 10)
+                    yield self.create_request(url, '/top', 0)
                 if self.scrapecategories:
-                    yield self.create_request(url + 'categories', 10)
+                    yield self.create_request(url, '/categories', 0)
                 if self.scrapeindex:
-                    yield self.create_request(url + 'site', 20)
+                    yield self.create_request(url, '/site', 75)
         
-    def create_request(self, url, priority=0):
-        return scrapy.Request(url=url, callback=self.parse, headers=self.headers, errback=self.handle_errback, priority=priority) # + random.randint(0, 10))
+    def create_request(self, site, path, priority=0):
+        url = site + path[1:] if site[-1] == '/' and path[0] == '/' else site + path
+        return scrapy.Request(url=url, callback=self.bind_parse_func(site), headers=self.headers, errback=self.handle_errback, priority=priority + random.randint(0, 50))
 
-    def parse(self, response):
+    def bind_parse_func(self, site):
+        def callparse(response):
+            return self.parse(site, response)
+        return callparse
+    def parse(self, site, response):
         try:
             jsondata = json.loads(response.body)
         except ValueError as e:
             # log failure
-            print("[" + bcolors.WARNING + 'WARNING' + bcolors.ENDC + "]\tfailed to parse JSON at %s" % (response.url))
+            print(("%.4f\t[" + bcolors.WARNING + 'WARNING' + bcolors.ENDC + "]\tfailed to parse JSON at %s") % (time.time(), response.url))
             self.write_failure(response.url, 'json_error')
             return
 
@@ -90,17 +96,17 @@ class DiscourseSpider(scrapy.Spider):
         #urlpath = m.group(3)
         #filename = m.group(4) or urlpath
 
+        sitepath = re.sub(r"^https?://(.*)/$", r'\1', site)
+
         url = urlparse(response.url)
         protocol = url.scheme + '://'
         domain = url.netloc
-        urlpath = url.path
+        urlpath = url.path or '/'
         if url.query:
-            urlpath += url.query
+            urlpath += '?' + url.query
 
         if urlpath[-1] == '/':
             urlpath += 'index'
-
-        baseurl = protocol + domain + urlpath
 
         datapath = 'discourse/%s/%s/' % (domain, urlpath)
 
@@ -110,38 +116,80 @@ class DiscourseSpider(scrapy.Spider):
             for category in jsondata['category_list']['categories']:
                 if self.scrapetopics:
                     if 'topic_url' in category and category['topic_url'] is not None:
-                        topicurl = '%s%s%s' % (protocol, domain, category['topic_url'])
-                        yield self.create_request(topicurl)
-                    categoryurl = '%s%s/c/%s/%d' % (protocol, domain, category['slug'], category['id'])
-                    yield self.create_request(categoryurl, 10)
+                        topicurl = category['topic_url']
+                        crawlfname = 'discourse/%s%s' % (sitepath, topicurl)
+                        if not os.path.isfile(crawlfname):
+                            yield self.create_request(site, topicurl)
+                    categoryurl = '/c/%s' % (category['slug'])
+                    # check for cached category page
+                    crawlfname = 'discourse/%s%s' % (sitepath, categoryurl)
+                    if os.path.isdir(crawlfname):
+                        # cached file found, parse the on-disk representation to repopulate the queue
+                        categoryjson = False
+                        categoryurl = '/c/%s' % (category['slug'])
+                        # check for cached category page
+                        crawlfname = 'discourse/%s%s/%d' % (sitepath, categoryurl, category['id'])
+                        with open(crawlfname, 'r') as fd:
+                            categorycontents = fd.read()
+                        #print("cached!'", categorycontents)
+                        if categorycontents:
+                            fakeresponse = {
+                                'body': categorycontents,
+                                'text': categorycontents,
+                                'url': site + categoryurl[1:]
+                            }
+                            self.parse(site, fakeresponse)
+                    elif os.path.isfile(crawlfname):
+                        # cached file found, parse the on-disk representation to repopulate the queue
+                        categoryjson = False
+                        with open(crawlfname, 'r') as fd:
+                            categorycontents = fd.read()
+                        if categoryjson:
+                            fakeresponse = {
+                                body: categorycontents,
+                                text: categorycontents,
+                                url: site + categoryurl[1:]
+                            }
+                            print(fakeresponse)
+                            #self.parse(site, fakeresponse)
+
+                    else:
+                        # not found crawl it
+                        yield self.create_request(site, categoryurl, 0)
+
                 if self.scrapecategories and 'subcategory_ids' in category:
                     for categoryid in category['subcategory_ids']:
-                        subcategoryurl = '%s%s/c/%d' % (protocol, domain, categoryid)
+                        subcategoryurl = '/c/%s' % (category['slug'])
                         #print('add subcategory', subcategoryurl)
-                        yield self.create_request(subcategoryurl, 10)
+                        yield self.create_request(site, subcategoryurl, 0)
                     
 
         if 'topic_list' in jsondata:
             self.write_file(domain, urlpath, response.text)
             if 'more_topics_url' in jsondata['topic_list']:
-                nexturl = protocol + domain + jsondata['topic_list']['more_topics_url']
+                nexturl = jsondata['topic_list']['more_topics_url']
                 #print('Add next page URL', nexturl, self.headers)
-                yield self.create_request(nexturl, 5)
+                yield self.create_request(site, nexturl, 0)
 
             if self.scrapetopics:
                 topics = jsondata['topic_list']['topics']
+                skips = 0
                 for topic in topics:
-                    crawlfname = datapath + '/t/%s/%d' % (topic['slug'], topic['id'])
-                    if not os.path.isfile(crawlfname): 
+                    #crawlfname = datapath + '/t/%s/%d' % (topic['slug'], topic['id'])
+                    topicurl = '/t/%s/%d' % (topic['slug'], topic['id'])
+                    crawlfname = 'discourse/%s%s' % (sitepath, topicurl)
+                    #print('check datapath', crawlfname, response.url, site)
+                    if not os.path.isfile(crawlfname):
                         # TODO - to facilitate continuous crawling, we probably want to check the last crawled time, and refresh if our list data indicates new posts
                         # As implemented, this is just a one-shot crawl that can be resumed. It'll grab new topics, but not refresh any changed ones
-                        topicurl = protocol + domain + '/t/%s/%d' % (topic['slug'], topic['id'])
                         #print('New topicurl: ' + topicurl)
-                        yield self.create_request(topicurl)
-                    #else:
-                    #    print('Skipping topic %s, already exists' % topic['slug'])
+                        yield self.create_request(site, topicurl, priority=50)
+                    else:
+                        skips += 1
+                if skips > 0:
+                    print(('%.4f\t[' + bcolors.OKBLUE + 'Skipped' + bcolors.ENDC + ']\t%-40s ...skipped %d topics...') % (time.time(), domain, skips))
         if 'post_stream' in jsondata:
-            print('[' + bcolors.OKGREEN + ' Saved ' + bcolors.ENDC + ']\t%-40s %-60s' % (domain, jsondata['fancy_title']))
+            print(('%.4f\t[' + bcolors.OKGREEN + ' Saved ' + bcolors.ENDC + ']\t%-40s %-60s') % (time.time(), domain, jsondata['fancy_title']))
             #crawlfname = datapath + filename + '.json'
             #pathlib.Path(datapath).mkdir(parents=True, exist_ok=True)
             #with open(crawlfname, 'w') as fd:
@@ -160,7 +208,7 @@ class DiscourseSpider(scrapy.Spider):
             with open(crawlfname, 'w') as fd:
                 #print("write file", crawlfname)
                 fd.write(contents)
-        else:
+        elif False:
             tarballname = 'discourse/%s.tar' % domain
             if len(contents) > 0:
                 tarinfo = tarfile.TarInfo(filepath)
@@ -180,13 +228,13 @@ class DiscourseSpider(scrapy.Spider):
                 print('wtf why', tarballname, filepath)
     def handle_errback(self, failure):
         if failure.check(HttpError):
-            print("["  + bcolors.WARNING + 'WARNING' + bcolors.ENDC + "]\tfailed to fetch URL %s" % (failure.value.response.url))
+            print(("%.4f\t["  + bcolors.WARNING + 'WARNING' + bcolors.ENDC + "]\tfailed to fetch URL %s") % (time.time(), failure.value.response.url))
             self.write_failure(failure.value.response.url, 'http_error')
         elif failure.check(DNSLookupError):
-            print("[" + bcolors.WARNING + 'WARNING' + bcolors.ENDC + "]\tDNS failure resolving %s" % (failure.request.url))
+            print(("%.4f\t[" + bcolors.WARNING + 'WARNING' + bcolors.ENDC + "]\tDNS failure resolving %s") % (time.time(), failure.request.url))
             self.write_failure(failure.request.url, 'dns_error')
         elif failure.check(TimeoutError):
-            print("[" + bcolors.WARNING + 'WARNING' + bcolors.ENDC + "]\tTimed out fetching %s" % (failure.request.url))
+            print(("%.4f\t[" + bcolors.WARNING + 'WARNING' + bcolors.ENDC + "]\tTimed out fetching %s") % (time.time(), failure.request.url))
             self.write_failure(failure.request.url, 'timeout_error')
     def write_failure(self, url, reason):
         self.failures[url] = reason
@@ -217,7 +265,7 @@ def generateCrawlSummary():
         with open('discourse/index.json') as index:
             sites = json.loads(index.read())
     except FileNotFoundError:
-        print("[ " + bcolors.FAIL + 'ERROR ' + bcolors.ENDC + '] couldn\'t read index or failure files')
+        print(("%.4f\t[ " + bcolors.FAIL + 'ERROR ' + bcolors.ENDC + '] couldn\'t read index or failure files' % (time.time())))
         return
     faildomains = {}
     for failurl in failures:
@@ -233,6 +281,7 @@ def generateCrawlSummary():
                 'sites': 0,
                 'sites_valid': 0,
                 'topic_count': 0,
+                'topic_crawl_count': 0,
                 'post_count': 0,
                 'category_count': 0,
                 }
@@ -244,64 +293,71 @@ def generateCrawlSummary():
             domain = url.netloc
             urlpath = url.path
             if url.query:
-                urlpath += url.query
-            #m = re.match(r"^(https?://)([^/]+)(/.*?)$", site)
-            #if m:
-            #    protocol = m.group(1)
-            #    domain = m.group(2)
+                urlpath += '?' + url.query
 
-            if True:
-                crawlsummary[domain] = {}
-                tarballname = 'discourse/%s.tar' % domain
-                fname = 'discourse/%s/site' % domain
-                crawlsummary['_totals']['sites'] += 1
-                crawlsummary[domain]['topic_count'] = 0
-                crawlsummary[domain]['post_count'] = 0
-                crawlsummary[domain]['category_count'] = 0
-                crawlsummary[domain]['categories'] = {}
+            crawlsummary[domain] = {}
+            tarballname = 'discourse/%s.tar' % domain
+            fname = 'discourse/%s%s/site' % (domain, urlpath)
+            crawlsummary['_totals']['sites'] += 1
+            crawlsummary[domain]['topic_count'] = 0
+            crawlsummary[domain]['topic_crawl_count'] = 0
+            crawlsummary[domain]['post_count'] = 0
+            crawlsummary[domain]['category_count'] = 0
+            crawlsummary[domain]['categories'] = {}
 
-                if domain in faildomains:
-                    crawlsummary[domain]['failure'] = faildomains[domain]
+            if domain in faildomains:
+                crawlsummary[domain]['failure'] = faildomains[domain]
 
-                if os.path.isfile(fname): 
-                    #print('open file', fname)
-                    with open(fname, 'r') as sitefd:
-                        crawlsummary['_totals']['sites_valid'] += 1
-                        sitejson = json.loads(sitefd.read())
+            if os.path.isfile(fname):
+                #print('open file', fname)
+                with open(fname, 'r') as sitefd:
+                    crawlsummary['_totals']['sites_valid'] += 1
+                    sitejson = json.loads(sitefd.read())
+                    for category in sitejson['categories']:
+                        crawlsummary[domain]['categories'][category['slug']] = category
+                        crawlsummary[domain]['topic_count'] += category['topic_count']
+                        if 'topic_url' in category and category['topic_url'] is not None and category['topic_url'] != '/t/':
+                            crawlsummary[domain]['topic_count'] += 1 # include the topic that describes this category
+                        crawlsummary[domain]['post_count'] += category['post_count']
+                        crawlsummary[domain]['category_count'] += 1
+                    topicdir = 'discourse/%s%s/t' % (domain, urlpath)
+                    if os.path.isdir(topicdir):
+                        entries = os.listdir(topicdir)
+                        for entry in entries:
+                            topicfname = topicdir + '/' + entry
+                            if os.path.isdir(topicfname):
+                                crawlsummary[domain]['topic_crawl_count'] += 1
+                    crawlsummary['_totals']['topic_crawl_count'] += crawlsummary[domain]['topic_crawl_count']
+
+
+            elif os.path.isfile(tarballname):
+                print("open tarball", tarballname)
+                try:
+                    tar = tarfile.open(tarballname, 'r')
+                    extractfile = (urlpath or '/') + 'site'
+                    try:
+                        tarreader = tar.extractfile(extractfile)
+                        sitejson = json.loads(tarreader.read(6553600))
                         for category in sitejson['categories']:
                             crawlsummary[domain]['categories'][category['slug']] = category
                             crawlsummary[domain]['topic_count'] = crawlsummary[domain]['topic_count'] + category['topic_count']
                             crawlsummary[domain]['post_count'] = crawlsummary[domain]['post_count'] + category['post_count']
                             crawlsummary[domain]['category_count'] += 1
-                elif os.path.isfile(tarballname): 
-                    print("open tarball", tarballname)
-                    try:
-                        tar = tarfile.open(tarballname, 'r')
-                        extractfile = (urlpath or '/') + 'site'
-                        try:
-                            tarreader = tar.extractfile(extractfile)
-                            sitejson = json.loads(tarreader.read(6553600))
-                            for category in sitejson['categories']:
-                                crawlsummary[domain]['categories'][category['slug']] = category
-                                crawlsummary[domain]['topic_count'] = crawlsummary[domain]['topic_count'] + category['topic_count']
-                                crawlsummary[domain]['post_count'] = crawlsummary[domain]['post_count'] + category['post_count']
-                                crawlsummary[domain]['category_count'] += 1
-                        except KeyError:
-                            pass
-                        tar.close()
-                    except tarfile.ReadError:
-                        print("oh no", filepath)
+                    except KeyError:
                         pass
-                crawlsummary['_totals']['topic_count'] += crawlsummary[domain]['topic_count']
-                crawlsummary['_totals']['post_count'] += crawlsummary[domain]['post_count']
-                crawlsummary['_totals']['category_count'] += crawlsummary[domain]['category_count']
+                    tar.close()
+                except tarfile.ReadError:
+                    print("oh no", filepath)
+                    pass
+            crawlsummary['_totals']['topic_count'] += crawlsummary[domain]['topic_count']
+            crawlsummary['_totals']['post_count'] += crawlsummary[domain]['post_count']
+            crawlsummary['_totals']['category_count'] += crawlsummary[domain]['category_count']
         
         print('Writing...')
         with open('discourse/crawlsummary.json', 'w') as crawlsummaryfd:
             crawlsummaryfd.write(json.dumps(crawlsummary, indent=2))
         print('Done.  Crawl summary written to discourse/crawlsummary.json')
         print(crawlsummary['_totals'])
-
 
 if __name__ == "__main__":
     process = CrawlerProcess()
