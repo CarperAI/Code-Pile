@@ -32,7 +32,6 @@ class TestUsenetDataset(TestCase):
         usenet_dataset = UsenetDataset(config)
         # Testing on two of the smaller archives
         usenet_dataset.download(files=['comp.ai.games.mbox.zip', 'comp.lang.basic.visual.mbox.zip', ])
-        usenet_dataset.process()
 
         self.test_data = pq.read_table('test/usenet-comp.parquet').to_pandas()
         self.df = pq.read_table(os.path.join(output_data_dir, 'usenet-comp.parquet')).to_pandas()

@@ -80,6 +80,8 @@ class UsenetDataset(Dataset):
             else:
                 ia.download(USENET_COMP, destdir=self.config.raw_data_dir)
 
+        self.process()
+
     def process(self, *args, **kwargs):
         # Process
         # Unzipping all files to the temp dir
