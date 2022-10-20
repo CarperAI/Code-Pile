@@ -64,6 +64,12 @@ class Thread:
 
         return thread
 
+    def get_metadata(self):
+        # Returns a metadata dict
+        return {
+            'reply_count': len(self.replies),
+        }
+
 
 class Message:
 

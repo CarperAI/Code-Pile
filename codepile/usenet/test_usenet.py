@@ -1,18 +1,18 @@
 from unittest import TestCase
 
-
 import os
-import pandas as pd
 
 from codepile.codepile import Config
 from codepile.usenet.usenet import UsenetDataset
+
+import pyarrow.parquet as pq
 
 
 class TestUsenetDataset(TestCase):
     def setUp(self):
         output_data_dir = 'data/output/'
         raw_data_dir = 'data/raw/'
-        tmpdir = '/tmp'
+        tmpdir = '/tmp/usenet/'
 
         if not os.path.exists(output_data_dir):
             os.makedirs(output_data_dir)
@@ -32,9 +32,10 @@ class TestUsenetDataset(TestCase):
         usenet_dataset = UsenetDataset(config)
         # Testing on two of the smaller archives
         usenet_dataset.download(files=['comp.ai.games.mbox.zip', 'comp.lang.basic.visual.mbox.zip', ])
+        usenet_dataset.process()
 
-        self.test_data = pd.read_parquet('test/usenet_test.parquet')
-        self.df = pd.read_parquet(os.path.join(output_data_dir, 'usenet.parquet'))
+        self.test_data = pq.read_table('test/usenet-comp.parquet').to_pandas()
+        self.df = pq.read_table(os.path.join(output_data_dir, 'usenet-comp.parquet')).to_pandas()
 
     def test_same_cols(self):
         self.setUp()

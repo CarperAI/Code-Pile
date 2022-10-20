@@ -12,10 +12,16 @@ import glob
 from datetime import datetime
 
 import pandas as pd
+import pyarrow.parquet as pq
+import pyarrow as pa
+
+import json
+import boto3
 
 
 # Usenet comp archive
 USENET_COMP = 'usenet-comp'
+BOOKS_S3_BUCKET = "s-eai-neox"
 
 
 class UsenetDataset(Dataset):
@@ -46,20 +52,41 @@ class UsenetDataset(Dataset):
         return self.info.id
 
     def download(self, *args, **kwargs):
-        # 1. Download
+        """
+        Download and process the entire comp raw dataset (or) a subset of archives
+        :param kwargs: files - (optional) list of comp archives to download, empty will download the entire archive
+        :return:
+        """
+        # Download
         if not os.path.exists(self.config.raw_data_dir):
             os.makedirs(self.config.raw_data_dir)
 
-        # Download the archive (or specific files from the archive) to the temp dir
-        if kwargs.get('files'):
-            ia.download(USENET_COMP, destdir=self.config.raw_data_dir, files=kwargs.get('files'))
+        # Download from s3
+        if kwargs.get('s3'):
+            s3 = boto3.client('s3')
+            usenet_comp_zipfile = os.path.join(self.config.raw_data_dir, 'usenet-comp.zip')
+            s3.download_file(
+                BOOKS_S3_BUCKET, 'data/codepile/usenet/usenet-comp-raw.zip', usenet_comp_zipfile,
+            )
+            # Unzipping in place
+            shutil.unpack_archive(
+                usenet_comp_zipfile, self.config.tmpdir
+            )
         else:
-            ia.download(USENET_COMP, destdir=self.config.raw_data_dir)
+            # Default - Use IA
+            # Download the archive (or specific files from the archive) to the temp dir
+            if kwargs.get('files'):
+                ia.download(USENET_COMP, destdir=self.config.raw_data_dir, files=kwargs.get('files'))
+            else:
+                ia.download(USENET_COMP, destdir=self.config.raw_data_dir)
 
-        # 2. Process
-        # Unzipping to the temp dir
-        if not os.path.exists(self.config.tmpdir):
-            os.makedirs(self.config.tmpdir)
+    def process(self, *args, **kwargs):
+        # Process
+        # Unzipping all files to the temp dir
+        if os.path.exists(self.config.tmpdir):
+            shutil.rmtree(self.config.tmpdir)
+
+        os.makedirs(self.config.tmpdir)
 
         for file in glob.glob(os.path.join(self.config.raw_data_dir, USENET_COMP, '*')):
             if file.endswith('.mbox.zip'):
@@ -69,16 +96,43 @@ class UsenetDataset(Dataset):
         if not os.path.exists(self.config.output_data_dir):
             os.makedirs(self.config.output_data_dir)
 
-        threads_content = []
+        # Create a log file
+        logfile = os.path.join(self.config.output_data_dir, f'{USENET_COMP}.log')
+        # Clearing the log file
+        open(logfile, 'w').close()
+
+        # Create an out folder
+        out_file = os.path.join(self.config.output_data_dir, f'{USENET_COMP}.parquet')
+
         for file in glob.glob(os.path.join(self.config.tmpdir, '*')):
             if file.endswith('.mbox'):
-                threads = mbox.process_forum(file)
-                for thread in threads:
-                    # tree = ET.ElementTree(thread.export_xml())
-                    threads_content.append(
-                        ET.tostring(thread.export_xml(), encoding='utf-8', method='xml')
-                    )
+                try:
+                    threads = mbox.process_forum(file)
+                    forum_content = []
+                    forum_metadata = []
+                    forum_name = os.path.basename(file)
+                    for thread in threads:
+                        # tree = ET.ElementTree(thread.export_xml())
+                        forum_content.append(
+                            ET.tostring(thread.export_xml(), encoding='utf-8', method='xml')
+                        )
+                        m_metadata = thread.get_metadata()
+                        m_metadata.update({'forum_name': forum_name})
+                        forum_metadata.append(json.dumps(m_metadata))
 
-        # Writing parquet to dest folder
-        pf = pd.DataFrame(threads_content, columns=['content'])
-        pf.to_parquet(os.path.join(self.config.output_data_dir, 'usenet.parquet'))
+                    forum_frame = pd.DataFrame({
+                        'metadata': forum_metadata,
+                        'content': forum_content,
+                    })
+                    forum_table = pa.Table.from_pandas(forum_frame)
+                    pq.write_to_dataset(forum_table, root_path=out_file)
+
+                    f = open(logfile, 'a')
+                    f.write(f'Success {file}: includes {len(threads)}\n')
+                    f.close()
+
+                except Exception as e:
+                    # Appending to the log file
+                    f = open(logfile, 'a')
+                    f.write('Error {file}: {e}\n'.format(file=file, e=str(e)))
+                    f.close()
