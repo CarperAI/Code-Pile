@@ -27,6 +27,9 @@ def process_raw_message(body, remove_empty_lines=True, remove_author_lines=True)
     5. Remove excessive empty lines
     6. Remove lines "On <date>, <person> wrote:" at the top of messages and quoted text
 
+    A lot of rules have been manually added based on mailboxes I have seen, edge cases I have not seen
+    might not be included.
+
     :param body: Raw text message body
     :param remove_empty_lines: Toggles step 5
     :param remove_author_lines: Toggles step 6
@@ -55,7 +58,9 @@ def process_raw_message(body, remove_empty_lines=True, remove_author_lines=True)
         for line in body.splitlines():
             line_l = line.lower()
             if remove_author_lines:
-                if line_l.startswith('on ') and line_l.endswith(' wrote:'):
+                if line_l.endswith(' wrote:') or line_l.endswith(' said:') or line_l.endswith(' said :'):
+                    continue
+                if 'in article ' in line_l:
                     continue
 
             if remove_empty_lines:
@@ -101,3 +106,18 @@ def quote(body, preserve_quoted_text=False):
             was_quoted = False
 
     return '\n'.join(blocks)
+
+
+def get_author_username(author_string):
+    """
+    Parses a raw mail archive style author string to get an author name
+    There can be multiple different formats within a single mailbox for authors ('From:')
+    This function tries its best to find the most obvious candidate for a username
+    """
+    email_part = author_string.split('<')[-1]
+    # Get the username from the first part of the email
+    username = email_part.split('@')[0]
+    # Also try to split on characters that may be used to substitute @
+    username = username.split('AT')[0]
+
+    return re.sub(r'\W+', '', username)

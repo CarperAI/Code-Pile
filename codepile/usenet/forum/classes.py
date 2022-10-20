@@ -64,6 +64,12 @@ class Thread:
 
         return thread
 
+    def export_string(self):
+        # Export this thread as a string
+        # https://docs.google.com/document/d/1Yq8MH3rMhIgf0fgXFHgjuAWscIdDO-lRo3dHFD8dCO0/edit#heading=h.bwu58ofcv32y
+        reply_strings = [f'    {reply.export_string()}' for reply in self.get_replies()]
+        return self.post.export_string() + '\n' + '\n'.join(reply_strings)
+
     def get_metadata(self):
         # Returns a metadata dict
         return {
@@ -73,10 +79,18 @@ class Thread:
 
 class Message:
 
-    def __init__(self, timestamp, body):
+    def __init__(self, timestamp, body, author=''):
         self.timestamp = timestamp
         self.body = body
         self.body_hash = hashlib.md5(body.encode()).hexdigest()
+        # Providing a sensible default for author in case it is not available
+        if author:
+            self.author = author
+        else:
+            self.author = 'anonymous'
 
     def __eq__(self, other):
         return self.body_hash == other.body_hash
+
+    def export_string(self):
+        return f'@{self.author}: "{self.body}"'

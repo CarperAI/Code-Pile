@@ -4,13 +4,14 @@ UseNet specific mailbox processing
 
 
 from .classes import Thread, Message
-from .utils import process_raw_message, discard_message
+from .utils import process_raw_message, discard_message, get_author_username
 
 from datetime import datetime
 import mailbox
 
 
 def mbox_utf_reader(stream):
+    # Custom utf reader, replaces utf-8 errors with the unicode error char "�"
     data = stream.read()
     text = data.decode(encoding='utf-8', errors='replace')
     return mailbox.mboxMessage(text)
@@ -78,11 +79,19 @@ def process_forum(mbox_file):
                 subject: thread,
             })
 
-        # Add the post/reply to the thread
-        if is_post and not threads[subject].has_post():
-            threads[subject].add_post(Message(body=body, timestamp=m_datetime))
+        # Get the author
+        message_from = message.get('From')
+        if message_from:
+            username = get_author_username(message_from)
         else:
-            threads[subject].add_reply(Message(body=body, timestamp=m_datetime))
+            username = ''
+
+        # Add the post/reply to the thread
+        message = Message(body=body, timestamp=m_datetime, author=username)
+        if is_post and not threads[subject].has_post():
+            threads[subject].add_post(message)
+        else:
+            threads[subject].add_reply(message)
 
     # Removing threads without a post or at least 1 reply
     final_threads = []

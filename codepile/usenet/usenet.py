@@ -114,10 +114,15 @@ class UsenetDataset(Dataset):
                     forum_metadata = []
                     forum_name = os.path.basename(file)
                     for thread in threads:
-                        # tree = ET.ElementTree(thread.export_xml())
-                        forum_content.append(
-                            ET.tostring(thread.export_xml(), encoding='utf-8', method='xml')
-                        )
+                        # Forum content in xml
+                        # forum_content.append(
+                        #     ET.tostring(thread.export_xml(), encoding='utf-8', method='xml')
+                        # )
+
+                        # Forum content in plain text
+                        forum_content.append(thread.export_string())
+
+                        # Metadata for this forum's threads
                         m_metadata = thread.get_metadata()
                         m_metadata.update({'forum_name': forum_name})
                         forum_metadata.append(json.dumps(m_metadata))
