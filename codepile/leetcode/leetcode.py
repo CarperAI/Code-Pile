@@ -2,12 +2,12 @@ from codepile.dataset import DatasetInfo, RawDataset, Scraper, Dataset
 
 from datetime import datetime
 import os
-import gdown
+import boto3
 
 from .processor import LeetCodeProcessor
 
-LEETCODE_DUMP_URL = "https://drive.google.com/file/d/1fT2cDXF_4U79Z6h0y0ImljICb-xbotUq/view?usp=sharing"
-LEETCODE_DUMP_ZIP_NAME = "leetcode.tar.bz2"
+LEETCODE_S3_BUCKET = "s-eai-neox"
+LEETCODE_PARQUET_S3_PATH = "data/codepile/leetcode/leetcode_topics_with_questions.parquet.gzip"
 LEETCODE_PARQUET_ZIP_NAME = "leetcode_topics_with_questions.parquet.gzip"
 
 '''
@@ -31,12 +31,9 @@ LeetCodeInfo = DatasetInfo(
 '''
 class LeetCodeScraper(Scraper):
     def scrape(self, metadata) -> RawDataset:
-        if not (os.path.exists(os.path.join(self.config.output_data_dir, LEETCODE_PARQUET_ZIP_NAME)) \
-            or os.path.exists(os.path.join(self.config.output_data_dir, LEETCODE_DUMP_ZIP_NAME))):
-            gdown.download(
-                url=LEETCODE_DUMP_URL, 
-                output=os.path.join(self.config.raw_data_dir, LEETCODE_DUMP_ZIP_NAME),
-                quiet=False, fuzzy=True)
+        if not os.path.exists(os.path.join(self.config.raw_data_dir, LEETCODE_PARQUET_ZIP_NAME)):
+            s3 = boto3.client('s3')
+            s3.download_file(LEETCODE_S3_BUCKET, LEETCODE_PARQUET_S3_PATH, os.path.join(self.config.raw_data_dir, LEETCODE_PARQUET_ZIP_NAME))
         return RawDataset(storage_uris=['file:///{self.config.raw_data_dir}'],
                 metadata=str(metadata))
 
@@ -72,6 +69,5 @@ class LeetCodeDataset(Dataset):
         return self.info.id
 
     def download(self):
-        if not os.path.exists(os.path.join(self.config.output_data_dir, LEETCODE_PARQUET_ZIP_NAME)):
+        if not os.path.exists(os.path.join(self.config.raw_data_dir, LEETCODE_PARQUET_ZIP_NAME)):
             self.scraper.scrape(metadata=self.info)
-            self.processor.process()
