@@ -3,9 +3,11 @@ import pandas as pd
 from codepile.codepile import Config
 from codepile.enwikibooks.wikibooks import WikiBookDataset
 
-from unittest import TestCase
-class TestWikiBookDataset(TestCase):
-    def setUp(self):
+import pytest
+
+class TestWikiBookDataset:
+    @pytest.mark.s3_download
+    def test_same_cols(self):
         if not os.path.exists("data/"):
             os.makedirs("data/")
         config = Config(
@@ -17,10 +19,4 @@ class TestWikiBookDataset(TestCase):
         book_dataset.download()
         self.dummy = pd.read_parquet("test/computing_wikibook_dummy.parquet")
         self.df = pd.read_parquet("data/computing_wikibooks.parquet")
-
-    def test_same_cols(self):
-        self.setUp()
         self.assertEqual(self.dummy.columns.tolist(), self.df.columns.tolist())
-
-if __name__ == '__main__':
-    TestWikiBookDataset().test_same_cols()
