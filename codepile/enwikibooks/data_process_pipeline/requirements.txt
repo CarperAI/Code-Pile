@@ -1,8 +1,0 @@
-datasets
-emoji==1.7.0
-fsspec==2022.8.2
-gcsfs==2022.8.2
-regex==2022.9.13
-sentencepiece==0.1.97
-tqdm==4.64.1
-typer==0.6.1

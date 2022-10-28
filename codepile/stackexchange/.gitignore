@@ -1,0 +1,7 @@
+tests/data/*
+!tests/data/dumps
+!tests/data/temp/
+tests/data/temp/*
+tests/data/temp/StackExchange/**
+!tests/data/temp/StackExchange/
+!tests/data/temp/StackExchange/raw_data.json
