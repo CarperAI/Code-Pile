@@ -124,7 +124,6 @@ def make_duplicate_clusters(dataset_iterator: Type[Dataset], jaccard_threshold: 
     This step cannot be parallelized. So using asynchronous thread in the previous step helps to speed up the process.
     """
     di = DuplicationIndex(duplication_jaccard_threshold=jaccard_threshold)
-
     for filename, min_hash in tqdm(ThreadedIterator(minhash_iter(enumerate(dataset_iterator)), max_queue_size=100)):
         di.add(filename, min_hash)
 

@@ -9,6 +9,12 @@ from codepile.codepile import Config
 from datetime import datetime
 from boto3.session import Session
 import boto3
+from codepile.tools.filtering import fitering_pipeline
+from codepile.tools.near_deduplication.minhash_deduplication import deduplicate_dataset
+from codepile.tools.bigscience_pii_detect_redact import run_pii_batch
+from functools import partial
+from lm_dataformat import Archive, Reader
+import datasets
 
 
 LIST_DATASET = ['CodeContest', 'TopCoder', "GoogleCodeJam"]
@@ -58,10 +64,14 @@ class CPDataset(Dataset):
         prompt = prompt + "Memory limit: " + memory_limit + "\n"
         prompt = prompt + "Difficulty: " + description + "\n"
         prompt = prompt + "Hint: " + hint + "\n"
+        lst_sols = []
         for sol in solutions:
-            prompt = prompt + f"Here is a correct solution with {sol['language']} programming language: \n" + sol['solution'] + "\n"
+            lst_sols.append(f"Here is a correct solution with {sol['language']} programming language: \n" + sol['solution'] + "\n")
+        prompt = prompt + "".join(lst_sols)
+        lst_insols = []
         for sol in incorrect_solutions:
-            prompt = prompt + f"Here is an incorrect solution with {sol['language']} programming language: \n" + sol['solution'] + "\n"
+            lst_insols.append(f"Here is an incorrect solution with {sol['language']} programming language: \n" + sol['solution'] + "\n")
+        prompt = prompt + "".join(lst_insols)
         return prompt
     
     def make_format_topcoder(self, sample):
@@ -70,8 +80,10 @@ class CPDataset(Dataset):
         solutions = sample['solutions']
         prompt = "Problem title: " + name + "\n"
         prompt = prompt + "Problem statement: " + description + "\n"
+        lst_sols = []
         for sol in solutions:
-            prompt = prompt + f"Here is a correct solution: \n" + sol.strip() + "\n"
+            lst_sols.append(f"Here is a correct solution: \n" + sol.strip() + "\n")
+        prompt = prompt + "".join(lst_sols)
         return prompt
     
     def make_format_ggcodejam(self, sample):
@@ -83,8 +95,12 @@ class CPDataset(Dataset):
         prompt = "Problem title: " + name + "\n"
         prompt = prompt + "Problem statement: " + description + "\n"
         prompt = prompt + "Hint: " + analysis + "\n"
+        lst_sols = []
         for author in solutions:
-            prompt = prompt + f"Here is a correct solution: \n" + solutions[author] + "\n"
+            if str(author) == "nan":
+                continue
+            lst_sols.append(f"Here is a correct solution: \n" + solutions[author] + "\n")
+        prompt = prompt + "".join(lst_sols)
         return prompt        
 
 
@@ -123,14 +139,63 @@ class CPDataset(Dataset):
     def download(self):
         self.fetch_raw(return_df=False)
 
+    def process(self):
+        """
+        print("Read data from raw files")
+        dict_df = {'CodeContest': pd.read_pickle(os.path.join(self.config.raw_data_dir, 'CodeContest_raw.pickle')),
+                    'TopCoder': pd.read_pickle(os.path.join(self.config.raw_data_dir, 'TopCoder_raw.pickle')), 
+                    'GoogleCodeJam': pd.read_pickle(os.path.join(self.config.raw_data_dir, 'GoogleCodeJam_raw.pickle'))}
+        cp_formatted_df = []
+        for source in dict_df:
+            print(f"Convert into well format: {source}")
+            raw_df = dict_df[source]
+            raw_df = raw_df.reset_index(drop=True)
+            if 'id' not in raw_df.columns.values: # create id 
+                raw_df['id'] = raw_df.index
+            raw_df['content'] = raw_df.apply(lambda row: self.make_format(row, source), axis = 1)
+            cp_formatted_df.append(raw_df[['id', 'content']])
+        combine_df = pd.concat(cp_formatted_df)
+        combine_df = combine_df.reset_index(drop=True)
+        import ipdb; ipdb.set_trace()
+        hf_dataset = datasets.Dataset.from_pandas(combine_df) 
+        print(f"Shape: {combine_df.shape}")
+        # hf dataset filtering
+        print("Run filtering")
+        hf_dataset = hf_dataset.filter(lambda sample: fitering_pipeline(sample['content']) == False) 
+        # run PII
+        print("Run PII")
+        hf_dataset = hf_dataset.map(
+            partial(run_pii_batch),
+            batched=True,
+            batch_size=32,
+            num_proc=32
+        )
+        """
+        combine_df = pd.read_pickle("data/combine_df.pickle")
+        #hf_dataset = datasets.Dataset.from_pandas(combine_df) 
+        print("Run deduplication")
+        # hf near-deduplication
+        #hf_dataset, duplicate_clusters = deduplicate_dataset(hf_dataset)
+        print("Write lm data format")
+        #import ipdb; ipdb.set_trace()
+        # convert to lmdata_format
+        ar = Archive(str(self.config.output_data_dir))
+        for content in tqdm(combine_df['content']):
+            ar.add_data(content, meta={"source": self.__class__.__name__,
+                "fields": list(combine_df.columns.values)})
+        ar.commit(self.__class__.__name__)
+
 
 if __name__=="__main__":
     if not os.path.exists("data/"):
         os.makedirs("data/")
+    if not os.path.exists("data_lm/"):
+        os.makedirs("data_lm/")
     config = Config(
         raw_data_dir="data/",
-        output_data_dir="data/",
+        output_data_dir="data_lm/",
         tmpdir="/tmp"
     )
     cp_dataset = CPDataset(config)
     cp_dataset.download()
+    cp_dataset.process()

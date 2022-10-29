@@ -28,6 +28,13 @@ def tokenization(document, sentencepiece_model, join_on_whitespace):
         document_tokenized = " ".join(document_tokenized)
     return document_tokenized
 
+def clean_html_tags(text):
+    text = re.sub(r'<[^>]+>', '', text)
+    text = '\n'.join([line.strip() for line in text.splitlines() if len(line) > 5])
+    text = text.replace("&nbsp;", "")
+    text = text.replace("&lt;", "<")
+    # text = fixes_text(text) 
+    return text
 
 def fixes_text(document):
     return ftfy.fix_text(document)

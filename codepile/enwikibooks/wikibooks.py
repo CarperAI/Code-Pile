@@ -93,7 +93,7 @@ class WikiBookDataset(Dataset):
         for content in hf_dataset['content']:
             ar.add_data(content, meta={"source": self.__class__.__name__,
                 "fields": list(hf_dataset.features.keys())})
-        ar.commit()
+        ar.commit(self.__class__.__name__)
         
 
 if __name__=="__main__":
