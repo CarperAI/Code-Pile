@@ -29,7 +29,7 @@ _DESCRIPTION = "PileV2"
 
 _DATA_URLS = {
     "DM Mathematics": "data/codepile/lm_dataformat_pilev2/data_0_time1666879910_DMMathDataset.jsonl.zst",
-    "Ubuntu IRC": "data/codepile/lm_dataformat_pilev2/ubuntu_irc_until_2020_9_1.jsonl.zst",
+    "Ubuntu IRC": "data/codepile/lm_dataformat_pilev2/ubuntu_irc_until_2020_9_1.jsonl.zst"
 }
 
 _FEATURES = {
@@ -162,7 +162,7 @@ class ThePile(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIG_CLASS = ThePileConfig
     BUILDER_CONFIGS = [ThePileConfig(subsets=[subset]) for subset in _DATA_URLS]
-    DEFAULT_CONFIG_NAME = "FreeLaw"
+    DEFAULT_CONFIG_NAME = "DM Mathematics"
 
     def _info(self):
         """Give information and typings for the dataset."""
@@ -218,13 +218,19 @@ class ThePile(datasets.GeneratorBasedBuilder):
                 with zstd.open(open(path, "rb"), "rt", encoding="utf-8") as f:
                     for row in f:
                         data = json.loads(row)
+                        if len(data['meta']) == 0: # prevent empty meta when write to lm_dataformat
+                            data['meta'] = str({"source": subset})
+                        data['meta'] = str(data['meta'])
                         yield key, data
                         key += 1
         else:
-            for subset in files:    
+            for subset in files:
                 import zstandard as zstd
                 with zstd.open(open(files[subset], "rb"), "rt", encoding="utf-8") as f:
                     for row in f:
                         data = json.loads(row)
+                        if len(data['meta']) == 0: # prevent empty meta when write to lm_dataformat
+                            data['meta'] = str({"source": subset})
+                        data['meta'] = str(data['meta'])
                         yield key, data
                         key += 1
