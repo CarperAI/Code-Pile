@@ -1,18 +1,14 @@
 ## Test Topcoder Crawling
 import os
 import pandas as pd
-from ai4code_kaggle import AI4Code_Kaggle
-
-import os
-import pandas as pd
-from ai4code_kaggle import AI4Code_Kaggle
+from codepile.ai4code_kaggle.ai4code_kaggle import AI4Code_Kaggle
 from codepile.codepile import Config
 
-from unittest import TestCase
-class TestAI4CodeDataset(TestCase):
+import pytest
 
-    def setUp(self):
-            
+class TestAI4CodeDataset:
+    @pytest.mark.s3_download
+    def test_same_cols(self):
         if not os.path.exists("data/"):
                 os.makedirs("data/")
         config = Config(
@@ -26,9 +22,4 @@ class TestAI4CodeDataset(TestCase):
         self.dummy = pd.read_parquet("test/ai4code_kaggle_dummy.parquet")
         self.df = pd.read_parquet("data/AI4Code_Kaggle.parquet")
 
-    def test_same_cols(self):
-        self.setUp()
         self.assertEqual(self.dummy.columns.tolist(), self.df.columns.tolist())
-
-if __name__ == '__main__':
-    TestAI4CodeDataset().test_same_cols()
