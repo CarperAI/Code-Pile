@@ -35,96 +35,112 @@ _DATA_URLS = {
 _FEATURES = {
     "Pubmed Central": datasets.Features(
         {
+            "id": datasets.Value("string"),
             "text": datasets.Value("string"),
             "meta": datasets.Value("string"),
         }
     ),
     "Books3": datasets.Features(
         {
+            "id": datasets.Value("string"),
             "text": datasets.Value("string"),
             "meta": datasets.Value("string"),
         }
     ),
     "Project Gutenberg": datasets.Features(
         {
+            "id": datasets.Value("string"),
             "text": datasets.Value("string"),
             "meta": datasets.Value("string"),
         }
     ),
     "FreeLaw": datasets.Features(
         {
+            "id": datasets.Value("string"),
             "text": datasets.Value("string"),
             "meta": datasets.Value("string"),
         }
     ),
     "Ubuntu IRC": datasets.Features(
         {
+            "id": datasets.Value("string"),
             "text": datasets.Value("string"),
             "meta": datasets.Value("string"),
         }
     ),
     "Wikipedia (en)": datasets.Features(
         {
+            "id": datasets.Value("string"),
             "text": datasets.Value("string"),
             "meta": datasets.Value("string"),
         }
     ),
     "EuroParl": datasets.Features(
         {
+            "id": datasets.Value("string"),
             "text": datasets.Value("string"),
             "meta": datasets.Value("string"),
         }
     ),
     "DM Mathematics": datasets.Features(
         {
+            "id": datasets.Value("string"),
             "text": datasets.Value("string"),
             "meta": datasets.Value("string"),
         }
     ),
     "Apache Software Foundation Public Mail Archives": datasets.Features(
         {
+            "id": datasets.Value("string"),
             "text": datasets.Value("string"),
             "meta": datasets.Value("string"),
         }
     ),
     "StackExchange": datasets.Features(
         {
+            "id": datasets.Value("string"),
             "text": datasets.Value("string"),
             "meta": datasets.Value("string"),
         }
     ),
     "Comptetitive Programming": datasets.Features(
         {
+            "id": datasets.Value("string"),
             "text": datasets.Value("string"),
             "meta": datasets.Value("string"),
         }
     ),
     "WikiBooks Computing": datasets.Features(
         {
+            "id": datasets.Value("string"),
             "text": datasets.Value("string"),
             "meta": datasets.Value("string"),
         }
     ),
     "Usenet": datasets.Features(
         {
+            "id": datasets.Value("string"),
             "text": datasets.Value("string"),
             "meta": datasets.Value("string"),
         }
     ),
     "AI4Code notebooks": datasets.Features(
         {
+            "id": datasets.Value("string"),
             "text": datasets.Value("string"),
             "meta": datasets.Value("string"),
         }
     ),
     "The Stack": datasets.Features(
         {
+            "id": datasets.Value("string"),
             "text": datasets.Value("string"),
             "meta": datasets.Value("string"),
         }
     ),
     "LeetCode Forum": datasets.Features(
         {
+            "id": datasets.Value("string"),
             "text": datasets.Value("string"),
             "meta": datasets.Value("string"),
         }
@@ -221,6 +237,7 @@ class ThePile(datasets.GeneratorBasedBuilder):
                         if len(data['meta']) == 0: # prevent empty meta when write to lm_dataformat
                             data['meta'] = str({"source": subset})
                         data['meta'] = str(data['meta'])
+                        data['id'] = str(key)
                         yield key, data
                         key += 1
         else:
@@ -232,5 +249,6 @@ class ThePile(datasets.GeneratorBasedBuilder):
                         if len(data['meta']) == 0: # prevent empty meta when write to lm_dataformat
                             data['meta'] = str({"source": subset})
                         data['meta'] = str(data['meta'])
+                        data['id'] = str(key)
                         yield key, data
                         key += 1
