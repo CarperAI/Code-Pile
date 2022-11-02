@@ -58,16 +58,20 @@ class DiscourseSpider(scrapy.Spider):
             random.shuffle(urls)
             for url in urls:
                 if self.scrapelatest:
-                    yield self.create_request(url, '/', 0)
+                    yield self.create_request(url, '', 0)
                 if self.scrapetop:
-                    yield self.create_request(url, '/top', 0)
+                    yield self.create_request(url, 'top', 0)
                 if self.scrapecategories:
-                    yield self.create_request(url, '/categories', 0)
+                    yield self.create_request(url, 'categories', 0)
                 if self.scrapeindex:
-                    yield self.create_request(url, '/site', 75)
+                    yield self.create_request(url, 'site', 75)
         
     def create_request(self, site, path, priority=0):
-        url = site + path[1:] if site[-1] == '/' and path[0] == '/' else site + path
+        #url = site + path[1:] if site[-1] == '/' and path[0] == '/' else site + path
+        url = site + path
+        if len(path) > 0 and path[0] == '/':
+            siteurl = urlparse(site)
+            url = '%s://%s%s' % (siteurl.scheme, siteurl.netloc, path)
         return scrapy.Request(url=url, callback=self.bind_parse_func(site), headers=self.headers, errback=self.handle_errback, priority=priority + random.randint(0, 50))
 
     def bind_parse_func(self, site):
@@ -97,6 +101,7 @@ class DiscourseSpider(scrapy.Spider):
         #filename = m.group(4) or urlpath
 
         sitepath = re.sub(r"^https?://(.*)/$", r'\1', site)
+        siteroot = sitepath.split('/')[0]
 
         url = urlparse(response.url)
         protocol = url.scheme + '://'
@@ -117,49 +122,60 @@ class DiscourseSpider(scrapy.Spider):
                 if self.scrapetopics:
                     if 'topic_url' in category and category['topic_url'] is not None:
                         topicurl = category['topic_url']
-                        crawlfname = 'discourse/%s%s' % (sitepath, topicurl)
+                        crawlroot = siteroot if topicurl[0] == '/' else sitepath
+                        crawlfname = 'discourse/%s%s' % (crawlroot, topicurl)
+                        #print("check crawlfname", crawlfname)
                         if not os.path.isfile(crawlfname):
                             yield self.create_request(site, topicurl)
-                    categoryurl = '/c/%s' % (category['slug'])
-                    # check for cached category page
-                    crawlfname = 'discourse/%s%s' % (sitepath, categoryurl)
-                    if os.path.isdir(crawlfname):
-                        # cached file found, parse the on-disk representation to repopulate the queue
-                        categoryjson = False
+                    if len(category['slug']) > 0:
                         categoryurl = '/c/%s' % (category['slug'])
                         # check for cached category page
-                        crawlfname = 'discourse/%s%s/%d' % (sitepath, categoryurl, category['id'])
-                        with open(crawlfname, 'r') as fd:
-                            categorycontents = fd.read()
-                        #print("cached!'", categorycontents)
-                        if categorycontents:
-                            fakeresponse = {
-                                'body': categorycontents,
-                                'text': categorycontents,
-                                'url': site + categoryurl[1:]
-                            }
-                            self.parse(site, fakeresponse)
-                    elif os.path.isfile(crawlfname):
-                        # cached file found, parse the on-disk representation to repopulate the queue
-                        categoryjson = False
-                        with open(crawlfname, 'r') as fd:
-                            categorycontents = fd.read()
-                        if categoryjson:
-                            fakeresponse = {
-                                body: categorycontents,
-                                text: categorycontents,
-                                url: site + categoryurl[1:]
-                            }
-                            print(fakeresponse)
-                            #self.parse(site, fakeresponse)
+                        crawlfname = 'discourse/%s%s' % (sitepath, categoryurl)
+                        #print("check category cache", crawlfname)
+                        if os.path.isdir(crawlfname):
+                            # cached file found, parse the on-disk representation to repopulate the queue
+                            categoryjson = False
+                            categoryslug = category['slug']
+                            if len(categoryslug) == 0:
+                                categoryslug = "%d-category" % category['id']
+                            categoryurl = 'c/%s' % (categoryslug)
+                            # check for cached category page
+                            crawlroot = siteroot if categoryurl[0] == '/' else sitepath
+                            crawlfname = 'discourse/%s/%s/%d' % (crawlroot, categoryurl, category['id'])
+                            with open(crawlfname, 'r') as fd:
+                                categorycontents = fd.read()
+                            #print("cached!'", categorycontents)
+                            if categorycontents:
+                                fakeresponse = {
+                                    'body': categorycontents,
+                                    'text': categorycontents,
+                                    'url': site + categoryurl[1:]
+                                }
+                                self.parse(site, fakeresponse)
+                        elif os.path.isfile(crawlfname):
+                            # cached file found, parse the on-disk representation to repopulate the queue
+                            categoryjson = False
+                            with open(crawlfname, 'r') as fd:
+                                categorycontents = fd.read()
+                            if categoryjson:
+                                fakeresponse = {
+                                    body: categorycontents,
+                                    text: categorycontents,
+                                    url: site + categoryurl[1:]
+                                }
+                                print(fakeresponse)
+                                #self.parse(site, fakeresponse)
 
-                    else:
-                        # not found crawl it
-                        yield self.create_request(site, categoryurl, 0)
+                        else:
+                            # not found crawl it
+                            yield self.create_request(site, categoryurl, 0)
 
                 if self.scrapecategories and 'subcategory_ids' in category:
                     for categoryid in category['subcategory_ids']:
-                        subcategoryurl = '/c/%s' % (category['slug'])
+                        categoryslug = category['slug']
+                        if len(categoryslug) == 0:
+                            categoryslug = "%d-category" % category['id']
+                        subcategoryurl = 'c/%s' % (categoryslug)
                         #print('add subcategory', subcategoryurl)
                         yield self.create_request(site, subcategoryurl, 0)
                     
@@ -176,8 +192,8 @@ class DiscourseSpider(scrapy.Spider):
                 skips = 0
                 for topic in topics:
                     #crawlfname = datapath + '/t/%s/%d' % (topic['slug'], topic['id'])
-                    topicurl = '/t/%s/%d' % (topic['slug'], topic['id'])
-                    crawlfname = 'discourse/%s%s' % (sitepath, topicurl)
+                    topicurl = 't/%s/%d' % (topic['slug'], topic['id'])
+                    crawlfname = 'discourse/%s/%s' % (sitepath, topicurl)
                     #print('check datapath', crawlfname, response.url, site)
                     if not os.path.isfile(crawlfname):
                         # TODO - to facilitate continuous crawling, we probably want to check the last crawled time, and refresh if our list data indicates new posts
@@ -358,6 +374,56 @@ def generateCrawlSummary():
             crawlsummaryfd.write(json.dumps(crawlsummary, indent=2))
         print('Done.  Crawl summary written to discourse/crawlsummary.json')
         print(crawlsummary['_totals'])
+
+def verify_site(site):
+    # load site map
+
+    try:
+        siteroot = 'discourse/%s' % (site)
+        print("try to open site", site, siteroot)
+        with open(siteroot + '/site', 'r') as sitefd:
+            print("opened")
+            sitedata = json.loads(sitefd.read())
+            #print(sitedata)
+            found = {
+                "categories": [],
+                "topics": []
+            }
+            missing = {
+                "categories": [],
+                "topics": []
+            }
+            if 'categories' in sitedata and len(sitedata['categories']) > 0:
+                # walk through all categories with pagination, and extract all topic urls
+                for category in sitedata['categories']:
+                    # check if category file exists in cache
+                    try:
+                        #print(category)
+                        categorypath = siteroot + '/c/%s' % (category['slug'])
+                        #print("check file?", categorypath)
+                        if os.path.isdir(categorypath):
+                            categorypath = '%s/%d' % (categorypath, category['id'])
+
+                        with open(categorypath, 'r') as categoryfd:
+                            categorydata = json.loads(categoryfd.read())
+                            print('found category', category['slug'])
+                            found['categories'].append(category['name'])
+                            #nextpageurl = categorydata['more_iotems']
+                    except FileNotFoundError:
+                        #print("no nope", category['slug'], category['name'])
+                        missing['categories'].append(category['name'])
+
+
+                    # compare known topic urls with saved topic urls
+
+                    # output missing urls
+
+            print('FOUND', found)
+            print('MISSING', missing)
+
+    except KeyError:
+        print("site not found", site)
+
 
 if __name__ == "__main__":
     process = CrawlerProcess()

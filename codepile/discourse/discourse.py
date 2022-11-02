@@ -1,5 +1,5 @@
 from codepile.dataset import DatasetInfo, DatasetSources, RawDataset, Scraper, Processor, Analyser, Dataset
-from codepile.discourse.discourse_spider import DiscourseSummarySpider, DiscourseTopicSpider, generateCrawlSummary
+from codepile.discourse.discourse_spider import DiscourseSummarySpider, DiscourseTopicSpider, generateCrawlSummary, verify_site
 from scrapy.crawler import CrawlerProcess
 import os
 import pathlib
@@ -30,7 +30,7 @@ class DiscourseScraper(Scraper):
         }
 
         # TODO - crawl type should be an argument we can pass in
-        crawltype = 'topics'
+        crawltype = 'summary'
 
         if crawltype == 'stats':
             # use DiscourseSummarySpider to generate crawl summary by grabbing the index from every site
@@ -49,6 +49,9 @@ class DiscourseScraper(Scraper):
         elif crawltype == 'summary':
             # Generate a summary of all the sites that were crawled
             generateCrawlSummary()
+        elif crawltype == 'verify':
+            # Generate a summary of all the sites that were crawled
+            verify_site('forum.arduino.cc')
 
         if self.profiler_enabled:
             profiler.disable()
