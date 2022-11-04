@@ -98,15 +98,18 @@ class TutorialspointArticleSpider(scrapy.Spider):
                 # Extract the HTML between the first and second clear divs
                 htmlsrc += node.extract()
         data = {
-          "url": response.url,
-          "title": response.css('.qa_title::text').get(),
-          "author": response.css('.qa_author span::text').get(),
-          "author_link": response.css('.author-caret a').attrib['href'],
-          "categories": response.css('.qa_category>a>span::text').getall(),
-          "html": htmlsrc,
-          #"text": html2text.html2text(htmlsrc).replace(u"\u00a0", " "),
-          "updated_time": response.css('.qa_answer_dtm::text').get().strip().replace('Updated on ', ''),
-          "crawled_time": datetime.now().strftime('%d-%b-%Y %H:%M:%S'),
+          "text": html2text.html2text(htmlsrc).replace(u"\u00a0", " "),
+          "meta": json.dumps({
+              "source": "tutorialspoint",
+              "url": response.url,
+              "title": response.css('.qa_title::text').get(),
+              "author": response.css('.qa_author span::text').get(),
+              "author_link": response.css('.author-caret a').attrib['href'],
+              "categories": response.css('.qa_category>a>span::text').getall(),
+              "html": htmlsrc,
+              "updated_time": response.css('.qa_answer_dtm::text').get().strip().replace('Updated on ', ''),
+              "crawled_time": datetime.now().strftime('%d-%b-%Y %H:%M:%S'),
+            })
         }
         yield data
         print('[' + bcolors.OKGREEN + ' save ' + bcolors.ENDC + ']', response.url)
