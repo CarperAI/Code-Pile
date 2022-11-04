@@ -10,8 +10,7 @@ import boto3
 import botocore.exceptions
 from datetime import datetime
 
-#S3_BUCKET = "s-eai-neox"
-S3_BUCKET = "assets.metacade.com"
+S3_BUCKET = "s-eai-neox"
 S3_BUCKET_PATH = "data/codepile/tutorialsites/tutorialspoint/"
 
 s3client = boto3.client('s3')
