@@ -136,7 +136,7 @@ class JsonS3WriterPipeline:
 
     def get_current_filename(self):
         # New file name every hour, for checkpointing
-        fname = datetime.now().strftime('crawled-items-%Y-%m-%d_%H_%M.jsonl')
+        fname = datetime.now().strftime('crawled-items-%Y-%m-%d_%H.jsonl')
         return fname
 
     def close_current_file(self):
