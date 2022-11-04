@@ -1,15 +1,13 @@
 import sys
 import argparse
 from codepile.stackexchange.stackexchange import *
-from codepile.discourse.discourse import *
 from codepile.dataset import Dataset
 
 class CodePile(Dataset):
     def __init__(self, tempdir, target_dir):
         self.subdatasets = []
         subsets = [
-            #StackExchangeDataset
-            DiscourseDataset
+            StackExchangeDataset
             ]
         for d in subsets:
             self.subdatasets.append(d(tempdir, target_dir))
