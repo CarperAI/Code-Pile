@@ -6,6 +6,7 @@ from codepile.dataset import Dataset
 class CodePile(Dataset):
     def __init__(self, tempdir, target_dir):
         self.subdatasets = []
+
         subsets = [
             StackExchangeDataset
             ]
