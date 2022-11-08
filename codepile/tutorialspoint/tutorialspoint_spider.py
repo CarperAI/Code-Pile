@@ -178,6 +178,7 @@ class JsonS3WriterPipeline:
         file = self.get_file()
         line = json.dumps(item) + "\n"
         file.write(line)
+        file.flush()
         return item
 
 
