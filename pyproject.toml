@@ -21,7 +21,9 @@ dependencies = [
     "pandas",
     "pyarrow",
     "lxml",
-    "pyspark"
+    "pyspark",
+    "scrapy",
+    "html2text",
 ]
 
 [tool.pytest.ini_options]
