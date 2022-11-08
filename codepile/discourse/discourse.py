@@ -1,10 +1,13 @@
 from codepile.dataset import DatasetInfo, DatasetSources, RawDataset, Scraper, Processor, Analyser, Dataset
 from codepile.discourse.discourse_spider import DiscourseSummarySpider, DiscourseTopicSpider, generateCrawlSummary, verify_site
+from codepile.discourse.discourse_processor import DiscourseProcessor
 from scrapy.crawler import CrawlerProcess
-import os
+import os, sys
 import pathlib
 
 import cProfile
+
+# CLI usage example at bottom
 
 class DiscourseScraper(Scraper):
     profiler_enabled = False
@@ -65,14 +68,49 @@ class DiscourseScraper(Scraper):
                 metadata='')
 
 
-class DiscourseCodeProcessor(Processor):
-    def process(self, raw_data: RawDataset, *args, **kwargs):
-        # TODO - transform raw JSON data into whatever format we need for training
-        return
-
 class DiscourseDataset(Dataset):
-    def __init__(self, tempdir, target_dir):
-        self.scraper = DiscourseScraper(tempdir, target_dir)
-        #self.processor = DiscourseCodeProcessor()
+    def __init__(self, site, data_dir, temp_dir):
+        self.scraper = DiscourseScraper(temp_dir, data_dir)
+        self.processor = DiscourseProcessor(site, data_dir, temp_dir)
     def download(self):
         self.scraper.download()
+    def compress(self):
+        # TODO - bundle up each site from the crawl as a .tar.gz file
+        pass
+
+if __name__=="__main__":
+    if not os.path.exists("data/"):
+            os.makedirs("data/")
+    # TODO - site should be an optional parameter, so you can choose whether to work on individual sites or the whole dataset
+    if len(sys.argv) > 4:
+        action = sys.argv[1]
+        site = sys.argv[2]
+        datadir = sys.argv[3]
+        tmpdir = sys.argv[4]
+
+        discourse_dataset = DiscourseDataset(site, datadir, tmpdir)
+        if action == 'download':
+            print(discourse_dataset.download())
+        elif action == 'compress':
+            print(discourse_dataset.compress())
+        elif action == 'process':
+            print(discourse_dataset.process())
+        elif action == 'analyze':
+            print(discourse_dataset.processor.analyze())
+    else:
+        print('Usage: %s <action> <site> <datadir> <tmpdir>' % (sys.argv[0]))
+
+
+# Example usage:
+#
+# - Start new crawl:
+#        python3 -m codepile.discourse.discourse download all ~/data/my-discourse-crawl /tmp
+#
+# - Compress each site into its own <site>.tar.gz file
+#        python3 -m codepile.discourse.discourse compress <site> ~/data/my-discourse-crawl /tmp
+#
+# - Process collected site data into lm_dataset format:
+#        python3 -m codepile.discourse.discourse process <site> ~/data/my-discourse-crawl /tmp
+#
+# - Collect stats about the sites included in this crawl:
+#        python3 -m codepile.discourse.discourse analyze <site> ~/data/my-discourse-crawl /tmp
