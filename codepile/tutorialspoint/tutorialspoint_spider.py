@@ -41,14 +41,14 @@ class TutorialspointArticleSpider(scrapy.Spider):
                 'https://www.tutorialspoint.com/tp1.xml',
         ]
 
-        print('Loading crawled sites list...')
+        print('Loading crawled sites list...', flush=True)
         if not os.path.isfile('crawled.txt'):
             # Crawled URLs list not found, see if there's on in s3
             try:
                 s3client.download_file(S3_BUCKET, S3_BUCKET_PATH + 'crawled.txt', 'crawled.txt')
-                print('got it')
+                print('got it', flush=True)
             except:
-                print('couldnt fetch crawled.txt')
+                print('couldnt fetch crawled.txt', flush=True)
 
         # Load the list of crawled sites into a dict
         try:
@@ -57,11 +57,11 @@ class TutorialspointArticleSpider(scrapy.Spider):
                     #self.crawled[url.strip()] = True
                     self.crawled.add(url.strip())
         except:
-            print('couldnt open crawled.txt')
+            print('couldnt open crawled.txt', flush=True)
             pass
 
 
-        print('Fetching sitemaps...');
+        print('Fetching sitemaps...', flush=True);
         for url in sitemaps:
             yield scrapy.Request(url=url, callback=self.parse_sitemap)
 
@@ -69,21 +69,21 @@ class TutorialspointArticleSpider(scrapy.Spider):
         #yield scrapy.Request(url="https://www.tutorialspoint.com/program-to-count-number-of-walls-required-to-partition-top-left-and-bottom-right-cells-in-python")
 
     def parse_sitemap(self, response):
-        print('Processing sitemap:', response.url)
+        print('Processing sitemap:', response.url, flush=True)
         response.selector.remove_namespaces()
-        print('running xpath selector')
+        print('running xpath selector', flush=True)
         selectors = response.xpath('//loc//text()')
-        print('iterating')
+        print('iterating', flush=True)
         added = 0
         for selector in selectors:
             url = selector.get();
             if url in self.crawled:
-                print('[' + bcolors.OKBLUE + ' skip ' + bcolors.ENDC + ']', url)
+                print('[' + bcolors.OKBLUE + ' skip ' + bcolors.ENDC + ']', url, flush=True)
             else:
-                #print("YIELD", url)
+                #print("YIELD", url, flush=True)
                 added += 1
                 yield scrapy.Request(url=url, callback=self.parse)
-        print('Added %d urls of %d total' % (added, len(selectors)))
+        print('Added %d urls of %d total' % (added, len(selectors)), flush=True)
 
     def parse(self, response):
         res = response.css('.tutorial-content>*')
@@ -91,7 +91,7 @@ class TutorialspointArticleSpider(scrapy.Spider):
         numclears = 0
         for node in res:
             block = node.get()
-            #print('check node', block, node)
+            #print('check node', block, node, flush=True)
             if block == '<div class="clear"></div>':
                 numclears += 1
             elif numclears == 1:
@@ -112,7 +112,7 @@ class TutorialspointArticleSpider(scrapy.Spider):
             })
         }
         yield data
-        print('[' + bcolors.OKGREEN + ' save ' + bcolors.ENDC + ']', response.url)
+        print('[' + bcolors.OKGREEN + ' save ' + bcolors.ENDC + ']', response.url, flush=True)
 
         with open('crawled.txt', 'a+') as crawled:
             crawled.write('%s\n' % (response.url))
@@ -120,7 +120,7 @@ class TutorialspointArticleSpider(scrapy.Spider):
         links = [link.attrib['href'] for link in response.css('.toc.chapters a')]
         for url in links:
             if url.find('https://') == 0:
-                #print('[' + bcolors.OKCYAN + ' link ' + bcolors.ENDC + ']', url)
+                #print('[' + bcolors.OKCYAN + ' link ' + bcolors.ENDC + ']', url, flush=True)
                 yield scrapy.Request(url=url)
 
     def process_item(self, item, spider):
@@ -141,7 +141,7 @@ class JsonS3WriterPipeline:
 
     def close_current_file(self):
         if self.current_file:
-            print('[' + bcolors.HEADER + 'close ' + bcolors.ENDC + ']', self.current_filename)
+            print('[' + bcolors.HEADER + 'close ' + bcolors.ENDC + ']', self.current_filename, flush=True)
             old_filename = self.current_filename
             self.current_file.close()
             self.current_file = None
@@ -156,11 +156,11 @@ class JsonS3WriterPipeline:
 
                 s3client.upload_file(zip_filename, S3_BUCKET, S3_BUCKET_PATH + zip_filename)
                 s3client.upload_file('crawled.txt', S3_BUCKET, S3_BUCKET_PATH + 'crawled.txt')
-                print('[' + bcolors.HEADER + ' sync ' + bcolors.ENDC + '] uploaded s3://%s/%s%s' % (S3_BUCKET, S3_BUCKET_PATH, zip_filename))
+                print('[' + bcolors.HEADER + ' sync ' + bcolors.ENDC + '] uploaded s3://%s/%s%s' % (S3_BUCKET, S3_BUCKET_PATH, zip_filename), flush=True)
             except IOError:
-                print('[' + bcolors.FAIL  + ' fail ' + bcolors.ENDC + '] writing file failed', self.current_filename)
+                print('[' + bcolors.FAIL  + ' fail ' + bcolors.ENDC + '] writing file failed', self.current_filename, flush=True)
             except botocore.exceptions.NoCredentialsError:
-                print('[' + bcolors.FAIL + ' fail ' + bcolors.ENDC + '] syncing file failed: s3://%s%s%s' % (S3_BUCKET, S3_BUCKET_PATH, zip_filename))
+                print('[' + bcolors.FAIL + ' fail ' + bcolors.ENDC + '] syncing file failed: s3://%s%s%s' % (S3_BUCKET, S3_BUCKET_PATH, zip_filename), flush=True)
 
 
     def get_file(self):
@@ -170,7 +170,7 @@ class JsonS3WriterPipeline:
             self.close_current_file()
             self.current_filename = current_filename
             self.current_file = open(current_filename, 'a+')
-            print('[' + bcolors.HEADER + ' open ' + bcolors.ENDC + ']', self.current_filename)
+            print('[' + bcolors.HEADER + ' open ' + bcolors.ENDC + ']', self.current_filename, flush=True)
 
         return self.current_file
 
