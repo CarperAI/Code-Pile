@@ -5,7 +5,46 @@ from scrapy.crawler import CrawlerProcess
 import os, sys
 import pathlib
 
-# CLI usage example at bottom
+USAGE_EXAMPLES = """
+Usage: python3 -m codepile.discourse.discourse <action> <site> <datadir> <tmpdir>
+
+    action : [index|download|compress|process|analyze]
+    site   : [all|<site>[,<site2>,...]]
+
+
+Place discourse/index.json inside of <datadir> before running
+
+
+Example usage:
+
+ - fetch the site index from each site in our index.json file
+
+        python3 -m codepile.discourse.discourse index all ~/data/my-discourse-crawl /tmp
+
+
+ - crawl topics from all indexed sites:
+
+        python3 -m codepile.discourse.discourse download all ~/data/my-discourse-crawl /tmp
+
+
+ - Compress each site into its own <site>.tar.gz file
+
+        python3 -m codepile.discourse.discourse compress [all|<site>] ~/data/my-discourse-crawl /tmp
+
+
+ - Process collected site data into lm_dataset format:
+
+        python3 -m codepile.discourse.discourse process [all|<site>] ~/data/my-discourse-crawl /tmp
+
+
+ - Collect stats about the sites included in this crawl:
+
+        python3 -m codepile.discourse.discourse analyze [all|<site>] ~/data/my-discourse-crawl /tmp
+
+
+ - Sync processed jsonl files to s3
+        python3 -m codepile.discourse.discourse sync [all|<site>] ~/data/my-discourse-crawl /tmp
+"""
 
 class DiscourseScraper(Scraper):
     def __init__(self, tempdir, target_dir, *args, **kwargs):
@@ -104,28 +143,4 @@ if __name__=="__main__":
         elif action == 'sync':
             discourse_dataset.sync(site)
     else:
-        print('Usage: %s <action> <site> <datadir> <tmpdir>' % (sys.argv[0]))
-        print('')
-        print('    action: [index|download|compress|process|analyze]')
-        print('')
-
-
-# Example usage:
-#
-# - fetch the site index from each site in our index.json file
-#        python3 -m codepile.discourse.discourse index all ~/data/my-discourse-crawl /tmp
-#
-# - crawl topics from all indexed sites:
-#        python3 -m codepile.discourse.discourse download all ~/data/my-discourse-crawl /tmp
-#
-# - Compress each site into its own <site>.tar.gz file
-#        python3 -m codepile.discourse.discourse compress [all|<site>] ~/data/my-discourse-crawl /tmp
-#
-# - Process collected site data into lm_dataset format:
-#        python3 -m codepile.discourse.discourse process [all|<site>] ~/data/my-discourse-crawl /tmp
-#
-# - Collect stats about the sites included in this crawl:
-#        python3 -m codepile.discourse.discourse analyze [all|<site>] ~/data/my-discourse-crawl /tmp
-#
-# - Sync processed jsonl files to s3
-#        python3 -m codepile.discourse.discourse sync [all|<site>] ~/data/my-discourse-crawl /tmp
+        print(USAGE_EXAMPLES)
