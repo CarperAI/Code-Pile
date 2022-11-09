@@ -147,16 +147,17 @@ class DiscourseProcessor(Processor):
 
     def convert_site(self, site):
         sitepath = self.get_site_path(site)
+        sitepath_tmp = self.get_site_path(site, True)
         with open(sitepath + '.jsonl', 'w') as outfile:
             def blargh(f):
                 self.convert_callback(f, outfile)
             pool = Pool(processes=40)
             jobs = []
 
-            for topicdir in os.listdir(sitepath + '/t'):
+            for topicdir in os.listdir(sitepath_tmp + '/t'):
                 #print('e', topicdir)
-                for topicfile in os.listdir(sitepath + '/t/' + topicdir):
-                    topicpath = '%s/t/%s/%s' % (sitepath, topicdir, topicfile)
+                for topicfile in os.listdir(sitepath_tmp + '/t/' + topicdir):
+                    topicpath = '%s/t/%s/%s' % (sitepath_tmp, topicdir, topicfile)
                     job = pool.apply_async(self.convert_site_file, args=[topicpath], callback=blargh)
                     jobs.append(job)
 
