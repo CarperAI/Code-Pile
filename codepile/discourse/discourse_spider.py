@@ -275,14 +275,21 @@ class DiscourseTopicSpider(DiscourseSpider):
 
 
 def generateCrawlSummary():
-    try :
-        with open('discourse/failures.json') as failurefd:
-            failures = json.loads(failurefd.read())
+    try:
         with open('discourse/index.json') as index:
             sites = json.loads(index.read())
     except FileNotFoundError:
-        print(("%.4f\t[ " + bcolors.FAIL + 'ERROR ' + bcolors.ENDC + '] couldn\'t read index or failure files' % (time.time())))
+        print(("%.4f\t[ " + bcolors.FAIL + 'ERROR ' + bcolors.ENDC + '] couldn\'t read index file' % (time.time())))
         return
+
+    failures = []
+    try:
+        with open('discourse/failures.json') as failurefd:
+            failures = json.loads(failurefd.read())
+    except FileNotFoundError:
+        print(("%.4f\t[ " + bcolors.WARNING + 'WARNING' + bcolors.ENDC + '] couldn\'t read failure file') % (time.time()))
+        failures = []
+
     faildomains = {}
     for failurl in failures:
             m = re.match(r"^(https?://)([^/]+)(/.*?)$", failurl)
@@ -291,7 +298,7 @@ def generateCrawlSummary():
                 domain = m.group(2)
                 faildomains[domain] = failures[failurl]
 
-    if failures and sites:
+    if sites:
         crawlsummary = {
             '_totals': {
                 'sites': 0,
