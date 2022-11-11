@@ -31,15 +31,15 @@ TODO: Add YAML tags here. Copy-paste the tags obtained with the online tagging a
 
 ## Dataset Description
 
-- **Homepage:**
-- **Repository:**
-- **Paper:**
-- **Leaderboard:**
-- **Point of Contact:**
+- **Homepage:** https://en.wikibooks.org/wiki/Department:Computing
+- **Repository:** https://github.com/CarperAI/Code-Pile/tree/working/codepile/enwikibooks
+- **Paper:** N/A
+- **Leaderboard:** N/A
+- **Point of Contact:** Duy Phung
 
 ### Dataset Summary
 
-[More Information Needed]
+The books deal with computing: usually defined as the activity of using and developing computer technology, computer hardware, and software get from Wikibook.
 
 ### Supported Tasks and Leaderboards
 
@@ -47,7 +47,7 @@ TODO: Add YAML tags here. Copy-paste the tags obtained with the online tagging a
 
 ### Languages
 
-[More Information Needed]
+The dataset is focused on English.
 
 ## Dataset Structure
 
@@ -123,4 +123,4 @@ TODO: Add YAML tags here. Copy-paste the tags obtained with the online tagging a
 
 ### Contributions
 
-Thanks to [@github-username](https://github.com/<github-username>) for adding this dataset.
+Thanks to [@PhungVanDuy](https://github.com/PhungVanDuy) for adding this dataset.
