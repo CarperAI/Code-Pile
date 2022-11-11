@@ -2,6 +2,7 @@ from codepile.dataset import DatasetInfo, DatasetSources, RawDataset, Scraper, P
 import gzip
 import zstd
 import os
+import shutil
 import hashlib
 import tarfile
 import json
@@ -9,11 +10,26 @@ import html2text
 from multiprocessing import Pool
 import boto3
 import botocore.exceptions
+import time
+import random
 
 S3_BUCKET = "s-eai-neox"
 S3_BUCKET_PATH = "data/codepile/discourse/"
 
 s3client = boto3.client('s3')
+
+text_maker = html2text.HTML2Text()
+text_maker.unicode_snob = True
+text_maker.ignore_links = True
+text_maker.ignore_images = True
+text_maker.images_to_alt = False
+text_maker.ignore_images = True
+text_maker.mark_code = True
+text_maker.escape_snob = False
+text_maker.open_quote = '"'
+text_maker.close_quote = '"'
+text_maker.body_width = 0
+
 
 class DiscourseProcessor(Processor):
     def __init__(self, temp_dir, data_dir):
@@ -71,6 +87,9 @@ class DiscourseProcessor(Processor):
                 print('extracting zipfile', zipfilepath)
                 self.extract_site_zip(site)
                 self.convert_site(site)
+                self.cleanup_site_temp(site)
+            else:
+                print('ERROR: checksum doesn\'t match: %s' % (zipfilepath))
 
         return
 
@@ -145,21 +164,34 @@ class DiscourseProcessor(Processor):
             print('Dir already existed', self.temp_dir + '/' + site)
         return True
 
+    def cleanup_site_temp(self, site):
+        sitedir = os.path.join(self.temp_dir, site)
+        if os.path.isdir(sitedir):
+            print('Cleaning up temp dir', sitedir)
+            shutil.rmtree(sitedir)
+
     def convert_site(self, site):
         sitepath = self.get_site_path(site)
         sitepath_tmp = self.get_site_path(site, True)
         with open(sitepath + '.jsonl', 'w') as outfile:
             def blargh(f):
                 self.convert_callback(f, outfile)
-            pool = Pool(processes=40)
+            pool = Pool(processes=4)
             jobs = []
-
+            batch = []
             for topicdir in os.listdir(sitepath_tmp + '/t'):
                 #print('e', topicdir)
                 for topicfile in os.listdir(sitepath_tmp + '/t/' + topicdir):
                     topicpath = '%s/t/%s/%s' % (sitepath_tmp, topicdir, topicfile)
-                    job = pool.apply_async(self.convert_site_file, args=[topicpath], callback=blargh)
-                    jobs.append(job)
+                    batch.append(topicpath)
+                    if len(batch) > 100:
+                        job = pool.apply_async(self.convert_site_files, args=[batch], callback=blargh)
+                        jobs.append(job)
+                        batch = []
+
+            if len(batch) > 0:
+                job = pool.apply_async(self.convert_site_files, args=[batch], callback=blargh)
+                jobs.append(job)
 
             #for job in jobs:
             #    job.get()
@@ -168,42 +200,90 @@ class DiscourseProcessor(Processor):
             #pool.map(self.convert_site_file, topicfiles)
             pool.close()
             pool.join()
-        print('compressing... ', end='')
+        print('done', flush=True)
+        print('compressing... ', end='', flush=True)
         with open(sitepath + '.jsonl', 'rb') as f_in, open(sitepath + '.jsonl.zstd', 'wb') as f_out:
             f_out.write(zstd.ZSTD_compress(f_in.read()))
-        print(sitepath + '.jsonl.zstd')
+        print(sitepath + '.jsonl.zstd', flush=True)
 
+
+    def convert_site_files(self, files):
+        converted = []
+        #print('CONVERT BATCH:', files)
+        for file in files:
+            newdata = self.convert_site_file(file)
+            converted.append(newdata)
+        return converted
 
     def convert_site_file(self, file):
-        #print('HEY', file)
-        data = json.loads(open(file, 'r').read())
-        #print(data)
-        poststream = data['post_stream']
+        try:
+            topic = json.loads(open(file, 'r').read())
+            #print(topic)
+            poststream = topic['post_stream']
 
-        posts = {}
-        for post in poststream['posts']:
-            posts[post['id']] = post
+            posts = {}
+            for post in poststream['posts']:
+                posts[post['id']] = post
 
-        stream = poststream['stream']
-        text = ''
-        for id in stream:
-            if id in posts:
-                text += html2text.html2text(posts[id]['cooked']) + '\n\n'
-            else:
-                #print('ERROR: missing post', id)
-                pass
+            stream = poststream['stream']
+            text = ''
+            authors = []
 
-        newdata = {
-                "text": text,
-                "meta": {
-                }
-        }
-        #print(newdata)
-        return newdata
+            replies = [
+                'To which %s replied\n\n    %s',
+                'Then %s said\n\n    %s',
+                'So %s replied\n\n    %s',
+                '%s replied\n\n    %s',
+                'After which, %s added\n\n    %s',
+            ]
+
+            if topic['reply_count'] < 1:
+                return False;
+            hashead = False
+            for id in stream:
+                if id in posts:
+                    post = posts[id]
+                    contents = text_maker.handle(post['cooked']).replace('\u2019', "'").strip().replace('\n', '\n    ')
+                    author = '@' + post['username']
+                    if 'name' in post and post['name'] != '' and post['name'] != None:
+                        author = post['name'] + ' (@' + post['username'] + ')'
+
+                    if text == '':
+                        newtext = '%s posted a new topic, subject "%s". It read:\n\n   %s\n\n' % (author, topic['title'], contents)
+                        if newtext == None:
+                            print('AHHH, WHAT?', author, topic['title'], contents)
+                        text = newtext
+                    else:
+                        #text += 'Then %s said, %s\n\n' % (author, contents)
+                        text += (random.choice(replies) + '\n\n') % (author, contents)
+                else:
+                    text += '( there was a missing post )\n\n'
+                    #print(post)
+                    #print('ERROR: missing post', id, post['reply_count'], topic['topic_id'], topic['reply_count'], topic['like_count'])
+                    #return False;
+                    pass
+
+            newdata = {
+                    "text": text,
+                    "meta": {
+                        "source": "discourse",
+                        "url": "",
+
+                    }
+            }
+            #print(newdata)
+            #print('=' * 20 + '\n\n' + text)
+            return newdata
+        except Exception as e:
+            print("Exception during conversion", e)
 
     def convert_callback(self, returnval, outfile):
-        print('.', end='', flush=True)
-        outfile.write(json.dumps(returnval) + '\n')
+        for line in returnval:
+            if line:
+                print('.', end='', flush=True)
+                outfile.write(json.dumps(line) + '\n')
+            else:
+                print(' ', end='', flush=True)
 
 
     def load_checksums(self):
