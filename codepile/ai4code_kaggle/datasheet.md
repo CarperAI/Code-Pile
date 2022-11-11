@@ -2,7 +2,7 @@
 TODO: Add YAML tags here. Copy-paste the tags obtained with the online tagging app: https://huggingface.co/spaces/huggingface/datasets-tagging
 ---
 
-# Dataset Card for [Dataset Name]
+# Dataset Card for AI4Code Kaggle Competition
 
 ## Table of Contents
 - [Table of Contents](#table-of-contents)
@@ -31,14 +31,15 @@ TODO: Add YAML tags here. Copy-paste the tags obtained with the online tagging a
 
 ## Dataset Description
 
-- **Homepage:**
-- **Repository:**
-- **Paper:**
-- **Leaderboard:**
-- **Point of Contact:**
+- **Homepage:** https://www.kaggle.com/competitions/AI4Code
+- **Repository:** https://github.com/CarperAI/Code-Pile/tree/working/codepile/ai4code_kaggle
+- **Paper:** N/A
+- **Leaderboard:** https://www.kaggle.com/competitions/AI4Code/leaderboard
+- **Point of Contact:** Duy Phung
 
 ### Dataset Summary
 
+This dataset is a collection of ~160,000 public Python notebooks from the popular [Kaggle](https://www.kaggle.com/) platform.
 [More Information Needed]
 
 ### Supported Tasks and Leaderboards
@@ -47,27 +48,28 @@ TODO: Add YAML tags here. Copy-paste the tags obtained with the online tagging a
 
 ### Languages
 
-[More Information Needed]
+The dataset is focused on English and Python.
 
 ## Dataset Structure
 
 ### Data Instances
 
-[More Information Needed]
+Each data instance is a Python notebook, which has been converted from the JSON format to a string. The string contains the code, markdown, and other metadata of the notebook. The string is stored in the `source` field.
 
 ### Data Fields
 
-[More Information Needed]
+* `id`: a `string` representing the notebook's ID.
+* `source`: a string containing the Python notebook converted from JSON format.
 
 ### Data Splits
 
-[More Information Needed]
+The dataset has a single split, which is the training set.
 
 ## Dataset Creation
 
 ### Curation Rationale
 
-[More Information Needed]
+Jupyter Notebooks are a popular tool for data scientists and machine learning practitioners. They are used to document and share the process of data analysis and machine learning. Therefore, it is important to have a dataset that contains a large number of notebooks to help train models for code generation that can leverage the knowledge contained in these notebooks.
 
 ### Source Data
 
@@ -77,7 +79,7 @@ TODO: Add YAML tags here. Copy-paste the tags obtained with the online tagging a
 
 #### Who are the source language producers?
 
-[More Information Needed]
+The source language producers are the users of Kaggle.
 
 ### Annotations
 
@@ -115,7 +117,7 @@ TODO: Add YAML tags here. Copy-paste the tags obtained with the online tagging a
 
 ### Licensing Information
 
-[More Information Needed]
+The dataset is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
 ### Citation Information
 
@@ -123,4 +125,4 @@ TODO: Add YAML tags here. Copy-paste the tags obtained with the online tagging a
 
 ### Contributions
 
-Thanks to [@github-username](https://github.com/<github-username>) for adding this dataset.
+Thanks to [@PhungVanDuy](https://github.com/PhungVanDuy) for adding this dataset.
