@@ -31,15 +31,15 @@ TODO: Add YAML tags here. Copy-paste the tags obtained with the online tagging a
 
 ## Dataset Description
 
-- **Homepage:**
-- **Repository:**
-- **Paper:**
+- **Homepage:** https://huggingface.co/datasets/deepmind/code_contests
+- **Repository:** https://github.com/CarperAI/Code-Pile/tree/working/codepile/competitive_programming
+- **Paper:** N/A
 - **Leaderboard:**
-- **Point of Contact:**
+- **Point of Contact:** Duy Phung
 
 ### Dataset Summary
 
-[More Information Needed]
+Competitive Programming Dataset Take From CodeContest and Google CodeJam.
 
 ### Supported Tasks and Leaderboards
 
@@ -47,7 +47,7 @@ TODO: Add YAML tags here. Copy-paste the tags obtained with the online tagging a
 
 ### Languages
 
-[More Information Needed]
+The dataset is focused on English, Python, C++, and Java.
 
 ## Dataset Structure
 
@@ -61,13 +61,13 @@ TODO: Add YAML tags here. Copy-paste the tags obtained with the online tagging a
 
 ### Data Splits
 
-[More Information Needed]
+The dataset has a single split, which is the training set.
 
 ## Dataset Creation
 
 ### Curation Rationale
 
-[More Information Needed]
+Competitive programming is a popular type of competition centered around solving algorithmic problems. The problems are usually presented as a set of input data and a set of output data. The goal is to write a program that takes the input data and produces the output data. Having a large dataset of competitive programming problems can be useful for training machine learning models to solve these types of problems.
 
 ### Source Data
 
@@ -115,7 +115,8 @@ TODO: Add YAML tags here. Copy-paste the tags obtained with the online tagging a
 
 ### Licensing Information
 
-[More Information Needed]
+* CodeContest: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+* APPs: [MIT](https://opensource.org/licenses/MIT)
 
 ### Citation Information
 
@@ -123,4 +124,4 @@ TODO: Add YAML tags here. Copy-paste the tags obtained with the online tagging a
 
 ### Contributions
 
-Thanks to [@github-username](https://github.com/<github-username>) for adding this dataset.
+Thanks to [@PhungVanDuy](https://github.com/PhungVanDuy) for adding this dataset.
