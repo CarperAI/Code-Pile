@@ -205,15 +205,19 @@ class DiscourseProcessor(Processor):
             topicroot = os.path.join(sitepath_tmp, 't')
             for topicdir in os.listdir(topicroot):
                 #print('e', topicdir)
-                topicdirpath = os.path.join(topicroot, topicdir)
-                for topicfile in os.listdir(topicdirpath):
-                    #topicpath = '%s/t/%s/%s' % (sitepath_tmp, topicdir, topicfile)
-                    topicpath = os.path.join(topicdirpath, topicfile)
-                    batch.append(topicpath)
-                    if len(batch) > 100:
-                        job = pool.apply_async(self.convert_site_files, args=[batch], callback=blargh)
-                        jobs.append(job)
-                        batch = []
+
+                topicfilepath = os.path.join(topicroot, topicdir)
+                if os.path.isdir(topicfilepath):
+                    for topicfile in os.listdir(topicfilepath):
+                        topicpath = os.path.join(topicfilepath, topicfile)
+                        batch.append(topicpath)
+                elif os.path.isfile(topicfilepath):
+                    batch.append(topicfilepath)
+
+                if len(batch) > 100:
+                    job = pool.apply_async(self.convert_site_files, args=[batch], callback=blargh)
+                    jobs.append(job)
+                    batch = []
 
             if len(batch) > 0:
                 job = pool.apply_async(self.convert_site_files, args=[batch], callback=blargh)
