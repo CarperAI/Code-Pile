@@ -112,8 +112,10 @@ class DiscourseProcessor(Processor):
                     siteroot = indexedsite[idx+3:]
 
         if temp:
-            return ('%s/%s' % (self.temp_dir, siteroot)).replace('//', '/')
-        return '%s/discourse/%s' % (self.data_dir, siteroot)
+            #return ('%s/%s' % (self.temp_dir, siteroot)).replace('//', '/')
+            return os.path.join(self.temp_dir, siteroot)
+        return os.path.join(self.data_dir, 'discourse', siteroot)
+        #return '%s/discourse/%s' % (self.data_dir, siteroot)
 
     def get_index(self):
         if not self.index:
@@ -200,10 +202,13 @@ class DiscourseProcessor(Processor):
             pool = Pool(processes=4)
             jobs = []
             batch = []
-            for topicdir in os.listdir(sitepath_tmp + '/t'):
+            topicroot = os.path.join(sitepath_tmp, 't')
+            for topicdir in os.listdir(topicroot):
                 #print('e', topicdir)
-                for topicfile in os.listdir(sitepath_tmp + '/t/' + topicdir):
-                    topicpath = '%s/t/%s/%s' % (sitepath_tmp, topicdir, topicfile)
+                topicdirpath = os.path.join(topicroot, topicdir)
+                for topicfile in os.listdir(topicdirpath):
+                    #topicpath = '%s/t/%s/%s' % (sitepath_tmp, topicdir, topicfile)
+                    topicpath = os.path.join(topicdirpath, topicfile)
                     batch.append(topicpath)
                     if len(batch) > 100:
                         job = pool.apply_async(self.convert_site_files, args=[batch], callback=blargh)
@@ -262,7 +267,8 @@ class DiscourseProcessor(Processor):
 
                 if topic['reply_count'] < 1:
                     return False;
-                hashead = False
+
+                missing = []
                 for id in stream:
                     if id in posts:
                         post = posts[id]
@@ -277,14 +283,18 @@ class DiscourseProcessor(Processor):
                                 print('AHHH, WHAT?', author, topic['title'], contents)
                             text = newtext
                         else:
-                            #text += 'Then %s said, %s\n\n' % (author, contents)
                             text += (random.choice(replies) + '\n\n') % (author, contents)
                     else:
                         text += '( there was a missing post )\n\n'
+                        hasmissing = True
+                        missing.append(id)
                         #print(post)
                         #print('ERROR: missing post', id, post['reply_count'], topic['topic_id'], topic['reply_count'], topic['like_count'])
                         #return False;
                         pass
+
+                if len(missing) > 0:
+                    self.log_process_failure(file, 'missing', ' '.join(map(str, missing)))
 
                 newdata = {
                         "text": text,
@@ -298,7 +308,9 @@ class DiscourseProcessor(Processor):
                 #print('=' * 20 + '\n\n' + text)
                 return newdata
         except Exception as e:
-            print("Exception during conversion", e)
+            #print("Exception during conversion", e)
+            print('!', end='', flush=True)
+            self.log_process_failure(file, 'exception', str(e))
         return False
 
     def convert_callback(self, returnval, outfile):
@@ -309,6 +321,9 @@ class DiscourseProcessor(Processor):
             else:
                 print(' ', end='', flush=True)
 
+    def log_process_failure(self, file, failtype, err):
+        with open('log-' + failtype + '.txt', 'a') as log:
+            log.write(file.replace(self.temp_dir, '') + ': ' + err + '\n')
 
     def load_checksums(self):
         try:
