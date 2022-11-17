@@ -1,0 +1,4 @@
+#language detection
+spacy
+spacy_fastlang
+en_core_web_sm
