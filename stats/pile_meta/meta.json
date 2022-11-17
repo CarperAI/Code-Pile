@@ -1,0 +1,221 @@
+{
+  "USPTO": {
+    "meta": {
+      "app_number": null,
+      "application_number": "<application-reference appl-type=\"utility\">\n<document-id>\n<country>US</country>\n<doc-number>12157483</doc-number>\n<date>20080611</date>\n</document-id>\n</application-reference>",
+      "doc_number": null,
+      "publication_number": "<publication-reference>\n<document-id>\n<country>US</country>\n<doc-number>20090307816</doc-number>\n<kind>A1</kind>\n<date>20091217</date>\n</document-id>\n</publication-reference>",
+      "source_file": "./application/2009/ipa091217.xml",
+      "source_data": "USPTO-Application"
+    },
+    "meta_keys": [
+      "app_number",
+      "application_number",
+      "doc_number",
+      "publication_number",
+      "source_file",
+      "source_data"
+    ],
+    "len": 11849483
+  },
+  "ASFPublicMail": {
+    "meta": {
+      "source": "Apache Software Foundation Public Mail Archives"
+    },
+    "meta_keys": [
+      "source"
+    ],
+    "len": 47030
+  },
+  "StackExchange": {
+    "meta": {
+      "source": "StackExchangeDataset",
+      "fields": [
+        "Id",
+        "content"
+      ],
+      "subset": "stackoverflow.com"
+    },
+    "meta_keys": [
+      "source",
+      "fields",
+      "subset"
+    ],
+    "len": 24477320
+  },
+  "FreeLaw_Options": {
+    "meta": {
+      "case_jurisdiction": "scotus.tar.gz",
+      "case_ID": "110921.json",
+      "date_created": "2010-04-28T17:12:49Z"
+    },
+    "meta_keys": [
+      "case_jurisdiction",
+      "case_ID",
+      "date_created"
+    ],
+    "len": 4940710
+  },
+  "PileOfLaw": {
+    "meta": {
+      "dataset": "courtlistener_opinions"
+    },
+    "meta_keys": [
+      "dataset"
+    ],
+    "len": 8848769
+  },
+  "AI4Code": {
+    "meta": {
+      "source": "AI4Code",
+      "id": "00001756c60be8"
+    },
+    "meta_keys": [
+      "source",
+      "id"
+    ],
+    "len": 139256
+  },
+  "arXiv": {
+    "meta": {
+      "source": "arXiv_out/"
+    },
+    "meta_keys": [
+      "source"
+    ],
+    "len": 1491573
+  },
+  "PubMed": {
+    "meta": {
+      "source": "PubMedDataset"
+    },
+    "meta_keys": [
+      "source"
+    ],
+    "len": 2996097
+  },
+  "DMMath": {
+    "meta": {
+      "source": "s3_pilev2/data_0_time1666879910_DMMathDataset.jsonl.zst"
+    },
+    "meta_keys": [
+      "source"
+    ],
+    "len": 982519
+  },
+  "AMPS": {
+    "meta": {
+      "source": "AMPS",
+      "file": "amps/mathematica/number_theory/convert_base/32964.txt"
+    },
+    "meta_keys": [
+      "source",
+      "file"
+    ],
+    "len": 4409614
+  },
+  "UbuntuIRC": {
+    "meta": {
+      "channel": "ubuntu",
+      "month": 7
+    },
+    "meta_keys": [
+      "channel",
+      "month"
+    ],
+    "len": 2807
+  },
+  "LeetCode": {
+    "meta": {
+      "source": "LeetCodeDataset",
+      "fields": [
+        "id",
+        "content",
+        "__index_level_0__"
+      ]
+    },
+    "meta_keys": [
+      "source",
+      "fields"
+    ],
+    "len": 140438
+  },
+  "CPDataset": {
+    "meta": {
+      "source": "CPDataset",
+      "fields": [
+        "id",
+        "content"
+      ]
+    },
+    "meta_keys": [
+      "source",
+      "fields"
+    ],
+    "len": 13742
+  },
+  "Discourse": {
+    "meta": {
+      "source": "discourse",
+      "url": "discourse/forum.facepunch.com.jsonl.zstd"
+    },
+    "meta_keys": [
+      "source",
+      "url"
+    ],
+    "len": 6867161
+  },
+  "USENET": {
+    "meta": {
+      "source": "USENET",
+      "other_information": "{\"reply_count\": 1, \"forum_name\": \"alt.polics.homosexuality.20140708.mbox\"}",
+      "file": "data/output/usenet-alt.polics.parquet"
+    },
+    "meta_keys": [
+      "source",
+      "other_information",
+      "file"
+    ],
+    "len": 9716186
+  },
+  "Gutenberg": {
+    "meta": {
+      "title": "!Tention: A Story of Boy-Life during the Peninsular War by George Manville Fenn",
+      "source": "Project Gutenberg",
+      "lang": "en"
+    },
+    "meta_keys": [
+      "title",
+      "source",
+      "lang"
+    ],
+    "len": 52032
+  },
+  "Enwiki": {
+    "meta": {
+      "source": "s3_pilev2/enwiki_20221006_lmdataformat.jsonl.zst"
+    },
+    "meta_keys": [
+      "source"
+    ],
+    "len": 6100633
+  },
+  "EuroParliamentProceedings": {
+    "meta": {
+      "language": "cs"
+    },
+    "meta_keys": [
+      "language"
+    ],
+    "len": 69814
+  },
+  "Books3": {
+    "meta": {
+      "source": "Books3"
+    },
+    "meta_keys": [
+      "source"
+    ],
+    "len": 196640
+  }
+}

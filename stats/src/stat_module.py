@@ -7,6 +7,7 @@ import argparse
 import ast
 import json
 import os
+from pathlib import Path
 
 logging.basicConfig(level=logging.INFO)
 
@@ -22,12 +23,12 @@ def read_json_file(json_file_path:str)->dict:
 
 def write_json_file(json_file_path:str,data:dict):
     with open(json_file_path,"w") as f:
-        json.dump(data,f)
+        json.dump(data,f,indent=2)
 
 
 def check_path_or_create(dataset_idt:str):
     path = os.path.join(STATS_DUMP_PATH,dataset_idt)
-    if not os.path.isdir(path):
+    if not Path(path).is_dir():
         os.makedirs(path)
         logger.info(f"Didn't find {path}, so created it...")
     
@@ -40,7 +41,7 @@ def load_dataset_custom(dataset_name_or_path:str,**kwargs)->datasets.Dataset:
     args:
         dataset_name_or_path (str) : Name of the dataset or path to the dataset
     """
-    if os.path.isidir(dataset_name_or_path):
+    if Path(dataset_name_or_path).is_dir():
         dataset = datasets.load_from_disk(dataset_name_or_path)
         return dataset
     else:
@@ -116,6 +117,7 @@ class GetMeta:
             read_flag (str) : Flag to read the dataset (lmd | datasets)
         """
         self.dataset_path = dataset_path
+        self.dataset_idt = dataset_path.split(os.sep)[-1]
         if read_flag == "lmd":
             self.dataset : iter = lmd.Reader(dataset_path).stream_data(get_meta=True)
         elif read_flag == "datasets":
@@ -136,7 +138,13 @@ class GetMeta:
             else:
                 raise TypeError("Metadata is neither a dict nor a string")
         elif self.read_flag == "datasets":
-            return self.dataset[0]["meta"].keys()
+            single_meta_obj = self.dataset[0]["meta"]
+            if isinstance(single_meta_obj,str):
+                meta_dict =  {"meta" : ast.literal_eval(single_meta_obj), "meta_keys" : list(ast.literal_eval(single_meta_obj).keys()) , "len" : len(self.dataset) }
+                return meta_dict
+            else:
+                meta_dict =  {"meta" : single_meta_obj,  "meta_keys" : list(ast.literal_eval(single_meta_obj).keys()) , "len":len(self.dataset)}
+                return meta_dict
         else:
             raise ValueError("Invalid read_flag")
 
@@ -145,7 +153,10 @@ class GetMeta:
         Get the metadata from the dataset and write it to a file
         """
         meta = self.get_meta()
-        write_json_file("meta.json",meta)
+        check_path_or_create(self.dataset_idt)
+        metadata_path = os.path.join(STATS_DUMP_PATH,self.dataset_idt,"meta.json")
+        write_json_file(metadata_path,meta)
+        return meta
 
 
     
@@ -162,11 +173,12 @@ if __name__ == "__main__":
 
     print(json.dumps(vars(args),indent=4))
 
-    if args.analysze == "meta":
-        if os.path.isdir(args.dataset_path):
+    if args.analyze == "meta":
+        if Path(args.dataset_path).is_dir():
             dataset_idt : str = args.dataset_path.split(os.path.sep)[-1]
         else:
             dataset_idt : str = args.dataset_path
         read_flag : str = args.read_flag
         analysis_path : str = os.path.join(STATS_DUMP_PATH,dataset_idt)
-        meta = GetMeta(dataset_idt,read_flag=read_flag).get_meta_and_write()
+        
+        #meta = GetMeta(dataset_idt,read_flag=read_flag).get_meta_and_write()
