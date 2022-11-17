@@ -1,6 +1,6 @@
 {
   "USPTO": {
-    "meta": {
+    "example_meta": {
       "app_number": null,
       "application_number": "<application-reference appl-type=\"utility\">\n<document-id>\n<country>US</country>\n<doc-number>12157483</doc-number>\n<date>20080611</date>\n</document-id>\n</application-reference>",
       "doc_number": null,
@@ -19,7 +19,7 @@
     "len": 11849483
   },
   "ASFPublicMail": {
-    "meta": {
+    "example_meta": {
       "source": "Apache Software Foundation Public Mail Archives"
     },
     "meta_keys": [
@@ -28,7 +28,7 @@
     "len": 47030
   },
   "StackExchange": {
-    "meta": {
+    "example_meta": {
       "source": "StackExchangeDataset",
       "fields": [
         "Id",
@@ -44,7 +44,7 @@
     "len": 24477320
   },
   "FreeLaw_Options": {
-    "meta": {
+    "example_meta": {
       "case_jurisdiction": "scotus.tar.gz",
       "case_ID": "110921.json",
       "date_created": "2010-04-28T17:12:49Z"
@@ -57,7 +57,7 @@
     "len": 4940710
   },
   "PileOfLaw": {
-    "meta": {
+    "example_meta": {
       "dataset": "courtlistener_opinions"
     },
     "meta_keys": [
@@ -66,7 +66,7 @@
     "len": 8848769
   },
   "AI4Code": {
-    "meta": {
+    "example_meta": {
       "source": "AI4Code",
       "id": "00001756c60be8"
     },
@@ -77,7 +77,7 @@
     "len": 139256
   },
   "arXiv": {
-    "meta": {
+    "example_meta": {
       "source": "arXiv_out/"
     },
     "meta_keys": [
@@ -86,7 +86,7 @@
     "len": 1491573
   },
   "PubMed": {
-    "meta": {
+    "example_meta": {
       "source": "PubMedDataset"
     },
     "meta_keys": [
@@ -95,7 +95,7 @@
     "len": 2996097
   },
   "DMMath": {
-    "meta": {
+    "example_meta": {
       "source": "s3_pilev2/data_0_time1666879910_DMMathDataset.jsonl.zst"
     },
     "meta_keys": [
@@ -104,7 +104,7 @@
     "len": 982519
   },
   "AMPS": {
-    "meta": {
+    "example_meta": {
       "source": "AMPS",
       "file": "amps/mathematica/number_theory/convert_base/32964.txt"
     },
@@ -115,7 +115,7 @@
     "len": 4409614
   },
   "UbuntuIRC": {
-    "meta": {
+    "example_meta": {
       "channel": "ubuntu",
       "month": 7
     },
@@ -126,7 +126,7 @@
     "len": 2807
   },
   "LeetCode": {
-    "meta": {
+    "example_meta": {
       "source": "LeetCodeDataset",
       "fields": [
         "id",
@@ -141,7 +141,7 @@
     "len": 140438
   },
   "CPDataset": {
-    "meta": {
+    "example_meta": {
       "source": "CPDataset",
       "fields": [
         "id",
@@ -155,7 +155,7 @@
     "len": 13742
   },
   "Discourse": {
-    "meta": {
+    "example_meta": {
       "source": "discourse",
       "url": "discourse/forum.facepunch.com.jsonl.zstd"
     },
@@ -166,7 +166,7 @@
     "len": 6867161
   },
   "USENET": {
-    "meta": {
+    "example_meta": {
       "source": "USENET",
       "other_information": "{\"reply_count\": 1, \"forum_name\": \"alt.polics.homosexuality.20140708.mbox\"}",
       "file": "data/output/usenet-alt.polics.parquet"
@@ -179,7 +179,7 @@
     "len": 9716186
   },
   "Gutenberg": {
-    "meta": {
+    "example_meta": {
       "title": "!Tention: A Story of Boy-Life during the Peninsular War by George Manville Fenn",
       "source": "Project Gutenberg",
       "lang": "en"
@@ -192,7 +192,7 @@
     "len": 52032
   },
   "Enwiki": {
-    "meta": {
+    "example_meta": {
       "source": "s3_pilev2/enwiki_20221006_lmdataformat.jsonl.zst"
     },
     "meta_keys": [
@@ -201,7 +201,7 @@
     "len": 6100633
   },
   "EuroParliamentProceedings": {
-    "meta": {
+    "example_meta": {
       "language": "cs"
     },
     "meta_keys": [
@@ -210,7 +210,7 @@
     "len": 69814
   },
   "Books3": {
-    "meta": {
+    "example_meta": {
       "source": "Books3"
     },
     "meta_keys": [

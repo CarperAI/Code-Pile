@@ -140,10 +140,10 @@ class GetMeta:
         elif self.read_flag == "datasets":
             single_meta_obj = self.dataset[0]["meta"]
             if isinstance(single_meta_obj,str):
-                meta_dict =  {"meta" : ast.literal_eval(single_meta_obj), "meta_keys" : list(ast.literal_eval(single_meta_obj).keys()) , "len" : len(self.dataset) }
+                meta_dict =  {"example_meta" : ast.literal_eval(single_meta_obj), "meta_keys" : list(ast.literal_eval(single_meta_obj).keys()) , "len" : len(self.dataset) }
                 return meta_dict
             else:
-                meta_dict =  {"meta" : single_meta_obj,  "meta_keys" : list(ast.literal_eval(single_meta_obj).keys()) , "len":len(self.dataset)}
+                meta_dict =  {"example_meta" : single_meta_obj,  "meta_keys" : list(ast.literal_eval(single_meta_obj).keys()) , "len":len(self.dataset)}
                 return meta_dict
         else:
             raise ValueError("Invalid read_flag")

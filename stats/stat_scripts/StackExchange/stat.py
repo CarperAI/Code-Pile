@@ -7,6 +7,7 @@ meta_dict = {}
 
 for dataset in tqdm(dataset_list):
     meta = GetMeta(f"/fsx/shared/hf_data_pilev2_by_cats/{dataset}","datasets").get_meta_and_write()
+    print(meta.keys())
     meta_dict[dataset] = meta
 
 import json
