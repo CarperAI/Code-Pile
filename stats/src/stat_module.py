@@ -119,6 +119,7 @@ class GetMeta:
         self.dataset_path = dataset_path
         self.dataset_idt = dataset_path.split(os.sep)[-1]
         if read_flag == "lmd":
+            logger.info(f"Dataset path : {self.dataset_path}")
             self.dataset : iter = lmd.Reader(dataset_path).stream_data(get_meta=True)
         elif read_flag == "datasets":
             self.dataset : datasets.Dataset = load_dataset_custom(dataset_path)
@@ -132,9 +133,9 @@ class GetMeta:
             datapoint = next(iter(self.dataset))
             metadata = datapoint[1]
             if isinstance(metadata,dict):
-                return metadata
+                return {"example_meta" : metadata,"meta_keys" : list(metadata.keys()),"len" : None }
             elif isinstance(metadata,str):
-                return ast.literal_eval(metadata)
+                return {"example_meta" : ast.literal_eval(metadata),"meta_keys" : list( ast.literal_eval(metadata).keys()),"len" : None }
             else:
                 raise TypeError("Metadata is neither a dict nor a string")
         elif self.read_flag == "datasets":
@@ -181,4 +182,4 @@ if __name__ == "__main__":
         read_flag : str = args.read_flag
         analysis_path : str = os.path.join(STATS_DUMP_PATH,dataset_idt)
         
-        #meta = GetMeta(dataset_idt,read_flag=read_flag).get_meta_and_write()
+        meta = GetMeta(args.dataset_path,read_flag=read_flag).get_meta_and_write()
