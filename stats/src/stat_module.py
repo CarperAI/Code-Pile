@@ -98,8 +98,21 @@ class StatModule:
         """
         Method to get the statistics of the entire dataset
         """
-        stat_dataset = self.dataset.map()
-
+        if batched:
+            stat_dataset = self.dataset.map(self.map_batch_fn,batched=batched,num_proc=num_proc)
+        else:
+            stat_dataset = self.dataset.map(self.map_fn,num_proc=num_proc)
+        return stat_dataset
+    
+    def get_stat_and_write(self,num_proc:int,batched:bool=False):
+        """
+        Method to get the statistics of the entire dataset and write the output
+        """
+        if batched:
+            stat_dataset = self.dataset.map(self.map_batch_fn,batched=batched,num_proc=num_proc)
+        else:
+            stat_dataset = self.dataset.map(self.map_fn,num_proc=num_proc)
+        return stat_dataset
 
 
 
@@ -183,3 +196,5 @@ if __name__ == "__main__":
         analysis_path : str = os.path.join(STATS_DUMP_PATH,dataset_idt)
         
         meta = GetMeta(args.dataset_path,read_flag=read_flag).get_meta_and_write()
+    if args.analyze == "stat":
+        
