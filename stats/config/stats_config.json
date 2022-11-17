@@ -1,0 +1,13 @@
+{
+    "stat_fn" : 
+    {
+        "lang_idt" : {
+            "state" : true, // true or false if the function needs to be applied
+            "column" : "text" // the column name to apply the function
+        },
+        "token_len" : {
+            "state" : true, //true or false if the function needs to be applied
+            "column" : "text" // the column name to apply the function
+        
+    }
+}
