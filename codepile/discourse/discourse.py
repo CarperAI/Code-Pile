@@ -1,5 +1,5 @@
 from codepile.dataset import DatasetInfo, DatasetSources, RawDataset, Scraper, Processor, Analyser, Dataset
-from codepile.discourse.discourse_spider import DiscourseSummarySpider, DiscourseTopicSpider, generateCrawlSummary, verify_site
+from codepile.discourse.discourse_spider import DiscourseSummarySpider, DiscourseTopicSpider, DiscourseAdditionalPostsSpider, generateCrawlSummary, verify_site
 from codepile.discourse.discourse_processor import DiscourseProcessor
 from scrapy.crawler import CrawlerProcess
 import os, sys
@@ -64,6 +64,7 @@ class DiscourseScraper(Scraper):
             "AUTOTHROTTLE_TARGET_CONCURRENCY": .5,
             "REACTOR_THREADPOOL_MAXSIZE": 100,
             "REQUEST_FINGERPRINTER_IMPLEMENTATION": '2.7',
+            "SCHEDULER_DEBUG": True,
             #"JOBDIR": "scrapy-job",
         }
 
@@ -96,6 +97,14 @@ class DiscourseScraper(Scraper):
     def verify(self, site):
         # verify the completeness of this dataset by comparing saved files with the index
         verify_site(site)
+    def get_additional_posts(self):
+        os.chdir(self.target_dir)
+        crawlsettings = self.get_crawl_settings()
+
+        # use DiscourseTopicSpider to perform a full crawl
+        process = CrawlerProcess(crawlsettings)
+        process.crawl(DiscourseAdditionalPostsSpider)
+        process.start()
 
 
 class DiscourseDataset(Dataset):
@@ -117,6 +126,11 @@ class DiscourseDataset(Dataset):
         self.scraper.index(False)
     def sync(self, site):
         self.processor.sync(site) 
+    def fix(self, site):
+        # Fetch posts that were missing from the initial crawl (eg, additional replies to long topics)
+        self.scraper.get_additional_posts()
+
+
 
 if __name__=="__main__":
     if not os.path.exists("data/"):
@@ -142,5 +156,7 @@ if __name__=="__main__":
             discourse_dataset.analyze(site)
         elif action == 'sync':
             discourse_dataset.sync(site)
+        elif action == 'fix':
+            discourse_dataset.fix(site)
     else:
         print(USAGE_EXAMPLES)

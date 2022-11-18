@@ -12,6 +12,8 @@ import boto3
 import botocore.exceptions
 import time
 import random
+import traceback, sys
+
 
 S3_BUCKET = "s-eai-neox"
 S3_BUCKET_PATH = "data/codepile/discourse/"
@@ -36,6 +38,7 @@ class DiscourseProcessor(Processor):
         self.data_dir = data_dir
         self.temp_dir = temp_dir
         self.index = False
+        self.batchsize = 250
 
     def analyze(self, site):
         print('ok cool lets go', site)
@@ -160,6 +163,20 @@ class DiscourseProcessor(Processor):
         md5pool.join()
         self.save_checksums()
 
+    def get_topic_posts(self, site, topicid, postids):
+        urlbase = '%s/t/%d/posts' % (site, topicid) + '?'
+        separator = 'post_ids[]='
+        step = 100
+
+        sitepath = self.get_site_path(site)
+        #with open(sitepath + '/t/')
+        for i in range(0, len(postids), step):
+            url = urlbase + separator + ('&' + separator).join(map(str, postids[i:i+step]))
+            print('get the url', url)
+        #post_ids[]=' + '&post_ids[]='.join(map(str, postids))
+
+
+
     def compress_site(self, site):
         zipfilepath = self.get_zip_path(site)
         cwd = os.getcwd()
@@ -209,12 +226,13 @@ class DiscourseProcessor(Processor):
                 topicfilepath = os.path.join(topicroot, topicdir)
                 if os.path.isdir(topicfilepath):
                     for topicfile in os.listdir(topicfilepath):
-                        topicpath = os.path.join(topicfilepath, topicfile)
-                        batch.append(topicpath)
-                elif os.path.isfile(topicfilepath):
+                        if topicfile != 'additional_posts.json':
+                            topicpath = os.path.join(topicfilepath, topicfile)
+                            batch.append(topicpath)
+                elif os.path.isfile(topicfilepath) and topicdir != 'additional_posts.json':
                     batch.append(topicfilepath)
 
-                if len(batch) > 100:
+                if len(batch) >= self.batchsize:
                     job = pool.apply_async(self.convert_site_files, args=[batch], callback=blargh)
                     jobs.append(job)
                     batch = []
@@ -242,80 +260,118 @@ class DiscourseProcessor(Processor):
         converted = []
         #print('CONVERT BATCH:', files)
         for file in files:
-            newdata = self.convert_site_file(file)
-            converted.append(newdata)
+            try:
+                newdata = self.convert_site_file(file)
+                converted.append(newdata)
+            except Exception as e:
+                print('oh no', e)
+                self.log_process_failure(file, 'exception', str(e))
+                traceback.print_exception(*sys.exc_info())
+
+        #print('converted: %d of %d' % (len(converted), len(files)))
         return converted
 
     def convert_site_file(self, file):
-        try:
-            with open(file, 'r') as fd:
-                topic = json.loads(fd.read())
-                #print(topic)
-                poststream = topic['post_stream']
+        with open(file, 'r') as fd:
+            topic = json.loads(fd.read())
+            poststream = topic['post_stream']
 
-                posts = {}
-                for post in poststream['posts']:
-                    posts[post['id']] = post
+            #if 'nsfw' in topic['tags'] or 'NSFW' in topic['tags']:
+            #    # TODO - there should really be a more intelligent and unified way of filtering results, and we should be logging whenever we cull results from the dataset
+            #    return False
 
-                stream = poststream['stream']
-                text = ''
-                authors = []
+            posts = {}
+            for post in poststream['posts']:
+                posts[post['id']] = post
 
-                replies = [
-                    'To which %s replied\n\n    %s',
-                    'Then %s said\n\n    %s',
-                    'So %s replied\n\n    %s',
-                    '%s replied\n\n    %s',
-                    'After which, %s added\n\n    %s',
-                ]
+            stream = poststream['stream']
+            text = ''
+            authors = []
 
-                if topic['reply_count'] < 1:
-                    return False;
+            basedir = os.path.dirname(file)
+            additionalposts = os.path.join(basedir, 'additional_posts.json')
+            if os.path.isfile(additionalposts):
+                with open(additionalposts, 'r') as apfd:
+                    data = json.loads(apfd.read())
+                    for d in data:
+                        posts[d['id']] = d
 
-                missing = []
-                for id in stream:
-                    if id in posts:
-                        post = posts[id]
-                        contents = text_maker.handle(post['cooked']).replace('\u2019', "'").strip().replace('\n', '\n    ')
-                        author = '@' + post['username']
-                        if 'name' in post and post['name'] != '' and post['name'] != None:
-                            author = post['name'] + ' (@' + post['username'] + ')'
+            replies = [
+                'To which %s replied\n\n    %s',
+                'Then %s said\n\n    %s',
+                'So %s replied\n\n    %s',
+                '%s replied\n\n    %s',
+                'After which, %s added\n\n    %s',
+            ]
 
-                        if text == '':
-                            newtext = '%s posted a new topic, subject "%s". It read:\n\n   %s\n\n' % (author, topic['title'], contents)
-                            if newtext == None:
-                                print('AHHH, WHAT?', author, topic['title'], contents)
-                            text = newtext
-                        else:
-                            text += (random.choice(replies) + '\n\n') % (author, contents)
+            if topic['reply_count'] < 1:
+                return False;
+
+            postauthor = ''
+            authors = []
+
+            missing = []
+            for id in stream:
+                post = None
+
+                # get post data
+                if id in posts:
+                    post = posts[id]
+                    #print('found it', id)
+
+                # process post data
+                if post:
+                    contents = text_maker.handle(post['cooked']).replace('\u2019', "'").strip().replace('\n', '\n    ')
+                    author = '@' + post['username']
+                    if 'name' in post and post['name'] != '' and post['name'] != None:
+                        author += ' (' + post['name'] + ')'
+
+                    if not author in authors:
+                        authors.append(author)
+
+                    if text == '':
+                        text = '%s posted a new topic, subject "%s". It read:\n\n   %s\n\n' % (author, topic['title'], contents)
+                        postauthor = author
                     else:
-                        text += '( there was a missing post )\n\n'
-                        hasmissing = True
-                        missing.append(id)
-                        #print(post)
-                        #print('ERROR: missing post', id, post['reply_count'], topic['topic_id'], topic['reply_count'], topic['like_count'])
-                        #return False;
-                        pass
+                        text += (random.choice(replies) + '\n\n') % (author, contents)
+                else:
+                    text += '( there was a missing post )\n\n'
+                    hasmissing = True
+                    missing.append(id)
+                    #print(post)
+                    #print('ERROR: missing post', id, post['reply_count'], topic['topic_id'], topic['reply_count'], topic['like_count'])
+                    #return False;
+                    pass
 
-                if len(missing) > 0:
-                    self.log_process_failure(file, 'missing', ' '.join(map(str, missing)))
+            if len(missing) > 0:
+                self.log_process_failure(file, 'missing', ' '.join(map(str, missing)))
 
-                newdata = {
-                        "text": text,
-                        "meta": {
-                            "source": "discourse",
-                            "url": "",
+            newdata = {
+                    "text": text,
+                    "meta": {
+                        "source": "discourse",
+                        "url": file.replace(self.temp_dir, 'https://'),
+                        "title": topic['title'],
+                        "views": topic['views'],
+                        "has_accepted_answer": 'accepted_answer' in topic,
+                        "word_count": topic['word_count'],
+                        "like_count": topic['like_count'],
+                        "reply_count": topic['reply_count'],
+                        "participant_count": topic['participant_count'],
+                        "posts": topic['posts_count'],
+                        "tags": ' '.join(topic['tags']),
+                        "author": postauthor,
+                        "participants": ', '.join(authors),
+                        "image_url": topic['image_url'],
+                        "created_at": topic['created_at'],
+                        "last_posted_at": topic['last_posted_at'],
 
-                        }
-                }
-                #print(newdata)
-                #print('=' * 20 + '\n\n' + text)
-                return newdata
-        except Exception as e:
-            #print("Exception during conversion", e)
-            print('!', end='', flush=True)
-            self.log_process_failure(file, 'exception', str(e))
-        return False
+                    }
+            }
+            #print(newdata)
+            #print('=' * 20 + '\n\n' + text)
+            return newdata
+    return False
 
     def convert_callback(self, returnval, outfile):
         for line in returnval:
