@@ -1,0 +1,46 @@
+query($repo_owner: String!, $repo_name: String!, $page_size: Int!, $after_cursor: String) {
+  repository(owner: $repo_owner, name: $repo_name) {
+    issues(first: $page_size, after: $after_cursor) {
+      pageInfo {
+        endCursor
+        hasNextPage
+      },
+      edges {
+        node {
+          number,
+          databaseId,
+          createdAt,
+          comments(first: 100) {
+            pageInfo {
+              hasNextPage,
+              endCursor
+            }
+            nodes {
+              databaseId
+            	authorAssociation,
+              author {
+                login,
+                avatarUrl,
+                __typename
+              }
+              body
+              reactionGroups {
+                content,
+                reactors {
+                  totalCount
+                }
+              }
+            },
+            totalCount
+          }
+        }
+      }
+    }
+  },
+  rateLimit {
+    limit
+    cost
+    remaining
+    resetAt
+  }  
+}
