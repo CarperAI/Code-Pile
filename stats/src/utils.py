@@ -35,8 +35,8 @@ class Tokenization:
 
 
 stat_config_map: dict[str] = {
-    "lang_idt": LangDetection,
-    "token_len": Tokenization,
+    "lang_idt": LangDetection(),
+    "tokenize": Tokenization(),
     "len_char": lambda doc: len(doc),
     "len_utf8bytes": lambda doc: len(doc.encode("utf-8")),
     "len_words": lambda doc: len(re.split(r"\s+", doc)),
