@@ -21,10 +21,15 @@ dependencies = [
     "pandas",
     "pyarrow",
     "lxml",
-    "pyspark"
+    "pyspark",
+    "spacy",
+    "spacy_fastlang",
+    "en_core_web_sm"
 ]
 
 [tool.pytest.ini_options]
 markers = [
     "s3_download: marks tests as downloading from s3, so they need credentials",
 ]
+[tool.setuptools]
+py-modules = ["codepile","stats"]
