@@ -23,9 +23,7 @@ dependencies = [
     "lxml",
     "pyspark",
     "spacy",
-    "spacy_fastlang",
-    "en_core_web_sm"
-]
+    "spacy_fastlang"]
 
 [tool.pytest.ini_options]
 markers = [
