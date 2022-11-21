@@ -118,7 +118,9 @@ class Statistics:
             stat_dataset = self.dataset.map(map_fn, num_proc=num_proc)
         return stat_dataset
 
-    def get_stat_and_write(self, num_proc: int, batched: bool = False, map_fn=None):
+    def get_stat_and_write(
+        self, output_path: str, num_proc: int, batched: bool = False, map_fn=None
+    ):
         """
         Method to get the statistics of the entire dataset and write the output
         """
@@ -126,7 +128,8 @@ class Statistics:
             stat_dataset = self.dataset.map(batched=batched, num_proc=num_proc)
         else:
             stat_dataset = self.dataset.map(num_proc=num_proc)
-        return stat_dataset
+        stat_dataset.to_parquet(output_path)  # Write as a parquet file to the path
+        return "Sucess"
 
 
 def master_map_fn(example: dict[object]):
