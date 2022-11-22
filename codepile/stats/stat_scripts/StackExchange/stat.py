@@ -1,5 +1,5 @@
-from stats.src.stat_module import Statistics, master_map_fn
-from stats.src.utils import stat_config_map
+from codepile.stats.src.stat_module import Statistics, master_map_fn
+from codepile.stats.src.utils import stat_config_map
 import multiprocessing as mp
 import argparse
 

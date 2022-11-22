@@ -29,5 +29,3 @@ dependencies = [
 markers = [
     "s3_download: marks tests as downloading from s3, so they need credentials",
 ]
-[tool.setuptools]
-py-modules = ["codepile","stats"]
