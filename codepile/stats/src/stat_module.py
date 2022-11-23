@@ -9,7 +9,7 @@ import json
 import os
 from pathlib import Path
 
-from stats.src.utils import stat_config_map, LangDetection, Tokenization
+from codepile.stats.src.utils import stat_config_map, LangDetection, Tokenization
 
 logging.basicConfig(level=logging.INFO)
 
@@ -47,7 +47,7 @@ def load_dataset_custom(dataset_name_or_path: str, **kwargs) -> datasets.Dataset
         dataset = datasets.load_from_disk(dataset_name_or_path)
         return dataset
     else:
-        dataset = datasets.load_dataset(dataset_name_or_path, split="train", **kwargs)
+        dataset = datasets.load_dataset("json",data_files=[dataset_name_or_path], split="train", **kwargs)
         return dataset
 
 
@@ -113,8 +113,10 @@ class Statistics:
                 map_fn_batch, batched=batched, num_proc=num_proc
             )
         else:
-            if map_fn:
+            if not map_fn:
+                logger.info("No map function passed, using default map_fn")
                 map_fn = self.map_fn
+ 
             stat_dataset = self.dataset.map(map_fn, num_proc=num_proc)
         return stat_dataset
 
@@ -137,10 +139,11 @@ def master_map_fn(example: dict[object]):
     Map function for the dataset
     """
     stats = {}
+
     stats["meta"] = example["meta"]
     stats["tok_len"] = len(stat_config_map["tokenize"].tokenize(example["text"]))
-    stats["lang"] = stat_config_map["lang_detect"].detect(example["text"])
-    stats["len_char"] = stat_config_map["char_len"](example["text"])
+   # stats["lang"] = stat_config_map["lang_detect"].detect(example["text"])
+    stats["len_char"] = stat_config_map["len_char"](example["text"])
     stats["len_utf8bytes"] = stat_config_map["len_utf8bytes"](example["text"])
     stats["len_words"] = stat_config_map["len_words"](example["text"])
     return stats
