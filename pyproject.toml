@@ -21,8 +21,9 @@ dependencies = [
     "pandas",
     "pyarrow",
     "lxml",
-    "pyspark"
-]
+    "pyspark",
+    "transformers",
+    "fasttext"]
 
 [tool.pytest.ini_options]
 markers = [
