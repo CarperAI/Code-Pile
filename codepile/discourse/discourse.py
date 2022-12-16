@@ -98,13 +98,13 @@ class DiscourseScraper(Scraper):
     def verify(self, site):
         # verify the completeness of this dataset by comparing saved files with the index
         verify_site(site)
-    def get_additional_posts(self):
+    def get_additional_posts(self, site="all"):
         os.chdir(self.target_dir)
         crawlsettings = self.get_crawl_settings()
 
         # use DiscourseTopicSpider to perform a full crawl
         process = CrawlerProcess(crawlsettings)
-        process.crawl(DiscourseAdditionalPostsSpider)
+        process.crawl(DiscourseAdditionalPostsSpider, site=site)
         process.start()
 
 
@@ -129,7 +129,7 @@ class DiscourseDataset(Dataset):
         self.processor.sync(site) 
     def fix(self, site):
         # Fetch posts that were missing from the initial crawl (eg, additional replies to long topics)
-        self.scraper.get_additional_posts()
+        self.scraper.get_additional_posts(site)
 
 
 
