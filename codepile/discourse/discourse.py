@@ -65,6 +65,7 @@ class DiscourseScraper(Scraper):
             "REACTOR_THREADPOOL_MAXSIZE": 100,
             "REQUEST_FINGERPRINTER_IMPLEMENTATION": '2.7',
             "SCHEDULER_DEBUG": True,
+            "TELNETCONSOLE_ENABLED": False,
             #"JOBDIR": "scrapy-job",
         }
 
