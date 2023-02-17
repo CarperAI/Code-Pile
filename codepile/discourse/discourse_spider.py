@@ -48,24 +48,37 @@ class DiscourseSpider(scrapy.Spider):
     scrapeindex = True
 
     usetarballs = False
+    usejsonl = True
 
     failures = {}
+
+    jsonl_files = {}
+    crawled_urls = {}
+
+    def __init__(self, sitelist='all'):
+        self.sitelist = sitelist
 
     def start_requests(self):
         pathlib.Path('discourse').mkdir(parents=True, exist_ok=True)
         # TODO - need some way of specifying which crawl index file to use
-        with open('discourse/index.json', 'r') as indexfd:
-            urls = json.loads(indexfd.read())
-            random.shuffle(urls)
-            for url in urls:
-                if self.scrapelatest:
-                    yield self.create_request(url, '', 0)
-                if self.scrapetop:
-                    yield self.create_request(url, 'top', 0)
-                if self.scrapecategories:
-                    yield self.create_request(url, 'categories', 0)
-                if self.scrapeindex:
-                    yield self.create_request(url, 'site', 75)
+
+        urls = []
+        if self.sitelist == 'all':
+            with open('discourse/index.json', 'r') as indexfd:
+                urls = json.loads(indexfd.read())
+        else:
+            urls = self.sitelist.split(',')
+
+        random.shuffle(urls)
+        for url in urls:
+            if self.scrapelatest:
+                yield self.create_request(url, '', 0)
+            if self.scrapetop:
+                yield self.create_request(url, 'top', 0)
+            if self.scrapecategories:
+                yield self.create_request(url, 'categories', 0)
+            if self.scrapeindex:
+                yield self.create_request(url, 'site', 75)
         
     def create_request(self, site, path, priority=0):
         #url = site + path[1:] if site[-1] == '/' and path[0] == '/' else site + path
@@ -126,7 +139,8 @@ class DiscourseSpider(scrapy.Spider):
                         crawlroot = siteroot if topicurl[0] == '/' else sitepath
                         crawlfname = 'discourse/%s%s' % (crawlroot, topicurl)
                         #print("check crawlfname", crawlfname)
-                        if not os.path.isfile(crawlfname):
+                        #if not os.path.isfile(crawlfname):
+                        if not self.has_crawled_topic(siteroot, topicurl):
                             yield self.create_request(site, topicurl)
                     if len(category['slug']) > 0:
                         categoryurl = '/c/%s' % (category['slug'])
@@ -196,7 +210,8 @@ class DiscourseSpider(scrapy.Spider):
                     topicurl = 't/%s/%d' % (topic['slug'], topic['id'])
                     crawlfname = 'discourse/%s/%s' % (sitepath, topicurl)
                     #print('check datapath', crawlfname, response.url, site)
-                    if not os.path.isfile(crawlfname):
+                    #if not os.path.isfile(crawlfname):
+                    if not self.has_crawled_topic(siteroot, topicurl):
                         # TODO - to facilitate continuous crawling, we probably want to check the last crawled time, and refresh if our list data indicates new posts
                         # As implemented, this is just a one-shot crawl that can be resumed. It'll grab new topics, but not refresh any changed ones
                         #print('New topicurl: ' + topicurl)
@@ -211,7 +226,8 @@ class DiscourseSpider(scrapy.Spider):
             #pathlib.Path(datapath).mkdir(parents=True, exist_ok=True)
             #with open(crawlfname, 'w') as fd:
             #    fd.write(response.text)
-            self.write_file(domain, urlpath, response.text)
+            #self.write_file(domain, urlpath, response.text)
+            self.write_topic_jsonl(domain, urlpath, response.text)
         if 'categories' in jsondata:
             #print('got full list of categories, probably the site index', jsondata)
             self.write_file(domain, urlpath, response.text)
@@ -243,6 +259,27 @@ class DiscourseSpider(scrapy.Spider):
 
             else:
                 print('wtf why', tarballname, filepath)
+    def write_topic_jsonl(self, domain, filepath, contents):
+        #print('write the topic file!', domain, filepath, contents)
+        self.set_topic_crawled(domain, filepath)
+        if not domain in self.jsonl_files:
+            jsonlpath = 'discourse/%s/%s-topics-raw.jsonl' % (domain, domain)
+            self.jsonl_files[domain] = open(jsonlpath, 'a')
+        fulljson = '{"domain": "%s", "path": "%s", "contents": %s}\n' % (domain, filepath, contents)
+        #print(fulljson)
+        jsonl = self.jsonl_files[domain]
+        jsonl.write(fulljson)
+        jsonl.flush()
+
+    def set_topic_crawled(self, site, topicpath):
+        #url = self.get_topic_url(site, topicpath)
+        if not site in self.crawled_urls:
+            self.crawled_urls[site] = set()
+        if topicpath[0] != '/':
+            topicpath = '/' + topicpath
+        self.crawled_urls[site].add(topicpath)
+
+
     def handle_errback(self, failure):
         if failure.check(HttpError):
             print(("%.4f\t["  + bcolors.WARNING + 'WARNING' + bcolors.ENDC + "]\tfailed to fetch URL %s") % (time.time(), failure.value.response.url))
@@ -280,6 +317,46 @@ class DiscourseSpider(scrapy.Spider):
             return os.path.join(self.temp_dir, siteroot)
         return os.path.join('discourse', siteroot)
         #return 'discourse/%s' % (siteroot)
+    def get_topic_url(self, site, topicurl):
+        url = site + topicurl
+        if len(topicurl) > 0 and topicurl[0] == '/':
+            siteurl = urlparse(site)
+            url = '%s://%s%s' % (siteurl.scheme, siteurl.netloc, topicurl)
+        return url
+    def get_crawled_topics(self, site):
+        if not site in self.crawled_urls:
+            print('Loading crawled urls for site: %s' % site)
+            self.crawled_urls[site] = set()
+            if self.usejsonl:
+                jsonlpath = 'discourse/%s/%s-topics-raw.jsonl' % (site, site)
+                pathre = re.compile(r'"path": "([^"]+)",')
+                try:
+                    with open(jsonlpath, 'r') as jsf:
+                        for line in jsf:
+                            # Yeah I'm parsing json with a regex, what are you gonna do about it? :D
+                            # (it's an order of magnitude faster than blowing up the whole json just to extract this one value here)
+                            m = pathre.search(line)
+                            if m:
+                                self.crawled_urls[site].add(m[1])
+                except:
+                    # no crawled urls found
+                    pass
+        return self.crawled_urls[site]
+
+    def has_crawled_topic(self, site, topicurl):
+        if self.usejsonl:
+            #url = self.get_topic_url(site, topicurl)
+            if topicurl[0] != '/':
+                topicurl = '/' + topicurl
+            crawled_urls = self.get_crawled_topics(site)
+            return topicurl in crawled_urls
+            return False
+        else:
+            sitepath = re.sub(r"^https?://(.*)/$", r'\1', site)
+            siteroot = sitepath.split('/')[0]
+            crawlroot = siteroot if topicurl[0] == '/' else sitepath
+            crawlfname = 'discourse/%s%s' % (crawlroot, topicurl)
+            return os.path.isfile(crawlfname)
 
 
 
@@ -298,75 +375,124 @@ class DiscourseTopicSpider(DiscourseSpider):
     scrapetopics = True
     scrapeindex = False
 
+def get_domain_from_site(site):
+    url = urlparse(site)
+    return url.netloc
+
+def get_additional_posts(site, sitepath):
+    additionalposts = {}
+    #domain = get_domain_from_site(site)
+    #additionalpath = os.path.join(sitepath, site + '-additional-posts.jsonl')
+    additionalpath = os.path.join('discourse', site, site + '-additional-posts.jsonl')
+    #print('load additional posts file', additionalpath)
+    if os.path.isfile(additionalpath):
+        with open(additionalpath, 'r') as apfd:
+            for line in apfd:
+                posts = json.loads(line)
+                if not posts['topicid'] in additionalposts:
+                    additionalposts[posts['topicid']] = []
+                additionalposts[posts['topicid']].extend(posts['posts'])
+    return additionalposts
+
 def get_missing_posts(site, sitepath):
-    print('Spawn process', site, sitepath, flush=True)
+    #print('Spawn process', site, sitepath, flush=True)
+
+    domain = get_domain_from_site(site)
 
     separator = 'post_ids[]='
     topicroot = os.path.join(sitepath, 't')
+    jsonlpath = os.path.join(sitepath, domain + '-topics-raw.jsonl')
     topicfiles = []
-    print(topicroot)
     newurls = []
 
-    if os.path.isdir(topicroot):
-        # iterate all topics per site
-        for topicdir in os.listdir(topicroot):
-            #print('e', topicdir)
-
-            topicfilepath = os.path.join(topicroot, topicdir)
-            if os.path.isdir(topicfilepath):
-                for topicfile in os.listdir(topicfilepath):
-                    if topicfile == 'additional_posts.json':
-                        continue
-                    topicpath = os.path.join(topicfilepath, topicfile)
-                    topicfiles.append(topicpath)
-            elif os.path.isfile(topicfilepath):
-                topicfiles.append(topicfilepath)
-    print('read topic files...')
-    fetchtopics = []
-    numtopics = 0
-    for topicfile in topicfiles:
-        print('.', end='', flush=True)
-        with open(topicfile) as tf:
-            try:
-                data = json.loads(tf.read())
-            except:
-                print('error parsing JSON', topicfile)
-                continue
-
-            if data['posts_count'] > len(data['post_stream']['posts']):
-                numtopics += 1
-                fetchtopics.append(topicfile)
-                topicurl = site + 't/%d/posts?' % (data['id'])
-                additionalpostspath = sitepath + 't/%s/additional_posts.json' % (data['slug'] or str(data['id']))
-                additional = []
-                if os.path.isfile(additionalpostspath):
-                    with open(additionalpostspath, 'r') as apfd:
-                        xdata = json.loads(apfd.read())
+    if os.path.isfile(jsonlpath):
+        additionalposts = get_additional_posts(site, sitepath)
+        with open(jsonlpath, 'r') as jsonlfd:
+            for line in jsonlfd:
+                rawdata = json.loads(line)
+                data = rawdata['contents']
+                if data['posts_count'] > len(data['post_stream']['posts']):
+                    topicurl = site + 't/%d/posts?' % (data['id'])
+                    additional = [] 
+                    if data['id'] in additionalposts:
+                        xdata = json.loads(additionalposts[data['id']])
                         additional = [post['id'] for post in xdata]
 
-                #print('my additionals', data['slug'], data['id'], additional)
-                posts = [post['id'] for post in data['post_stream']['posts']]
-                missing = []
-                if 'stream' in data['post_stream']:
-                    missing = [x for x in data['post_stream']['stream'] if x not in posts and x not in additional]
-                #print(topicurl)
-                #print('  - ', len(missing), missing)
-                #print('  - ', len(data['post_stream']['stream']), data['post_stream']['stream'])
-                #print('  - ', len(posts), posts)
-                step = 100
-                for i in range(0, len(missing), step):
-                    url = topicurl + separator + ('&' + separator).join(map(str, missing[i:i+step]))
-                    #print('get the url', url)
-                    topicpath = 't/%d/' % (data['id'])
-                    if 'slug' in data and data['slug'] != None:
-                        topicpath = 't/%s/' % (data['slug'])
-                    #yield scrapy.Request(url=url, callback=self.bind_parse_additional_posts_func(site, topicpath), headers=self.headers, errback=self.handle_errback)
-                    newurls.append(url)
-        #print('topics missing posts: ', site, len(fetchtopics), fetchtopics)
-            # read topic json
-            # for any topics with numposts > the number of posts we have, make a list of missing ones
-            # fetch posts for each topic, in batches of 100
-            # save to additional_posts.json
+                    posts = [post['id'] for post in data['post_stream']['posts']]
+                    missing = []
+                    if 'stream' in data['post_stream']:
+                        missing = [x for x in data['post_stream']['stream'] if x not in posts and x not in additional]
+                    #print(topicurl)
+                    #print('  - ', len(missing), missing)
+                    #print('  - ', len(data['post_stream']['stream']), data['post_stream']['stream'])
+                    #print('  - ', len(posts), posts)
+                    step = 100
+                    for i in range(0, len(missing), step):
+                        url = topicurl + separator + ('&' + separator).join(map(str, missing[i:i+step]))
+                        #print('get the url', url)
+                        topicpath = 't/%d/' % (data['id'])
+                        if 'slug' in data and data['slug'] != None:
+                            topicpath = 't/%s/' % (data['slug'])
+                        #yield scrapy.Request(url=url, callback=self.bind_parse_additional_posts_func(site, topicpath), headers=self.headers, errback=self.handle_errback)
+                        newurls.append(url)
+                        #print('new url: ' + url)
+    else:
+        # old file-based approach
+        if os.path.isdir(topicroot):
+            # iterate all topics per site
+            for topicdir in os.listdir(topicroot):
+                #print('e', topicdir)
+
+                topicfilepath = os.path.join(topicroot, topicdir)
+                if os.path.isdir(topicfilepath):
+                    for topicfile in os.listdir(topicfilepath):
+                        if topicfile == 'additional_posts.json':
+                            continue
+                        topicpath = os.path.join(topicfilepath, topicfile)
+                        topicfiles.append(topicpath)
+                elif os.path.isfile(topicfilepath):
+                    topicfiles.append(topicfilepath)
+        #print('read topic files...')
+        for topicfile in topicfiles:
+            print('.', end='', flush=True)
+            with open(topicfile) as tf:
+                try:
+                    data = json.loads(tf.read())
+                except:
+                    print('error parsing JSON', topicfile)
+                    continue
+
+                if data['posts_count'] > len(data['post_stream']['posts']):
+                    topicurl = site + 't/%d/posts?' % (data['id'])
+                    additionalpostspath = sitepath + 't/%s/additional_posts.json' % (data['slug'] or str(data['id']))
+                    additional = []
+                    if os.path.isfile(additionalpostspath):
+                        with open(additionalpostspath, 'r') as apfd:
+                            xdata = json.loads(apfd.read())
+                            additional = [post['id'] for post in xdata]
+
+                    #print('my additionals', data['slug'], data['id'], additional)
+                    posts = [post['id'] for post in data['post_stream']['posts']]
+                    missing = []
+                    if 'stream' in data['post_stream']:
+                        missing = [x for x in data['post_stream']['stream'] if x not in posts and x not in additional]
+                    #print(topicurl)
+                    #print('  - ', len(missing), missing)
+                    #print('  - ', len(data['post_stream']['stream']), data['post_stream']['stream'])
+                    #print('  - ', len(posts), posts)
+                    step = 100
+                    for i in range(0, len(missing), step):
+                        url = topicurl + separator + ('&' + separator).join(map(str, missing[i:i+step]))
+                        #print('get the url', url)
+                        topicpath = 't/%d/' % (data['id'])
+                        if 'slug' in data and data['slug'] != None:
+                            topicpath = 't/%s/' % (data['slug'])
+                        #yield scrapy.Request(url=url, callback=self.bind_parse_additional_posts_func(site, topicpath), headers=self.headers, errback=self.handle_errback)
+                        newurls.append(url)
+                # read topic json
+                # for any topics with numposts > the number of posts we have, make a list of missing ones
+                # fetch posts for each topic, in batches of 100
+                # save to additional_posts.json
     #print('ok now yield them', newurls)
     return newurls
 
@@ -382,6 +508,10 @@ class DiscourseAdditionalPostsSpider(DiscourseSpider):
     index = False
     sitetopicpaths = {}
 
+    def __init__(self, site='all', **kwargs):
+        super().__init__(**kwargs)  # python3
+        self.site = site
+
     def start_requests(self):
         #for s in self.settings:
         #    print(' - ', s, self.settings[s])
@@ -389,16 +519,22 @@ class DiscourseAdditionalPostsSpider(DiscourseSpider):
         # iterate all sites
         if not os.path.isfile(self.missingpostsfile):
             print('Missing posts file hasn\'t been built yet, building...')
-            self.gather_missing_posts()
+            self.gather_missing_posts(self.site)
 
-        blah = self.load_site_topic_paths('discourse.threejs.org')
+        #blah = self.load_site_topic_paths('discourse.threejs.org')
         #print('cool', blah)
 
         #try:
         if True:
             print('Load missing posts file')
+            additionalposts = {}
+            lastsite = None
+            lastcount = 0
+            allurls = []
             with open(self.missingpostsfile, 'r') as mpfd:
                 for url in mpfd:
+                    if self.site != 'all' and self.site not in url:
+                        continue
                     urlparts = url.split('/')
                     site = urlparts[2]
                     topicid = 0
@@ -406,26 +542,44 @@ class DiscourseAdditionalPostsSpider(DiscourseSpider):
                         if urlparts[i] == 't':
                             topicid = int(urlparts[i+1])
                             break
+                    if site != lastsite:
+                        print('%d new urls (%d total)\nnew site: %-70s' % (len(allurls) - lastcount, len(allurls), site), end='', flush=True)
+                        lastsite = site
+                        lastcount = len(allurls)
+                        sitepath = self.get_site_path(site)
+                        additionalposts = get_additional_posts(site, sitepath)
 
                     #print(site, topicid)
-                    topicpath = self.get_site_topic_path(site, topicid)
+                    #topicpath = self.get_site_topic_path(site, topicid)
                     #print(' - ', url, topicpath)
-                    yield scrapy.Request(url=url, callback=self.bind_parse_additional_posts_func(site, topicpath), headers=self.headers, errback=self.handle_errback)
+                    #print('site has additional posts?', site, additionalposts[site])
+                    if not topicid in additionalposts:
+                        #yield scrapy.Request(url=url, callback=self.bind_parse_additional_posts_func(site, topicid), headers=self.headers, errback=self.handle_errback, priority=random.randint(1, 10000))
+                        allurls.insert(random.randint(0, len(allurls)), (url, site, topicid))
+                    #else:
+                    #    print('skip a topic, already got it: %s %d', site, topicid)
                     #yield scrapy.Request(url=url, callback=self.bind_parse_additional_posts_func(site))
+
+            print('Loaded %d total sites, start crawling...' % (len(allurls)))
+            for url,site,topicid in allurls:
+                yield scrapy.Request(url=url, callback=self.bind_parse_additional_posts_func(site, topicid), headers=self.headers, errback=self.handle_errback, priority=random.randint(1, 10000))
         #except:
         #    print('oh no')
 
-    def gather_missing_posts(self):
-        sites = self.get_index()
-        print('Iterate sites', sites)
-        pool = mp.Pool(processes=8)
+    def gather_missing_posts(self, site):
+        if site == 'all':
+            sites = self.get_index()
+        else:
+            sites = site.split(',')
+        #print('Iterate sites', sites)
+        pool = mp.Pool(processes=32)
 
         jobs = []
         for site in sites:
             sitepath = self.get_site_path(site)
             job = pool.apply_async(get_missing_posts, args=(site, sitepath, ), callback=self.update_missing_posts)
             jobs.append(job)
-            print('add site', site, job)
+            #print('add site', site, job)
 
         print('Waiting for jobs...')
         pool.close()
@@ -435,12 +589,12 @@ class DiscourseAdditionalPostsSpider(DiscourseSpider):
         print('done');
         #yield scrapy.Request(url='https://www.google.com')
 
-    def bind_parse_additional_posts_func(self, site, topicpath):
+    def bind_parse_additional_posts_func(self, site, topicid):
         def callparse(response):
-            return self.parse_additional_posts(site, topicpath, response)
+            return self.parse_additional_posts(site, topicid, response)
         return callparse
 
-    def parse_additional_posts(self, site, topicpath, response):
+    def parse_additional_posts(self, site, topicid, response):
         try:
             jsondata = json.loads(response.body)
         except ValueError as e:
@@ -453,20 +607,36 @@ class DiscourseAdditionalPostsSpider(DiscourseSpider):
         #topicpath = self.get_topic_path(site, topicid)
         newposts = jsondata['post_stream']['posts']
         #print('parse it', site, topicpath, sitepath, jsondata)
-        try:
-            with open(topicpath + 'additional_posts.json', 'r+') as tfd:
-                currentdata = json.loads(tfd.read())
-                newposts.extend(currentdata)
-                print('append', site, topicpath)
-                tfd.seek(0)
-                tfd.write(json.dumps(newposts))
-                tfd.truncate()
-        except FileNotFoundError:
-            with open(topicpath + 'additional_posts.json', 'w') as tfd:
-                print('write new', site, topicpath)
-                tfd.write(json.dumps(newposts))
+        use_jsonl = True
+
+        if use_jsonl:
+            additionalpath = os.path.join('discourse', site, site + '-additional-posts.jsonl')
+            print('write to file', sitepath, site, additionalpath, len(newposts))
+            try:
+                with open(additionalpath, 'a') as apfd:
+                    data = {
+                        'topicid': topicid,
+                        'posts': newposts
+                        }
+                    apfd.write(json.dumps(data) + '\n')
+            except FileNotFoundError:
+                print('Couldn\'t write to additional posts file: %s' % (additionalpath))
+        else:
+            topicpath = self.get_site_topic_path(site, topicid)
+            try:
+                with open(topicpath + 'additional_posts.json', 'r+') as tfd:
+                    currentdata = json.loads(tfd.read())
+                    newposts.extend(currentdata)
+                    print('append', site, topicpath)
+                    tfd.seek(0)
+                    tfd.write(json.dumps(newposts))
+                    tfd.truncate()
+            except FileNotFoundError:
+                with open(topicpath + 'additional_posts.json', 'w') as tfd:
+                    print('write new', site, topicpath)
+                    tfd.write(json.dumps(newposts))
     def update_missing_posts(self, newurls):
-        print('UPDATE URLS', newurls)
+        #print('UPDATE URLS', newurls)
 
         with open(self.missingpostsfile, 'a+') as fd:
             for url in newurls:
@@ -509,6 +679,18 @@ def generateCrawlSummary():
         print(("%.4f\t[ " + bcolors.FAIL + 'ERROR ' + bcolors.ENDC + '] couldn\'t read index file' % (time.time())))
         return
 
+    sitelicenses = {}
+    try:
+        with open('discourse/licenses.tsv') as licensesfd:
+            for line in licensesfd:
+                site, sitelicense = line.strip().split('\t')
+                sitelicenses[site] = sitelicense
+        print(("%.4f\t[ " + bcolors.OKGREEN + 'SUCCESS' + bcolors.ENDC + '] loaded licenses file') % (time.time()))
+    except FileNotFoundError:
+        print(("%.4f\t[ " + bcolors.WARNING + 'WARNING' + bcolors.ENDC + '] couldn\'t read licenses file') % (time.time()))
+        return
+
+
     failures = []
     try:
         with open('discourse/failures.json') as failurefd:
@@ -536,8 +718,9 @@ def generateCrawlSummary():
                 'category_count': 0,
                 }
             }
-        print('Collecting crawl stats...')
+        print('Collecting crawl stats', end='', flush=True)
         for site in sites:
+            print('.', end='', flush=True)
             url = urlparse(site)
             protocol = url.scheme + '://'
             domain = url.netloc
@@ -554,6 +737,10 @@ def generateCrawlSummary():
             crawlsummary[domain]['post_count'] = 0
             crawlsummary[domain]['category_count'] = 0
             crawlsummary[domain]['categories'] = {}
+            if site in sitelicenses:
+                crawlsummary[domain]['license'] = sitelicenses[site]
+            else:
+                crawlsummary[domain]['license'] = 'UNKNOWN'
 
             if domain in faildomains:
                 crawlsummary[domain]['failure'] = faildomains[domain]
@@ -571,12 +758,19 @@ def generateCrawlSummary():
                         crawlsummary[domain]['post_count'] += category['post_count']
                         crawlsummary[domain]['category_count'] += 1
                     topicdir = 'discourse/%s%s/t' % (domain, urlpath)
+                    jsonlpath = 'discourse/%s/%s-topics-raw.jsonl' % (domain, domain)
                     if os.path.isdir(topicdir):
                         entries = os.listdir(topicdir)
                         for entry in entries:
                             topicfname = topicdir + '/' + entry
                             if os.path.isdir(topicfname):
                                 crawlsummary[domain]['topic_crawl_count'] += 1
+                    elif os.path.isfile(jsonlpath):
+                        #print('Read jsonl file: %s' % jsonlpath)
+                        with open(jsonlpath, 'r') as fd:
+                            for line in fd:
+                                crawlsummary[domain]['topic_crawl_count'] += 1
+
                     crawlsummary['_totals']['topic_crawl_count'] += crawlsummary[domain]['topic_crawl_count']
 
 
@@ -602,6 +796,7 @@ def generateCrawlSummary():
             crawlsummary['_totals']['topic_count'] += crawlsummary[domain]['topic_count']
             crawlsummary['_totals']['post_count'] += crawlsummary[domain]['post_count']
             crawlsummary['_totals']['category_count'] += crawlsummary[domain]['category_count']
+        print('done', flush=True)
         
         print('Writing...')
         with open('discourse/crawlsummary.json', 'w') as crawlsummaryfd:

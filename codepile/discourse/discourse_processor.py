@@ -5,15 +5,19 @@ import os
 import shutil
 import hashlib
 import tarfile
+import zipfile
 import json
 import html2text
 from multiprocessing import Pool
+import multiprocessing as mp
 import boto3
 import botocore.exceptions
 import time
 import random
 import traceback, sys
-
+import urllib.request
+import re
+import pathlib
 
 S3_BUCKET = "s-eai-neox"
 S3_BUCKET_PATH = "data/codepile/discourse/"
@@ -25,13 +29,17 @@ text_maker.unicode_snob = True
 text_maker.ignore_links = True
 text_maker.ignore_images = True
 text_maker.images_to_alt = False
-text_maker.ignore_images = True
+text_maker.inline_links = True
 text_maker.mark_code = True
 text_maker.escape_snob = False
 text_maker.open_quote = '"'
 text_maker.close_quote = '"'
 text_maker.body_width = 0
+text_maker.single_line_break = True
+text_maker.use_automatic_links = True
 
+regex_topic = re.compile('/t/([^/]+)/(\d+)')
+regex_additional = re.compile('/t/([^/]+)/additional_posts.json')
 
 class DiscourseProcessor(Processor):
     def __init__(self, temp_dir, data_dir):
@@ -128,14 +136,17 @@ class DiscourseProcessor(Processor):
 
         return self.index
 
-    def parse_site_list(self, site):
+    def parse_site_list(self, site, fullurl=False):
         sitelist = []
         if site == 'all':
             with open('discourse/index.json', 'r') as indexfd:
                 urls = json.loads(indexfd.read())
                 for url in urls:
-                    parts = url.split('/')
-                    sitelist.append(parts[2])
+                    if fullurl:
+                        sitelist.append(url)
+                    else:
+                        parts = url.split('/')
+                        sitelist.append(parts[2])
         else:
             sitelist = site.split(',')
         return sitelist
@@ -143,7 +154,7 @@ class DiscourseProcessor(Processor):
     def compress(self, site):
         sitelist = self.parse_site_list(site)
 
-        zippool = Pool(processes=6)
+        zippool = Pool(processes=max(1, os.num_cpus() - 1))
         for site in sitelist:
             sitepath = self.get_site_path(site)
             if os.path.isdir(sitepath):
@@ -155,7 +166,7 @@ class DiscourseProcessor(Processor):
 
         print('Updating checksums')
         checksums = self.load_checksums()
-        md5pool = Pool(processes=6)
+        md5pool = Pool(processes=min(1, os.num_cpus()-1))
         for site in sitelist:
             md5pool.apply_async(self.checksum_site, args=[site], callback=self.update_checksum)
 
@@ -213,10 +224,12 @@ class DiscourseProcessor(Processor):
     def convert_site(self, site):
         sitepath = self.get_site_path(site)
         sitepath_tmp = self.get_site_path(site, True)
-        with open(sitepath_tmp + '.jsonl', 'w') as outfile:
+        jsonl_path = sitepath_tmp[0:-1] + '.jsonl'
+        print('heyo', sitepath, sitepath_tmp, jsonl_path)
+        with open(jsonl_path, 'w') as outfile:
             def blargh(f):
                 self.convert_callback(f, outfile)
-            pool = Pool(processes=4)
+            pool = Pool(processes=min(1, os.num_cpus() - 1))
             jobs = []
             batch = []
             topicroot = os.path.join(sitepath_tmp, 't')
@@ -251,7 +264,7 @@ class DiscourseProcessor(Processor):
         print('done', flush=True)
         print('compressing... ', end='', flush=True)
         zstdpath = self.get_site_path(site, False, False) + '.jsonl.zstd'
-        with open(sitepath_tmp + '.jsonl', 'rb') as f_in, open(zstdpath, 'wb') as f_out:
+        with open(jsonl_path, 'rb') as f_in, open(zstdpath, 'wb') as f_out:
             f_out.write(zstd.ZSTD_compress(f_in.read()))
         print(zstdpath, flush=True)
 
@@ -284,7 +297,9 @@ class DiscourseProcessor(Processor):
             for post in poststream['posts']:
                 posts[post['id']] = post
 
-            stream = poststream['stream']
+            stream = []
+            if 'stream' in poststream:
+                stream = poststream['stream']
             text = ''
             authors = []
 
@@ -321,19 +336,26 @@ class DiscourseProcessor(Processor):
 
                 # process post data
                 if post:
-                    contents = text_maker.handle(post['cooked']).replace('\u2019', "'").strip().replace('\n', '\n    ')
-                    author = '@' + post['username']
-                    if 'name' in post and post['name'] != '' and post['name'] != None:
-                        author += ' (' + post['name'] + ')'
+                    author = post['username']
+                    #if 'name' in post and post['name'] != '' and post['name'] != None:
+                    #    author += ' (' + post['name'] + ')'
+                    if author == None:
+                        author = 'UnknownUser'
 
                     if not author in authors:
                         authors.append(author)
+                    anonymized_author = 'User%d' % (authors.index(author) + 1)
+                    contents = text_maker.handle(post['cooked']).replace('\u2019', "'").strip()
+
+                    for i in range(0, len(authors)):
+                        contents = contents.replace('@' + authors[i], '@User%d' % (i + 1))
+
 
                     if text == '':
-                        text = '%s posted a new topic, subject "%s". It read:\n\n   %s\n\n' % (author, topic['title'], contents)
+                        text = '%s: %s\n%s\n' % (anonymized_author, topic['title'], contents)
                         postauthor = author
                     else:
-                        text += (random.choice(replies) + '\n\n') % (author, contents)
+                        text += '%s: %s\n' % (anonymized_author, contents)
                 else:
                     text += '( there was a missing post )\n\n'
                     hasmissing = True
@@ -345,6 +367,13 @@ class DiscourseProcessor(Processor):
 
             if len(missing) > 0:
                 self.log_process_failure(file, 'missing', ' '.join(map(str, missing)))
+            topictags = ''
+            topicimageurl = ''
+
+            if 'tags' in topic:
+                topictags = ' '.join(topic['tags'])
+            if 'image_url' in topic:
+                topicimageurl = topic['image_url'],
 
             newdata = {
                     "text": text,
@@ -359,10 +388,10 @@ class DiscourseProcessor(Processor):
                         "reply_count": topic['reply_count'],
                         "participant_count": topic['participant_count'],
                         "posts": topic['posts_count'],
-                        "tags": ' '.join(topic['tags']),
-                        "author": postauthor,
-                        "participants": ', '.join(authors),
-                        "image_url": topic['image_url'],
+                        "tags": topictags,
+                        #"author": postauthor,
+                        #"participants": ', '.join(authors),
+                        "image_url": topicimageurl,
                         "created_at": topic['created_at'],
                         "last_posted_at": topic['last_posted_at'],
 
@@ -371,7 +400,7 @@ class DiscourseProcessor(Processor):
             #print(newdata)
             #print('=' * 20 + '\n\n' + text)
             return newdata
-    return False
+        return False
 
     def convert_callback(self, returnval, outfile):
         for line in returnval:
@@ -457,3 +486,220 @@ class DiscourseProcessor(Processor):
             except boto3.exceptions.S3UploadFailedError:
                 print('upload failed: s3://%s%s%s' % (S3_BUCKET, S3_BUCKET_PATH, s3_filename), flush=True)
 
+    def get_license_file(self):
+        if not self.licensefile:
+            self.licensefile = open('%s/discourse/licenses.tsv' % (self.data_dir), 'w')
+        return self.licensefile
+
+    def close_license_file(self):
+        if self.licensefile:
+            self.licensefile.close()
+
+    def get_license(self, sites):
+        self.licensecount = 0
+        self.licensefile = None
+        self.foo = 0
+        try:
+            sitelist = self.parse_site_list(sites, True)
+            #print(sitelist)
+                #pool = Pool(processes=1) # FIXME shouldn't be hardcoded
+            with mp.pool.ThreadPool(20) as pool:
+                for site in sitelist:
+                    print('#' * 10)
+                    job = pool.apply_async(self.fetch_and_process_license, callback=self.handle_license, args=(site, ))
+                    #self.handle_license(self.fetch_and_process_license(site))
+                print('waiting')
+                pool.close()
+                pool.join()
+                print('ok')
+        except Exception as e:
+            print('eek', e)
+        self.close_license_file()
+        print('got a bunch of licenses', self.licensecount, len(sitelist))
+
+    def fetch_and_process_license(self, site):
+        try:
+            #print(('=' * 10) + site)
+            sitepath = self.get_site_path(site)
+            tospath = sitepath + 'tos'
+
+            contents = None
+            licensetype = 'UNKNOWN'
+
+            if os.path.isfile(tospath):
+                with open(tospath, 'r') as f:
+                    contents = f.read()
+                    #print('from file', site)
+            if not contents or len(contents) == 0:
+                tosurl = site
+                if site[-1] != '/':
+                    tosurl += '/'
+                tosurl += 'tos'
+                req = urllib.request.Request(tosurl, headers={'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36'})
+                with urllib.request.urlopen(req, timeout=5) as res:
+                    contents = res.read().decode('utf-8')
+                    #print('from url', site)
+                    if not os.path.isdir(sitepath):
+                        os.makedirs(sitepath)
+                    with open(tospath, 'w') as f:
+                        f.write(contents)
+                #print(contents)
+
+            if contents:
+                m = re.findall(r'https?://(:?www\.)?creativecommons\.org/licenses/([^/">]+)', contents)
+                if m:
+                    licensetype = 'cc-' + m[0][1]
+                elif re.search(r'https?://(:?www\.)?creativecommons\.org/publicdomain/zero', contents):
+                    licensetype = 'cc0'
+                elif re.search('Content you submit to the forum belongs to you, and you decide what permission to give others for it.', contents):
+                    licensetype = 'unlicensed'
+            return (site, licensetype)
+        except Exception as e:
+            print('failed to fetch license', site + 'tos', e)
+            licensetype = 'FAILED'
+        return (site, licensetype)
+
+    def handle_license(self, licensedata):
+        print('got a license', licensedata)
+        self.licensecount += 1
+        licensefile = self.get_license_file()
+        if licensefile:
+            licensefile.write('%s\t%s\n' % (licensedata[0], licensedata[1]))
+            licensefile.flush()
+    def handle_license_error(self, wat):
+        print('huh?', wat)
+    def convert_raw(self, site):
+        sitelist = self.parse_site_list(site)
+        pool = Pool(processes=64)
+        jobs = []
+
+        for site in sitelist:
+                    #self.convert_raw_site(site)
+            jobs.append(pool.apply_async(self.convert_raw_site, args=[site]))
+
+        #print(topicfiles)
+        #pool.map(self.convert_site_file, topicfiles)
+        pool.close()
+        pool.join()
+
+    def convert_raw_site(self, site):
+        #print('convert site', site)
+        sitepath = self.get_site_path(site)
+        sitepath_tmp = self.get_site_path(site, True)
+        tarball_path = sitepath[0:-1] + '.tar.gz'
+        topic_path = sitepath + 't/'
+        jsonl_path = '%s%s-topics-raw.jsonl' % (sitepath, site)
+        additional_path = '%s%s-additional-posts.jsonl' % (sitepath, site)
+        #print('convert site', sitepath, sitepath_tmp, jsonl_path, tarball_path, topic_path)
+
+        # TODO:
+        # - extract tarball to memory
+        # - for each topic:
+        #   - merge t/topic-slug/<topicid> json into <site>-topics-raw.jsonl
+        #   - merge t/topic-slug/additional_posts.json into <site>-additional-posts.jsonl
+
+        topicids = {}
+        #pool = mp.pool.ThreadPool(100)
+        additionalfile = None
+        if os.path.isdir(topic_path):
+            # Raw files in a filesystem
+            try:
+                with open(jsonl_path, 'w') as jsonlfile:
+                    for topicdir in os.listdir(topic_path):
+                        print('e', topicdir)
+
+                        topicfilepath = os.path.join(topic_path, topicdir)
+                        if os.path.isdir(topicfilepath):
+                            topicid = None
+                            hasadditional = False
+                            for topicfile in os.listdir(topicfilepath):
+                                #pool.apply_async(self.convert_raw_topic, args=(site, sitezip, file), callback=self.handle_raw_topic)
+                                if topicfile == 'additional_posts.json':
+                                    hasadditional = True
+                                else:
+                                    topicid = topicfile
+                            if topicid != None:
+                                jsonlfile.write(self.convert_raw_topic_file(site, '/t/' + topicdir + '/' + str(topicid), topicid))
+                                if hasadditional:
+                                    if additionalfile == None:
+                                        additionalfile = open(additional_path, 'w')
+                                    additionalfile.write(self.convert_raw_topic_file(site, '/t/' + topicdir + '/additional_posts.json', topicid))
+            except Exception as e:
+                print('error while converting: ' + str(e))
+
+        elif os.path.isfile(tarball_path):
+            # Raw files in a tarball
+            print('Opening zip: ' + tarball_path)
+            sitezip = tarfile.open(tarball_path, 'r')
+            print(sitepath)
+            pathlib.Path(sitepath).mkdir(parents=True, exist_ok=True)
+            with open(jsonl_path, 'w') as jsonlfile:
+                for file in sitezip:
+                    print(file.name)
+                    try:
+                        #pool.apply_async(self.convert_raw_topic, args=(site, sitezip, file), callback=self.handle_raw_topic)
+                        self.handle_raw_topic(self.convert_raw_topic_zip(site, sitezip, file.name))
+                    except Exception as e:
+                        print('aaaa', str(e))
+
+
+                    
+            #    print('go on now')
+        else:
+            print('WARNING - missing tar.gz file: %s' % (tarball_path))
+        if additionalfile:
+            additionalfile.close()
+        print('converted site: ' + site)
+    def convert_raw_topic_zip(self, site, sitezip, filename):
+        try:
+            matches_topic = regex_topic.search(filename)
+            matches_additional = regex_additional.search(filename)
+            if matches_topic:
+                #topicids[matches_topic[1]] = matches_topic[2]
+                #print('compose json...')
+                #jsonstr = '{"domain": "%s", "path": "%s", "contents": %s}\n' % (site, matches_topic[0], sitezip.extractfile(filename).read().decode('utf-8'))
+                #jsonlfile.write(sitezip.extractfile(filename).read().decode('utf-8') + '\n')
+                #additionalfile.write(jsonstr)
+                return self.get_topic_json(site, matches_topic[0], sitezip.extractfile(filename).read().decode('utf-8'))
+            elif matches_additional:
+                #jsonstr = '{"topicid": %s, "posts": %s}\n' % (topicids[matches_additional[1]], sitezip.extractfile(filename).read().decode('utf-8'))
+                #return jsonstr
+                return self.get_additionalposts_json(topicids[matches_additional[1]], sitezip.extractfile(filename).read().decode('utf-8'))
+        except Exception as e:
+            print('uh oh: ' + str(e))
+    def convert_raw_topic_file(self, site, topicpath, topicid):
+        try:
+            sitepath = self.get_site_path(site)
+            matches_topic = regex_topic.search(topicpath)
+            matches_additional = regex_additional.search(topicpath)
+            if matches_topic:
+                #topicids[matches_topic[1]] = matches_topic[2]
+                #print('compose json...')
+                #jsonstr = '{"domain": "%s", "path": "%s", "contents": %s}\n' % (site, matches_topic[0], sitezip.extractfile(filename).read().decode('utf-8'))
+                #jsonlfile.write(sitezip.extractfile(filename).read().decode('utf-8') + '\n')
+                #additionalfile.write(jsonstr)
+                with open(sitepath + topicpath) as tfd:
+                    return self.get_topic_json(site, topicpath, tfd.read())
+            elif matches_additional:
+                #jsonstr = '{"topicid": %s, "posts": %s}\n' % (topicids[matches_additional[1]], sitezip.extractfile(filename).read().decode('utf-8'))
+                #return jsonstr
+                #return self.get_additionalposts_json(topicids[matches_additional[1]], sitezip.extractfile(filename).read().decode('utf-8'))
+                with open(sitepath + topicpath) as tfd:
+                    return self.get_additionalposts_json(topicid, tfd.read())
+        except Exception as e:
+            print('uh oh: ' + str(e))
+
+    def get_topic_json(self, site, path, contents):
+        return '{"domain": "%s", "path": "%s", "contents": %s}\n' % (site, path, contents)
+
+    def get_additionalposts_json(self, topicid, posts):
+        return '{"topicid": %s, "posts": %s}\n' % (topicid, posts)
+
+    def handle_raw_topic(self, response):
+        print(response)
+        if response[0] == 'topic':
+            topicfile = self.get_topic_file(response[1])
+            topicfile.write(response[2])
+        elif response[0] == 'posts':
+            postsfile = self.get_additionalposts_file(response[1])
+            postsfile.write(response[2])

@@ -8,7 +8,7 @@ import pathlib
 USAGE_EXAMPLES = """
 Usage: python3 -m codepile.discourse.discourse <action> <site> <datadir> <tmpdir>
 
-    action : [index|download|compress|process|analyze]
+    action : [index|download|compress|process|analyze|sync|fix|license]
     site   : [all|<site>[,<site2>,...]]
 
 
@@ -44,6 +44,9 @@ Example usage:
 
  - Sync processed jsonl files to s3
         python3 -m codepile.discourse.discourse sync [all|<site>] ~/data/my-discourse-crawl /tmp
+
+ - Parse license for site
+        python3 -m codepile.discourse.discourse license [all|<site>] ~/data/my-discourse-crawl /tmp
 """
 
 class DiscourseScraper(Scraper):
@@ -55,21 +58,21 @@ class DiscourseScraper(Scraper):
     def get_crawl_settings(self):
         return {
             "SCHEDULER_PRIORITY_QUEUE": 'scrapy.pqueues.DownloaderAwarePriorityQueue',
-            "CONCURRENT_REQUESTS": 1000,
+            "CONCURRENT_REQUESTS": 5000,
             "LOG_LEVEL": "WARN",
             "DOWNLOAD_DELAY": .6,
             "CONCURRENT_REQUESTS_PER_DOMAIN": 1,
             "AUTOTHROTTLE_ENABLED": False,
             "AUTOTHROTTLE_DEBUG": True,
             "AUTOTHROTTLE_TARGET_CONCURRENCY": .5,
-            "REACTOR_THREADPOOL_MAXSIZE": 100,
+            "REACTOR_THREADPOOL_MAXSIZE": 5000,
             "REQUEST_FINGERPRINTER_IMPLEMENTATION": '2.7',
             "SCHEDULER_DEBUG": True,
             "TELNETCONSOLE_ENABLED": False,
             #"JOBDIR": "scrapy-job",
         }
 
-    def scrape(self) -> RawDataset:
+    def scrape(self, site='all') -> RawDataset:
         pathlib.Path(self.target_dir).mkdir(parents=True, exist_ok=True)
         os.chdir(self.target_dir)
         crawlsettings = self.get_crawl_settings()
@@ -78,7 +81,7 @@ class DiscourseScraper(Scraper):
 
         # use DiscourseTopicSpider to perform a full crawl
         process = CrawlerProcess(crawlsettings)
-        process.crawl(DiscourseTopicSpider)
+        process.crawl(DiscourseTopicSpider, sitelist=site)
         process.start()
 
         return RawDataset(storage_uris=['file:///{self.target_dir}'],
@@ -116,8 +119,8 @@ class DiscourseDataset(Dataset):
         self.processor = DiscourseProcessor(tempdir, data_dir)
     def index(self):
         self.scraper.index()
-    def download(self):
-        self.scraper.scrape()
+    def download(self, site):
+        self.scraper.scrape(site)
     def compress(self, site):
         self.processor.compress(site) 
     def process(self, site):
@@ -130,6 +133,11 @@ class DiscourseDataset(Dataset):
     def fix(self, site):
         # Fetch posts that were missing from the initial crawl (eg, additional replies to long topics)
         self.scraper.get_additional_posts(site)
+    def convertraw(self, site):
+        # Converts an old crawl (collections of files) to jsonl topic storage
+        self.processor.convert_raw(site)
+    def license(self, site):
+        self.processor.get_license(site)
 
 
 
@@ -148,7 +156,7 @@ if __name__=="__main__":
         if action == 'index':
             discourse_dataset.index()
         elif action == 'download':
-            discourse_dataset.download()
+            discourse_dataset.download(site)
         elif action == 'compress':
             discourse_dataset.compress(site)
         elif action == 'process':
@@ -159,5 +167,9 @@ if __name__=="__main__":
             discourse_dataset.sync(site)
         elif action == 'fix':
             discourse_dataset.fix(site)
+        elif action == 'convertraw':
+            discourse_dataset.convertraw(site)
+        elif action == 'license':
+            discourse_dataset.license(site)
     else:
         print(USAGE_EXAMPLES)
